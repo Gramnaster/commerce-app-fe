@@ -2,11 +2,14 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import { Error, Home, Login, Signup, Profile, Cart, Products, Dashboard } from './pages/index.ts';
+import { Error, Home, Login, Signup, Profile, Cart, Products, Dashboard, ProfileView } from './pages/index.ts';
 import { store } from './store.ts';
 
-import {action as loginAction} from './pages/Login/Login.tsx';
-import {action as registerAction} from './pages/Signup/Signup.tsx';
+import {action as loginAction} from './pages/Login/Login';
+import {action as registerAction} from './pages/Signup/Signup';
+
+import {loader as profileViewAction} from './pages/Profile/ProfileView.tsx';
+import {loader as profileLoader} from './pages/Profile/Profile.tsx';
 
 
 const queryClient = new QueryClient({
@@ -36,24 +39,26 @@ const router = createBrowserRouter([
           {
             // localhost:3000/profile
             index: true,
-            element: <MainPage />,
+            // element: <MainPage />,
           },
           {
             // localhost:3000/profile
             path: 'profile',
             element: <Profile />,
+            loader: profileLoader(queryClient, store),
             children: [
               {
-                index: true,
-                element: <ProfileView />
+                path: 'view/:id',
+                element: <ProfileView />,
+                loader: profileViewAction(queryClient, store)
               },
               {
                 path: 'edit',
-                element: <ProfileEdit />
+                // element: <ProfileEdit />
               },
               {
                 path: 'transactions',
-                element: <ProfileReceipts />
+                // element: <ProfileReceipts />
               },
             ]
           },

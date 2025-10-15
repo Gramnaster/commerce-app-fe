@@ -38,6 +38,7 @@ export const action =
       const userData = response.data.data;
 
       store.dispatch(loginUser({ user: userData, token }));
+      console.log(`login.tsx user: userdata`, userData);
       toast.success('logged in successfully');
       return redirect('/dashboard');
     } catch (error) {
@@ -54,26 +55,26 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // const loginAsGuestUser = async () => {
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append('user[email]', 'manuel@test.com');
-  //     formData.append('user[password]', 'test123456');
+  const loginAsGuestUser = async () => {
+    try {
+      const formData = new FormData();
+      formData.append('user[email]', 'manuel@test.com');
+      formData.append('user[password]', 'test123456');
 
-  //     const response = await customFetch.post('/users/login', formData);
+      const response = await customFetch.post('/users/login', formData);
       
-  //     // Extract token and user data (same as form submission)
-  //     const token = response.headers.authorization; // Keep the full "Bearer <token>" format
-  //     const userData = response.data.data;
+      // Extract token and user data (same as form submission)
+      const token = response.headers.authorization; // Keep the full "Bearer <token>" format
+      const userData = response.data.data;
 
-  //     dispatch(loginUser({ user: userData, token }));
-  //     toast.success('Welcome, guest user');
-  //     navigate('/dashboard');
-  //   } catch (error) {
-  //     console.log(error);
-  //     toast.error('Please try again')
-  //   }
-  // };
+      dispatch(loginUser({ user: userData, token }));
+      toast.success('Welcome, guest user');
+      navigate('/dashboard');
+    } catch (error) {
+      console.log(error);
+      toast.error('Please try again')
+    }
+  };
 
   return (
     <section className="h-screen grid place-items-center">

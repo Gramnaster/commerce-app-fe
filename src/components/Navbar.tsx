@@ -1,4 +1,4 @@
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, Navigate, NavLink, useNavigate } from 'react-router-dom';
 import logoIcon from '../assets/images/logo-1.png';
 import userIcon from '../assets/images/icon-user.png';
 import languageIcon from '../assets/images/icon-language.png';
@@ -8,17 +8,18 @@ import NavLinks from './NavLinks';
 // import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../store';
 import { logoutUser } from '../features/user/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Navbar = () => {
   // const [theme, setTheme] = useState(false);
-  // const navigate = useNavigate();
-  // const dispatch = useDispatch();
-  // const user = useSelector((state: RootState) => state.userState.user);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.userState.user);
 
   const handleLogout = () => {
-    // navigate('/');
-    // // dispatch()
-    // dispatch(logoutUser());
+    navigate('/');
+    // dispatch()
+    dispatch(logoutUser());
 
     console.log("logout function here")
   };
@@ -91,6 +92,9 @@ const Navbar = () => {
               <Link to='/login'>
                 <img src={userIcon} alt="user-icon" />
               </Link>
+            </button>
+            <button className="btn btn-xs" onClick={handleLogout}>
+                  Logout
             </button>
             <button className="btn bg-transparent h-[30px]">
               <img src={languageIcon} alt="language-icon" />
