@@ -88,7 +88,9 @@ const Navbar = () => {
             )} */}
 
             <button className="btn bg-transparent h-[28px] ml-4">
-              <img src={userIcon} alt="user-icon" />
+              <Link to='/login'>
+                <img src={userIcon} alt="user-icon" />
+              </Link>
             </button>
             <button className="btn bg-transparent h-[30px]">
               <img src={languageIcon} alt="language-icon" />

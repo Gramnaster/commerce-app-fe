@@ -1,9 +1,12 @@
 import { Navbar } from '../../components'
+import Sidebar from '../../components/Sidebar'
+import { Outlet, useNavigation } from 'react-router-dom';
 
 const Profile = () => {
   return (
     <div>
-      <Navbar />
+      <Sidebar />
+        <Outlet />
       YAWA YAWA YAWA
     </div>
   )

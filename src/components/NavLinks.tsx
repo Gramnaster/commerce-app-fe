@@ -9,9 +9,9 @@ interface LinksType {
 }
 const links: LinksType[] = [
   { id: 0, url: '/', text: 'Home' },
-  { id: 1, url: '/products', text: 'Products' },
-  { id: 3, url: '/profile', text: 'Profile' },
-  { id: 4, url: '/cart', text: 'Cart' }
+  { id: 1, url: 'products', text: 'Products' },
+  { id: 3, url: '/dashboard', text: 'Profile' },
+  { id: 4, url: '/dashboard/cart', text: 'Cart' }
 ];
 
 const NavLinks = () => {

@@ -13,45 +13,45 @@ import { loginUser } from '../../features/user/userSlice';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../store';
 
-// export const action =
-//   (store: { dispatch: AppDispatch }) =>
-//   async ({ request }: ActionFunctionArgs) => {
-//     console.log(store);
-//     // const {request} = store;
-//     const requestFormData = await request.formData();
-//     const data = Object.fromEntries(requestFormData);
+export const action =
+  (store: { dispatch: AppDispatch }) =>
+  async ({ request }: ActionFunctionArgs) => {
+    console.log(store);
+    // const {request} = store;
+    const requestFormData = await request.formData();
+    const data = Object.fromEntries(requestFormData);
 
-//     // Modern React Router + Rails format
-//     // const payload = { user: data};
+    // Modern React Router + Rails format
+    // const payload = { user: data};
 
-//     try {
-//       // Convert to FormData to avoid preflight
-//       const formData = new FormData();
-//       formData.append('user[email]', data.email);
-//       formData.append('user[password]', data.password);
+    try {
+      // Convert to FormData to avoid preflight
+      const formData = new FormData();
+      formData.append('user[email]', data.email);
+      formData.append('user[password]', data.password);
 
-//       const response = await customFetch.post('/users/login', formData);
-//       console.log(response);
+      const response = await customFetch.post('/users/login', formData);
+      console.log(response);
 
-//       // Data and Token extraction
-//       const token = response.headers.authorization; // Keep the full "Bearer <token>" format
-//       const userData = response.data.data;
+      // Data and Token extraction
+      const token = response.headers.authorization; // Keep the full "Bearer <token>" format
+      const userData = response.data.data;
 
-//       store.dispatch(loginUser({ user: userData, token }));
-//       toast.success('logged in successfully');
-//       return redirect('/dashboard');
-//     } catch (error) {
-//       console.log('Try-Catch Login Error:', error);
-//       const err = error as AxiosError<{ error: { message: string } }>;
-//       const errorMessage =
-//         err.response?.data?.error?.message || 'Invalid credentials';
-//       toast.error(errorMessage);
-//       return null;
-//     }
-//   };
+      store.dispatch(loginUser({ user: userData, token }));
+      toast.success('logged in successfully');
+      return redirect('/dashboard');
+    } catch (error) {
+      console.log('Try-Catch Login Error:', error);
+      const err = error as AxiosError<{ error: { message: string } }>;
+      const errorMessage =
+        err.response?.data?.error?.message || 'Invalid credentials';
+      toast.error(errorMessage);
+      return null;
+    }
+  };
 
 const Login = () => {
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // const loginAsGuestUser = async () => {

@@ -2,7 +2,12 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import { Error, Home, Login, Signup, Profile, Cart, Products } from './pages/index.ts';
+import { Error, Home, Login, Signup, Profile, Cart, Products, Dashboard } from './pages/index.ts';
+import { store } from './store.ts';
+
+import {action as loginAction} from './pages/Login/Login.tsx';
+import {action as registerAction} from './pages/Signup/Signup.tsx';
+
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -12,39 +17,72 @@ const queryClient = new QueryClient({
   },
 });
 
+// Routes that need authentication before you can access it
 const router = createBrowserRouter([
   {
+    // localhost:3000/
     path: '/',
     element: <Home />,
     errorElement: <Error />,
-    children: []
+    children: [
+      {
+        index: true,
+        element: <Products />
+      },
+      {
+        path: 'dashboard',
+        element: <Dashboard />,
+        children: [
+          {
+            // localhost:3000/profile
+            index: true,
+            element: <MainPage />,
+          },
+          {
+            // localhost:3000/profile
+            path: 'profile',
+            element: <Profile />,
+            children: [
+              {
+                index: true,
+                element: <ProfileView />
+              },
+              {
+                path: 'edit',
+                element: <ProfileEdit />
+              },
+              {
+                path: 'transactions',
+                element: <ProfileReceipts />
+              },
+            ]
+          },
+          {
+            path: 'cart',
+            element: <Cart />
+          },
+        ]
+      }
+
+    ]
   },
   {
     path: '/login',
     element: <Login />,
-    errorElement: <Error />
+    errorElement: <Error />,
+    action: loginAction(store),
   },
   {
     path: '/signup',
     element: <Signup />,
-    errorElement: <Error />
+    errorElement: <Error />,
+    action: registerAction,
   },
   {
     path: '*',
     element: <Error />
   },
-  {
-    path: '/profile',
-    element: <Profile />
-  },
-  {
-    path: '/cart',
-    element: <Cart />
-  },
-  {
-    path: '/products',
-    element: <Products />
-  }
+
 ])
 
 function App() {
