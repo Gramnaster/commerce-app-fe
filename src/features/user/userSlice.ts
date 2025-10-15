@@ -3,11 +3,7 @@ import { toast } from 'react-toastify';
 
 export interface User {
   email: string;
-  first_name: string;
   id: number;
-  last_name: string;
-  user_role: 'trader' | 'admin';
-  user_status: 'rejected' | 'pending' | 'approved';
   jti: string;
   token: string;
 }
@@ -35,6 +31,7 @@ const userSlice = createSlice({
     loginUser: (state, action) => {
       console.log('userSlice action.payload:', action.payload);
       const { user, token } = action.payload;
+      console.log(`userSlice user`, user);
 
       const userWithToken = {
         ...user,

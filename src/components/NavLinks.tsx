@@ -10,7 +10,7 @@ interface LinksType {
 const links: LinksType[] = [
   { id: 0, url: '/', text: 'Home' },
   { id: 1, url: 'products', text: 'Products' },
-  { id: 3, url: '/dashboard', text: 'Profile' },
+  { id: 3, url: '/dashboard/profile', text: 'Profile' },
   { id: 4, url: '/dashboard/cart', text: 'Cart' }
 ];
 
