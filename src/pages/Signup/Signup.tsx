@@ -29,31 +29,16 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   // Convert to FormData to avoid preflight (same fix as login)
   const submitData = new FormData();
   console.log(`submitData`, submitData);
-  // const user_detail_attributes = { };
+  
   Object.entries(data).forEach(([key, value]) => {
     if (key === 'first_name' || key === "last_name" || key === "dob") {
-      // user_detail_attributes[key] = value as string;
       submitData.append(`user[user_detail_attributes][${key}]`, value as string);
-      // console.log(`userDetailAttributes[key]`, user_detail_attributes, key);
-      // submitData.append(`user[user_detail_attributes][${key}]`, value as string)
     } else {
       submitData.append(`user[${key}]`, value as string);
     }
-    // console.log(`userDetailAttributes`, userDetailAttributes)
     console.log(`submitData append ${key}:`, value);
   });
 
-  // submitData.append(`user[${user_detail_attributes}]`, JSON.stringify(user_detail_attributes));
-
-  // submitData.append(`user[${userDetailAttributes}]`, );
-  // console.log(`submitData`, submitData);
-
-  // console.log(`submitData`, submitData.entries());
-  // for (const [key, value] of submitData.entries()) {
-    // submitData.append(`user[${user_detail_attributes}][${key}]`, value);
-  //   console.log(`submitData.entries key:`, JSON.stringify(key), value);
-  // }
-  // console.log(`data`, data);
 
   try {
     await customFetch.post('/users/signup', submitData);
@@ -118,6 +103,12 @@ const Signup = () => {
               label="Last Name (required)"
               name="last_name"
               placeholder="Sayson"
+            />
+            <FormInput
+              type="date"
+              label="Date of Birth (required)"
+              name="dob"
+              placeholder="1990/01/01"
             />
             <FormInput
               type="date"
