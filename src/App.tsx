@@ -2,14 +2,15 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import { Error, Home, Login, Signup, Profile, Cart, Products, Dashboard, ProfileView } from './pages/index.ts';
+import { Error, Home, Login, Signup, Profile, Cart, Products, Dashboard, ProfileView, ProfileEdit } from './pages/index.ts';
 import { store } from './store.ts';
 
 import {action as loginAction} from './pages/Login/Login';
 import {action as registerAction} from './pages/Signup/Signup';
 
-import {loader as profileViewAction} from './pages/Profile/ProfileView.tsx';
 import {loader as profileLoader} from './pages/Profile/Profile.tsx';
+import {loader as profileViewAction} from './pages/Profile/ProfileView.tsx';
+import {loader as profileEditAction} from './pages/Profile/ProfileEdit.tsx';
 
 
 const queryClient = new QueryClient({
@@ -53,8 +54,9 @@ const router = createBrowserRouter([
                 loader: profileViewAction(queryClient, store)
               },
               {
-                path: 'edit',
-                // element: <ProfileEdit />
+                path: 'edit/:id',
+                element: <ProfileEdit />,
+                loader: profileEditAction(queryClient, store)
               },
               {
                 path: 'transactions',
