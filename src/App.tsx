@@ -2,11 +2,15 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import { Error, Home, Login, Signup, Profile, Cart, Products, Dashboard, ProfileView, ProfileEdit } from './pages/index.ts';
+import { Error, Home, Login, Signup, Profile, Cart, Products, ProductView, FeaturedProducts, Dashboard, ProfileView, ProfileEdit } from './pages/index.ts';
 import { store } from './store.ts';
 
 import {action as loginAction} from './pages/Login/Login';
 import {action as registerAction} from './pages/Signup/Signup';
+
+
+import {loader as productsLoader} from './pages/Products/Products.tsx';
+import {loader as productViewAction} from './pages/Products/ProductView.tsx';
 
 import {loader as profileLoader} from './pages/Profile/Profile.tsx';
 import {loader as profileViewAction} from './pages/Profile/ProfileView.tsx';
@@ -31,7 +35,17 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Products />
+        element: <FeaturedProducts />
+      },
+      {
+        path: 'products',
+        element: <Products />,
+        loader: productsLoader(queryClient, store),
+      },          
+      {
+        path: 'products/:id',
+        element: <ProductView />,
+        loader: productViewAction(queryClient, store),
       },
       {
         path: 'dashboard',
