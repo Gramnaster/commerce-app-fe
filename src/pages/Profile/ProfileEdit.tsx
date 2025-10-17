@@ -22,18 +22,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
   const storeState = store.getState();
   const user = storeState.userState?.user;
 
-  // if (!user || user.user_role !== 'admin') {
-  //   toast.warn('There must be an error in this page');
-  //   return redirect('/dashboard');
-  // }
-
   const id = params.id;
-  // console.log(`ProfileEdit params.id`, id)
-
-  // if (!id) {
-  //   toast.error('User ID is required');
-  //   return redirect('/admin');
-  // }
 
   const userDetailsQuery = {
     queryKey: ['userDetails', id],
@@ -46,7 +35,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
       return response.data;
     },
   };
-  // console.log(`ProfileEdit userDetailsQuery`, userDetailsQuery)
+  console.log(`ProfileEdit userDetailsQuery`, userDetailsQuery)
 
   const countriesQuery = {
     queryKey: ['countries'],
@@ -247,7 +236,6 @@ const handleInputChange = (
     // Create the payload matching the API format
     const payload = {
       ...formData,
-      // country: countries.find(c => c.id === parseInt(formData.country_id.toString())),
     };
     
     updateUserMutation.mutate(payload);
