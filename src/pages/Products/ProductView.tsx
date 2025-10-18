@@ -1,6 +1,7 @@
 import { redirect, useLoaderData } from "react-router-dom";
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
+import { useState, useEffect } from "react";
 
 interface ProductCategory {
   id: number;
@@ -56,19 +57,44 @@ const ProductView = () => {
     ProductDetails: Product;
   }
 
+  const [cart, setCart] = useState<any[]>(() => {
+    const saved = localStorage.getItem('cart');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }, [cart]);
+
+  const addToCart = (product: Product) => {
+    setCart((prevCart) => {
+      const existingItem = prevCart.find((item) => item.id === product.id);
+
+      if (existingItem) {
+        return prevCart.map((item) =>
+          item.id === product.id ? { ...item, qty: item.qty + 1 } : item
+        );
+      } else {
+        return [...prevCart, { ...product, qty: 1 }];
+      }
+    });
+    console.log(`addToCart cart`, cart)
+    toast.success(`Item successfully added to cart`)
+  };
+
   console.log(`ProductView ProductDetails`, ProductDetails)
   return (
     <div>
-      LIGMA LIGMA
       <div>
-            <div>Product Name: {ProductDetails.data.title}</div>
-            <img src={ProductDetails.data.product_image_url} className="w-[100px]" />
-            <div>Category: {ProductDetails.data.product_category.title}</div>
-            <div>Producer: {ProductDetails.data.title}</div>
-            <div>Product Description:{ProductDetails.data.description}</div>
-            <div>Price: {ProductDetails.data.rice}</div>
-            <div>{!ProductDetails.data.promotion_id ? "No active promotions": "WHAATTT"}</div>
-          </div>
+        <div>Product Name: {ProductDetails.data.title}</div>
+        <img src={ProductDetails.data.product_image_url} className="w-[100px]" />
+        <div>Category: {ProductDetails.data.product_category.title}</div>
+        <div>Producer: {ProductDetails.data.title}</div>
+        <div>Product Description:{ProductDetails.data.description}</div>
+        <div>Price: {ProductDetails.data.price}</div>
+        <div>{!ProductDetails.data.promotion_id ? "No active promotions": "WHAATTT"}</div>
+      </div>
+      <button onClick={() => addToCart(ProductDetails.data)}>Add to Cart</button>
     </div>
   )
 }
