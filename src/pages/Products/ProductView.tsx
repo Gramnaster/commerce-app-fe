@@ -91,7 +91,7 @@ const ProductView = () => {
         <div>Category: {ProductDetails.data.product_category.title}</div>
         <div>Producer: {ProductDetails.data.title}</div>
         <div>Product Description:{ProductDetails.data.description}</div>
-        <div>Price: {ProductDetails.data.rice}</div>
+        <div>Price: {ProductDetails.data.price}</div>
         <div>{!ProductDetails.data.promotion_id ? "No active promotions": "WHAATTT"}</div>
       </div>
       <button onClick={() => addToCart(ProductDetails.data)}>Add to Cart</button>
