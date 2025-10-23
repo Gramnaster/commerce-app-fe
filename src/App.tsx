@@ -46,7 +46,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <FeaturedProducts />,
+        element: <Dashboard />,
       },
       {
         path: 'products',
@@ -60,7 +60,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'dashboard',
-        element: <Dashboard />,
+        element: <Profile />,
         children: [
           {
             // localhost:3000/profile

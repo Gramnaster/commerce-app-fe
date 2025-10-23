@@ -14,6 +14,7 @@ import {
   IconThemeDark,
   IconThemeLight,
   MainLogoDark,
+  MainLogoLight,
 } from '../assets/images';
 
 const Navbar = () => {
@@ -36,106 +37,120 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="bg-primary px-10 max-h-[75px]">
-        <div className="navbar align-headers">
-          <div className="navbar-start">
+      <nav>
+        <section className="w-full bg-primary">
+          <div className="navbar align-headers flex items-center max-w-full px-10 max-h-[75px] mx-auto">
+            <div className="navbar-start flex-1 items-right">
+              <NavLink
+                to="/"
+                className="hidden lg:flex btn bg-transparent border-none shadow-none text-secondary items-center"
+              >
+                <img
+                  src={MainLogoDark}
+                  alt="Logo"
+                  className="w-[110px] h-[50px]"
+                />
+              </NavLink>
+              {/* Dropdown Menu */}
+              <div className="dropdown">
+                <label tabIndex={0} className="btn btn-ghost lg:hidden">
+                  <img src={IconHamburger} alt="Hamburger" />
+                </label>
+                <ul
+                  tabIndex={0}
+                  className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-200 rounded-box"
+                >
+                  <NavLinks />
+                </ul>
+              </div>
+            </div>
+            <div className="navbar-center hidden lg:flex flex-6 justify-center">
+              <label className="input flex items-center w-full max-w-4xl max-h-[32px]">
+                <input
+                  type="search"
+                  required
+                  placeholder="Search Categories or Products"
+                  className="flex-1 text-base text-black placeholder:text-gray-500 rounded-l-md rounded-tr-none rounded-br-none"
+                />
+              </label>
+              <button className="btn bg-accent text-base max-h-[32px] rounded-l-md rounded-tl-none rounded-bl-none">
+                Search
+                <img src={IconSearch} className="h-[15px] w-[15px]" />
+              </button>
+            </div>
+            <div className="navbar-end flex-3 flex justify-end">
+              <div className="flex gap-x-y justify-center items-center px-1 gap-[20px]">
+                {user ? (
+                  <div className="flex gap-x-2 sm:gap-x-8 items-center">
+                    <button className="btn btn-xs" onClick={handleLogout}>
+                      Logout
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <label className="btn border-none shadow-none outline-none text-base bg-secondary text-white w-[110px] h-[33px]">
+                      <Link to="/login">
+                        {/* <img src={IconProfile} alt="user-icon" /> */}
+                        Login
+                      </Link>
+                    </label>
+                    <label className="btn border-none shadow-none outline-none text-base bg-secondary text-white w-[110px] h-[33px]">
+                      <Link to="/signup">
+                        {/* <img src={IconProfile} alt="user-icon" /> */}
+                        Sign Up
+                      </Link>
+                    </label>
+                  </>
+                )}
+
+                {/* <button className="btn text-base bg-secondary text-white w-[128px] h-[33px]" onClick={handleLogout}>
+                  Sign Up
+                </button> */}
+                <button className="btn bg-transparent h-[30px] border-none shadow-none outline-none">
+                  <img src={IconCart} alt="cart-icon" />
+                </button>
+                <label className="swap swap-rotate">
+                  <input type="checkbox" onChange={handleTheme} />
+                  {/* Moon Icon */}
+                  <img
+                    src={IconThemeDark}
+                    alt="theme-icon"
+                    className="swap-on h-[28px] w-[28px]"
+                  />
+                  {/* Sun Icon */}
+                  <img
+                    src={IconThemeLight}
+                    alt="theme-icon"
+                    className="swap-off h-[28px] w-[28px]"
+                  />
+                </label>
+                {/* <button className="btn bg-transparent h-[30px]">
+                  <img src={IconTheme} alt="theme-icon"/>
+                </button> */}
+              </div>
+            </div>
+          </div>
+        </section>
+        <section className="navbar align-elements flex flex-col items-center justify-center max-h-[235px] mx-auto px-10 pt-[70px]">
+          {/* <ul className="menu menu-horizontal">
+            <NavLinks />
+          </ul> */}
+          <div className="h-[150px] mb-[70px]">
             <NavLink
               to="/"
-              className="hidden lg:flex btn text-2xl bg-transparent border-none shadow-none text-secondary items-center"
+              className="hidden lg:flex btn bg-transparent border-none shadow-none text-secondary items-center"
             >
               <img
-                src={MainLogoDark}
-                alt="Logo"
-                className="w-[110px] h-[50px]"
+                src={MainLogoLight}
+                alt="Main-Logo"
+                className="w-[253px] h-[115px] ml-10"
               />
             </NavLink>
-            {/* Dropdown Menu */}
-            <div className="dropdown">
-              <label tabIndex={0} className="btn btn-ghost lg:hidden">
-                <img src={IconHamburger} alt="Hamburger" />
-              </label>
-              <ul
-                tabIndex={0}
-                className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-200 rounded-box"
-              >
-                <NavLinks />
-              </ul>
-            </div>
           </div>
-          <div className="navbar-center hidden lg:flex">
-            <label className="input">
-              <input
-                type="search"
-                required
-                placeholder="Search Categories or Products"
-              />
-              <img src={IconSearch} className='h-[15px] w-[15px]'/>
-            </label>
-          </div>
-          <div className="navbar-end">
-            <div className="flex gap-x-y justify-center items-center ">
-              {/* {user ? (
-                <div className="flex gap-x-2 sm:gap-x-8 items-center">
-                  <p className="text-xs sm:text-sm">Hello, {user.first_name}</p>
-                  <button className="btn btn-xs" onClick={handleLogout}>
-                    Logout
-                  </button>
-                </div>
-              ) : (
-                <button className="btn btn-primary h-[33px]">
-                  <Link
-                    to="/login"
-                    className="link link-hover text-cs sm:text-sm"
-                  >
-                    Login
-                  </Link>
-                </button>
-              )} */}
-
-              <label className="btn border-none shadow-none outline-none text-base bg-secondary text-white w-[110px] h-[33px]">
-                <Link to="/login">
-                  {/* <img src={IconProfile} alt="user-icon" /> */}
-                  Login
-                </Link>
-              </label>
-              <label className="btn border-none shadow-none outline-none text-base bg-secondary text-white w-[110px] h-[33px]">
-                <Link to="/signup">
-                  {/* <img src={IconProfile} alt="user-icon" /> */}
-                  Sign Up
-                </Link>
-              </label>
-              {/* <button className="btn text-base bg-secondary text-white w-[128px] h-[33px]" onClick={handleLogout}>
-                Sign Up
-              </button> */}
-              <button className="btn bg-transparent h-[30px] border-none shadow-none outline-none">
-                <img src={IconCart} alt="cart-icon" />
-              </button>
-              <label className="swap swap-rotate">
-                <input type="checkbox" onChange={handleTheme} />
-                {/* Moon Icon */}
-                <img
-                  src={IconThemeDark}
-                  alt="theme-icon"
-                  className="swap-on h-[28px] w-[28px]"
-                />
-                {/* Sun Icon */}
-                <img
-                  src={IconThemeLight}
-                  alt="theme-icon"
-                  className="swap-off h-[28px] w-[28px]"
-                />
-              </label>
-              {/* <button className="btn bg-transparent h-[30px]">
-                <img src={IconTheme} alt="theme-icon"/>
-              </button> */}
-            </div>
-          </div>
-        </div>
-        <div className='navbar align-elements'>
-          <ul className="menu menu-horizontal">
+          <div className="flex flex-row text-base-content gap-[40px]">
             <NavLinks />
-          </ul>
-        </div>
+          </div>
+        </section>
       </nav>
     </>
   );
