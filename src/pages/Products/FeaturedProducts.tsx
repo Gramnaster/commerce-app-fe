@@ -22,22 +22,22 @@ const featuredImages: featuredImage[] = [
 const FeaturedProducts = () => {
   return (
     <div className="carousel w-full">
-      {featuredImages.map((image, idx) => {
+      {featuredImages.map((image, index) => {
         const total = featuredImages.length;
-        const prevIdx = (idx - 1 + total) % total;
-        const nextIdx = (idx + 1) % total;
+        const prevIndex = (index - 1 + total) % total;
+        const nextIndex = (index + 1) % total;
         return (
           <div
             key={image.id}
-            id={`slide${idx + 1}`}
+            id={`slide${index + 1}`}
             className="carousel-item relative w-full"
           >
             <img src={image.url} className="w-full" />
             <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
-              <a href={`#slide${prevIdx + 1}`} className="btn btn-circle">
+              <a href={`#slide${prevIndex + 1}`} className="btn btn-circle">
                 ❮
               </a>
-              <a href={`#slide${nextIdx + 1}`} className="btn btn-circle">
+              <a href={`#slide${nextIndex + 1}`} className="btn btn-circle">
                 ❯
               </a>
             </div>
