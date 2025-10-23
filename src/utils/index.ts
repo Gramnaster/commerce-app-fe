@@ -5,6 +5,8 @@ const isDevelopment = import.meta.env.DEV;
 const productionUrl = import.meta.env.VITE_API_URL;
 const baseURL = isDevelopment ? '/api/v1' : productionUrl;
 
+// const url = import.meta.env.VITE_API_URL;
+
 export const customFetch = axios.create({
   baseURL: baseURL,
 });
@@ -12,7 +14,8 @@ export const customFetch = axios.create({
 console.log('API Base URL:', baseURL);
 
 customFetch.defaults.headers.common['Accept'] = 'application/json';
-customFetch.defaults.headers.common['Content-Type'] = 'application/json';
+// Don't set Content-Type globally - let axios set it based on request data (JSON or FormData)
+// customFetch.defaults.headers.common['Content-Type'] = 'application/json';
 
 customFetch.interceptors.request.use(
   (config) => {
