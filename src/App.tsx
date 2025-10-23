@@ -2,20 +2,31 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import { Error, Home, Login, Signup, Profile, Cart, Products, ProductView, FeaturedProducts, Dashboard, ProfileView, ProfileEdit } from './pages/index.ts';
+import {
+  Error,
+  Home,
+  Login,
+  Signup,
+  Profile,
+  Cart,
+  Products,
+  ProductView,
+  FeaturedProducts,
+  Dashboard,
+  ProfileView,
+  ProfileEdit,
+} from './pages/index.ts';
 import { store } from './store.ts';
 
-import {action as loginAction} from './pages/Login/Login';
-import {action as registerAction} from './pages/Signup/Signup';
+import { action as loginAction } from './pages/Login/Login';
+import { action as registerAction } from './pages/Signup/Signup';
 
+import { loader as productsLoader } from './pages/Products/Products.tsx';
+import { loader as productViewAction } from './pages/Products/ProductView.tsx';
 
-import {loader as productsLoader} from './pages/Products/Products.tsx';
-import {loader as productViewAction} from './pages/Products/ProductView.tsx';
-
-import {loader as profileLoader} from './pages/Profile/Profile.tsx';
-import {loader as profileViewAction} from './pages/Profile/ProfileView.tsx';
-import {loader as profileEditAction} from './pages/Profile/ProfileEdit.tsx';
-
+import { loader as profileLoader } from './pages/Profile/Profile.tsx';
+import { loader as profileViewAction } from './pages/Profile/ProfileView.tsx';
+import { loader as profileEditAction } from './pages/Profile/ProfileEdit.tsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,13 +46,13 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <FeaturedProducts />
+        element: <Dashboard />,
       },
       {
         path: 'products',
         element: <Products />,
         loader: productsLoader(queryClient, store),
-      },          
+      },
       {
         path: 'products/:id',
         element: <ProductView />,
@@ -49,7 +60,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'dashboard',
-        element: <Dashboard />,
+        element: <Profile />,
         children: [
           {
             // localhost:3000/profile
@@ -65,27 +76,26 @@ const router = createBrowserRouter([
               {
                 path: 'view/:id',
                 element: <ProfileView />,
-                loader: profileViewAction(queryClient, store)
+                loader: profileViewAction(queryClient, store),
               },
               {
                 path: 'edit/:id',
                 element: <ProfileEdit />,
-                loader: profileEditAction(queryClient, store)
+                loader: profileEditAction(queryClient, store),
               },
               {
                 path: 'transactions',
                 // element: <ProfileReceipts />
               },
-            ]
+            ],
           },
           {
             path: 'cart',
-            element: <Cart />
+            element: <Cart />,
           },
-        ]
-      }
-
-    ]
+        ],
+      },
+    ],
   },
   {
     path: '/login',
@@ -101,10 +111,9 @@ const router = createBrowserRouter([
   },
   {
     path: '*',
-    element: <Error />
+    element: <Error />,
   },
-
-])
+]);
 
 function App() {
   return (
@@ -112,7 +121,7 @@ function App() {
       <RouterProvider router={router} />
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
-  )
+  );
 }
 
-export default App
+export default App;

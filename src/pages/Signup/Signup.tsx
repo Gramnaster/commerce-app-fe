@@ -110,12 +110,12 @@ const Signup = () => {
               name="dob"
               placeholder="1990/01/01"
             />
-            <FormInput
+            {/* <FormInput
               type="date"
               label="Date of Birth (required)"
               name="dob"
               placeholder="1990/01/01"
-            />
+            /> */}
             <div className="my-4 gap-y-4">
               <Link to="/">
                 <button className="btn bg-neutral-800 btn-block">Cancel</button>
