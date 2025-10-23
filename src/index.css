@@ -1,5 +1,12 @@
 @import 'tailwindcss';
 @plugin "daisyui";
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  --color-primary: #003566;
+  --color-secondary: #AE2012;
+  --color-tertiary: #EE9B00;
+}
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -8,7 +15,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #F2F2F2;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -18,7 +25,10 @@
 }
 
 @layer components {
-  .align-element {
+  .align-headers {
     @apply mx-auto max-w-7xl px-8;
+  }
+  .align-element {
+    @apply mx-auto max-w-5xl px-8;
   }
 }

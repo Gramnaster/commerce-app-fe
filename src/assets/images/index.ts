@@ -37,6 +37,8 @@ export { default as IconLineDark } from './icon-line-dark.png';
 export { default as IconLineWhite } from './icon-line-light.png';
 export { default as IconProfile } from './icon-profile-01.png';
 export { default as IconSearch } from './icon-search-01.png';
+export { default as IconThemeDark } from './icon-theme-01.png';
+export { default as IconThemeLight } from './icon-theme-sun-01.png';
 
 export { default as Social01 } from './social-01.png';
 export { default as Social02 } from './social-02.png';
