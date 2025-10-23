@@ -1,10 +1,13 @@
 // import { Outlet } from "react-router-dom"
 
+import FeaturedProducts from "../Products/FeaturedProducts"
+
 const Dashboard = () => {
   return (
-    <div>
+    <section>
       Dashboard. Can you see this?
-    </div>
+      <FeaturedProducts />
+    </section>
   )
 }
 export default Dashboard
