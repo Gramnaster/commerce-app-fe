@@ -8,7 +8,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   IconCart,
   IconHamburger,
+  IconLineWhite,
   IconProfile,
+  IconSearch,
   IconThemeDark,
   IconThemeLight,
   MainLogoDark,
@@ -39,7 +41,7 @@ const Navbar = () => {
           <div className="navbar-start">
             <NavLink
               to="/"
-              className="hidden lg:flex btn text-2xl bg-transparent text-secondary items-center"
+              className="hidden lg:flex btn text-2xl bg-transparent border-none shadow-none text-secondary items-center"
             >
               <img
                 src={MainLogoDark}
@@ -48,29 +50,6 @@ const Navbar = () => {
               />
             </NavLink>
             {/* Dropdown Menu */}
-            <label className="input">
-              <svg
-                className="h-[1em] opacity-50"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-              >
-                <g
-                  strokeLinejoin="round"
-                  strokeLinecap="round"
-                  strokeWidth="2.5"
-                  fill="none"
-                  stroke="currentColor"
-                >
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <path d="m21 21-4.3-4.3"></path>
-                </g>
-              </svg>
-              <input
-                type="search"
-                required
-                placeholder="Search Categories or Products"
-              />
-            </label>
             <div className="dropdown">
               <label tabIndex={0} className="btn btn-ghost lg:hidden">
                 <img src={IconHamburger} alt="Hamburger" />
@@ -84,9 +63,14 @@ const Navbar = () => {
             </div>
           </div>
           <div className="navbar-center hidden lg:flex">
-            <ul className="menu menu-horizontal">
-              <NavLinks />
-            </ul>
+            <label className="input">
+              <input
+                type="search"
+                required
+                placeholder="Search Categories or Products"
+              />
+              <img src={IconSearch} className='h-[15px] w-[15px]'/>
+            </label>
           </div>
           <div className="navbar-end">
             <div className="flex gap-x-y justify-center items-center ">
@@ -108,16 +92,23 @@ const Navbar = () => {
                 </button>
               )} */}
 
-              <button className="btn bg-transparent h-[28px] ml-4">
+              <label className="btn border-none shadow-none outline-none text-base bg-secondary text-white w-[110px] h-[33px]">
                 <Link to="/login">
-                  <img src={IconProfile} alt="user-icon" />
+                  {/* <img src={IconProfile} alt="user-icon" /> */}
+                  Login
                 </Link>
-              </button>
-              <button className="btn btn-xs" onClick={handleLogout}>
-                Logout
-              </button>
-              <button className="btn bg-transparent h-[30px]">
-                <img src={IconCart} alt="language-icon" />
+              </label>
+              <label className="btn border-none shadow-none outline-none text-base bg-secondary text-white w-[110px] h-[33px]">
+                <Link to="/signup">
+                  {/* <img src={IconProfile} alt="user-icon" /> */}
+                  Sign Up
+                </Link>
+              </label>
+              {/* <button className="btn text-base bg-secondary text-white w-[128px] h-[33px]" onClick={handleLogout}>
+                Sign Up
+              </button> */}
+              <button className="btn bg-transparent h-[30px] border-none shadow-none outline-none">
+                <img src={IconCart} alt="cart-icon" />
               </button>
               <label className="swap swap-rotate">
                 <input type="checkbox" onChange={handleTheme} />
@@ -139,6 +130,11 @@ const Navbar = () => {
               </button> */}
             </div>
           </div>
+        </div>
+        <div className='navbar align-elements'>
+          <ul className="menu menu-horizontal">
+            <NavLinks />
+          </ul>
         </div>
       </nav>
     </>

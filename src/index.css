@@ -1,15 +1,44 @@
 @import 'tailwindcss';
-@plugin "daisyui";
+@plugin "daisyui" {
+  themes: light --default, dark --prefersdark;
+};
 @plugin "daisyui/theme" {
   name: "light";
   default: true;
+  prefersdark: false;
+  color-scheme: light;
+
+  --color-base-100: #E6E6E6;      /* Main background */
+  --color-base-200: #EDEDED;      /* Secondary background */
+  --color-base-300: #e5e5e5;      /* Tertiary background */
+  --color-base-content: #1A1A1A;  /* Text colour on background */
+  --color-primary: #003566;
+  --color-primary-content: oklch(98% 0.01 240);
+  --color-secondary: #AE2012;
+  --color-secondary-content: oklch(98% 0.01 200);
+  --color-tertiary: #EE9B00;
+  --color-accent:  #EE9B00;
+  --color-accent-content: oklch(98% 0.01 160);
+}
+@plugin "daisyui/theme" {
+  name: "dark";
+  default: false;
+  prefersdark: false;
+  color-scheme: dark;
+  
+  --color-base-100: #0D0D0D;      /* Main background */
+  --color-base-200: #333333;      /* Secondary background */
+  --color-base-300: #272727;      /* Tertiary background */
+  --color-base-content: #222222;  /* Text colour on background */
   --color-primary: #003566;
   --color-secondary: #AE2012;
   --color-tertiary: #EE9B00;
 }
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font-primary: 'Alegreya Sans', system-ui, Helvetica, Arial, sans-serif;
+  --font-secondary: 'Aleo', 'Times New Roman', serif;
+  font-family: var(--font-primary);
   line-height: 1.5;
   font-weight: 400;
 
@@ -24,6 +53,24 @@
   box-sizing: border-box;
 }
 
+.font-primary {
+  font-family: var(--font-primary);
+}
+.font-secondary {
+  font-family: var(--font-secondary);
+}
+
+/* [data-theme="light"] {
+  .my-btn {
+    background-color: #1EA1F1;
+    border-color: #1EA1F1;
+  }
+  .my-btn:hover {
+    background-color: #1C96E1;
+    border-color: #1C96E1;
+  }
+} */
+
 @layer components {
   .align-headers {
     @apply mx-auto max-w-7xl px-8;
@@ -31,4 +78,7 @@
   .align-element {
     @apply mx-auto max-w-5xl px-8;
   }
+  /* .btn {
+    @apply border-none shadow-none outline-none;
+  } */
 }
