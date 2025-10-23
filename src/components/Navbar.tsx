@@ -1,7 +1,7 @@
 import { Link, Navigate, NavLink, useNavigate } from 'react-router-dom';
-import logoIcon from '../assets/images/logo-1.png';
+// import logoIcon from '../assets/images/logo-1.png';
 import userIcon from '../assets/images/icon-user.png';
-import languageIcon from '../assets/images/icon-language.png';
+// import languageIcon from '../assets/images/icon-language.png';
 import hamburgerIcon from '../assets/images/icon-hamburger.png';
 import NavLinks from './NavLinks';
 // import { useState } from 'react';
@@ -33,7 +33,6 @@ const Navbar = () => {
             className="hidden lg:flex btn text-2xl bg-transparent text-secondary items-center"
           >
             <img src={logoIcon} alt="Logo" className="w-[42px] h-[42px]" />
-            ORBITAL.FINANCES
           </NavLink>
           {/* Dropdown Menu */}
           <label className="input">
