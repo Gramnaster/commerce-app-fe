@@ -11,7 +11,6 @@ import {
   Cart,
   Products,
   ProductView,
-  FeaturedProducts,
   Dashboard,
   ProfileView,
   ProfileEdit,

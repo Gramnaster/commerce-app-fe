@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   IconCart,
   IconHamburger,
-  IconLineWhite,
   IconProfile,
   IconSearch,
   IconThemeDark,
