@@ -1,12 +1,15 @@
 // import { Outlet } from "react-router-dom"
 
-import FeaturedProducts from "../Products/FeaturedProducts"
+import Categories from "./Categories"
+import FeaturedProducts from "./FeaturedProducts"
+import NewProducts from "./NewProducts"
 
 const Dashboard = () => {
   return (
     <section>
-      Dashboard. Can you see this?
       <FeaturedProducts />
+      <Categories />
+      <NewProducts />
     </section>
   )
 }

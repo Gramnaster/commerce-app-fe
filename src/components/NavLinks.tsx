@@ -12,10 +12,10 @@ const links: LinksType[] = [
   { id: 1, url: '/categories/women', text: "Women's Clothes" },
   { id: 3, url: '/categories/children', text: "Children's Clothes" },
   { id: 4, url: '/categories/jewel', text: 'Jewellery' },
-  { id: 4, url: '/categories/electronics', text: 'Electronics' },
-  { id: 4, url: '/categories/snacks', text: 'Snacks' },
-  { id: 4, url: '/categories/trinkets', text: 'Trinkets' },
-  { id: 4, url: '/categories/airstrikes', text: 'Air Strikes' },
+  { id: 5, url: '/categories/electronics', text: 'Electronics' },
+  { id: 6, url: '/categories/snacks', text: 'Snacks' },
+  { id: 7, url: '/categories/trinkets', text: 'Trinkets' },
+  { id: 8, url: '/categories/airstrikes', text: 'Air Strikes' },
 ];
 
 const NavLinks = () => {
