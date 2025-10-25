@@ -1,5 +1,6 @@
 // import { Outlet } from "react-router-dom"
 
+import { FooterCTA } from "../../components"
 import Categories from "./Categories"
 import FeaturedProducts from "./FeaturedProducts"
 import FeaturedSocials from "./FeaturedSocials"
@@ -12,6 +13,8 @@ const Dashboard = () => {
       <Categories />
       <NewProducts />
       <FeaturedSocials />
+      {/* If logged in, this CTA does not appear anymore */}
+      <FooterCTA />
     </section>
   )
 }

@@ -30,8 +30,9 @@ const socialLists = [
 
 const Footer = () => {
   const lastCommitDate = import.meta.env.VITE_LAST_COMMIT_DATE || 'Unknown';
+
   return (
-  <div className="flex flex-col w-full h-[450px] min-h-[450px] max-h-[450px] mt-10 bg-primary font-secondary font-light items-center justify-center">
+  <div className="flex flex-col w-full h-[450px] min-h-[450px] max-h-[450px] bg-primary font-secondary font-light items-center justify-center">
       <div className="flex flex-row text-left gap-x-5 items-center justify-center h-full">
         {socialLists.map((socialList) => {
           return (

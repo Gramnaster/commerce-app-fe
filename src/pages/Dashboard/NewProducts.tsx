@@ -28,8 +28,8 @@ const NewProducts = () => {
     .slice(0, 4);
 
   return (
-    <section className="bg-primary h-[612px] flex flex-col justify-center items-center">
-      <div className="flex justify-center align-middle flex-col my-[55px]">
+    <section className="bg-primary h-[650px] flex flex-col justify-center items-center">
+      <div className="flex justify-center align-middle flex-col mb-[55px]">
         <h2 className="font-primary text-white text-2xl text-center">
           NEWEST PRODUCTS
         </h2>

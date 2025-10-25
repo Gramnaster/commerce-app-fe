@@ -29,7 +29,6 @@ const Navbar = () => {
 
   const handleLogout = () => {
     navigate('/');
-    // dispatch()
     dispatch(logoutUser());
 
     console.log('logout function here');

@@ -1,5 +1,5 @@
 import { Outlet, useNavigation } from 'react-router-dom';
-import { Footer, FooterCTA, Navbar } from '../../components';
+import { Footer, Navbar } from '../../components';
 
 const Home = () => {
   const navigation = useNavigation();
@@ -11,8 +11,6 @@ const Home = () => {
       <h1>
         <Outlet />
       </h1>
-      {/* If logged in, this CTA does not appear anymore */}
-      <FooterCTA />
       <Footer />
     </div>
   );

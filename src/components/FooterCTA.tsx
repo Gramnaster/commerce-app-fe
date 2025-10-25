@@ -1,21 +1,15 @@
 import { Link, useNavigation } from 'react-router-dom';
+import { IconLineWhite } from '../assets/images';
 
 const FooterCTA = () => {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
   return (
-    <div className="flex flex-col items-center">
-      <img
-        className="w-[658px] h-[5px] my-15 align-middle justify-center items-center"
-      />
-
-      <div
-        className="w-full aspect-1440/413 bg-cover bg-center flex justify-center items-center flex-col gap-y-15"
-      >
-        <h2 className="font-bold text-5xl">Launch your portfolio today</h2>
+  <div className="flex flex-col items-center bg-primary h-[155px] justify-center">
+      <div className="align-element">
         <button
           type="button"
-          className="btn btn-secondary items-center pb-1 w-[230px] h-[52px] rounded-2xl shadow-[0_4px_20px_10px_rgba(34,0,228,0.4)]"
+          className="btn btn-secondary items-center pb-1 w-[230px] h-[80px] rounded-full font-bold text-[32px]"
         >
           {isSubmitting ? (
             <>
@@ -25,6 +19,12 @@ const FooterCTA = () => {
           ) : (
             <Link to="/signup">
               <span className="font-bold text-2xl">Sign Up Now</span>
+              <div className="relative h-[11px] w-[67px] mx-auto">
+                <img
+                  src={IconLineWhite}
+                  className="icon-line-dark h-[11px] w-[67px] mx-auto"
+                />
+              </div>
             </Link>
           )}
           {/* {text} */}
