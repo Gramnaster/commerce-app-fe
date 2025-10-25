@@ -2,6 +2,7 @@
 
 import Categories from "./Categories"
 import FeaturedProducts from "./FeaturedProducts"
+import FeaturedSocials from "./FeaturedSocials"
 import NewProducts from "./NewProducts"
 
 const Dashboard = () => {
@@ -10,6 +11,7 @@ const Dashboard = () => {
       <FeaturedProducts />
       <Categories />
       <NewProducts />
+      <FeaturedSocials />
     </section>
   )
 }
