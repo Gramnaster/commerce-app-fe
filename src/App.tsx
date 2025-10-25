@@ -52,48 +52,42 @@ const router = createBrowserRouter([
         path: 'products',
         element: <Products />,
         loader: productsLoader(queryClient, store),
-      },
-      {
-        path: 'products/:id',
-        element: <ProductView />,
-        loader: productViewAction(queryClient, store),
-      },
-      {
-        path: 'dashboard',
-        element: <Profile />,
         children: [
           {
-            // localhost:3000/profile
-            index: true,
-            // element: <MainPage />,
-          },
-          {
-            // localhost:3000/profile
-            path: 'profile',
-            element: <Profile />,
-            loader: profileLoader(queryClient, store),
-            children: [
-              {
-                path: 'view/:id',
-                element: <ProfileView />,
-                loader: profileViewAction(queryClient, store),
-              },
-              {
-                path: 'edit/:id',
-                element: <ProfileEdit />,
-                loader: profileEditAction(queryClient, store),
-              },
-              {
-                path: 'transactions',
-                // element: <ProfileReceipts />
-              },
-            ],
-          },
-          {
-            path: 'cart',
-            element: <Cart />,
+            path: 'products/:id',
+            element: <ProductView />,
+            loader: productViewAction(queryClient, store),
           },
         ],
+      },
+      {
+        path: 'profile',
+        element: <Profile />,
+        loader: profileLoader(queryClient, store),
+        children: [
+          {
+            index: true,
+            element: <Profile />,
+          },
+          {
+            path: 'view/:id',
+            element: <ProfileView />,
+            loader: profileViewAction(queryClient, store),
+          },
+          {
+            path: 'edit/:id',
+            element: <ProfileEdit />,
+            loader: profileEditAction(queryClient, store),
+          },
+          {
+            path: 'transactions',
+            // element: <ProfileReceipts />
+          },
+        ],
+      },
+      {
+        path: 'cart',
+        element: <Cart />,
       },
     ],
   },

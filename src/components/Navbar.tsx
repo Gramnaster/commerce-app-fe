@@ -147,7 +147,7 @@ const Navbar = () => {
               />
             </NavLink>
           </div>
-          <div className="flex flex-row text-base-content gap-[40px]">
+          <div className="flex flex-row text-base-content gap-[40px] mb-2">
             <NavLinks />
           </div>
         </section>

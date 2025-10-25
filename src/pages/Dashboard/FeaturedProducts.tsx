@@ -37,7 +37,7 @@ const FeaturedProducts = () => {
               <a href={`#slide${prevIndex + 1}`} className="btn btn-circle items-center">
                 ❮
               </a>
-              <a href={`#slide${nextIndex + 1}`} className="btn btn-circle">
+              <a href={`#slide${nextIndex + 1}`} className="btn btn-circle items-center">
                 ❯
               </a>
             </div>
