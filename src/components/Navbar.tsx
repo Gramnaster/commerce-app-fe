@@ -22,7 +22,9 @@ const themes = {
 };
 
 const Navbar = () => {
-  const [theme, setTheme] = useState(themes.light);
+  // Always sync with the real data-theme attribute
+  const getCurrentTheme = () => document.documentElement.getAttribute('data-theme') || themes.light;
+  const [theme, setTheme] = useState(getCurrentTheme());
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.userState.user);
@@ -35,10 +37,10 @@ const Navbar = () => {
   };
 
   const handleTheme = () => {
-    const { light, dark } = themes;
-    const newTheme = theme === light ? dark : light;
-    document.documentElement.setAttribute('data-theme', theme);
-    setTheme(newTheme);
+  const { light, dark } = themes;
+  const newTheme = theme === light ? dark : light;
+  document.documentElement.setAttribute('data-theme', newTheme);
+  setTheme(newTheme);
   };
 
   return (
@@ -88,7 +90,10 @@ const Navbar = () => {
               <div className="flex gap-x-y justify-center items-center px-1 gap-[20px]">
                 {user ? (
                   <div className="flex gap-x-2 sm:gap-x-8 items-center">
-                    <button className="btn btn-xs" onClick={handleLogout}>
+                    <button
+                      className="btn border-none shadow-none outline-none text-base bg-secondary text-white w-[110px] h-[33px]"
+                      onClick={handleLogout}
+                    >
                       Logout
                     </button>
                   </div>
@@ -152,7 +157,7 @@ const Navbar = () => {
               className="hidden lg:flex btn bg-transparent border-none shadow-none text-secondary items-center"
             >
               <img
-                src={theme === themes.dark ? MainLogoLight : MainLogoDark}
+                src={getCurrentTheme() === themes.dark ? MainLogoDark : MainLogoLight}
                 alt="Main-Logo"
                 className="w-[253px] h-[115px] ml-10"
               />
