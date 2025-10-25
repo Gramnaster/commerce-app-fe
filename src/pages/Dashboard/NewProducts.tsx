@@ -41,6 +41,7 @@ const NewProducts = () => {
         </div>
       </div>
       <div className="flex flex-row justify-center items-center gap-[20px]">
+        {/* If error, loads the rest of the background but leaves it empty */}
         {isLoading ? (
           <div>Loading...</div>
         ) : error ? (
