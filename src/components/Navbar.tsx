@@ -105,8 +105,11 @@ const Navbar = () => {
                 {/* <button className="btn text-base bg-secondary text-white w-[128px] h-[33px]" onClick={handleLogout}>
                   Sign Up
                 </button> */}
-                <button className="btn bg-transparent h-[30px] border-none shadow-none outline-none">
-                  <img src={IconCart} alt="cart-icon" />
+                <button className="btn bg-transparent h-[30px] border-none shadow-none outline-none btn-circle">
+                  <div className="indicator">
+                    <img src={IconCart} alt="cart-icon" />
+                    <span className="badge badge-xs badge-error indicator-item text-xs">5</span>
+                  </div>
                 </button>
                 <label className="swap swap-rotate">
                   <input type="checkbox" onChange={handleTheme} />

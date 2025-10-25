@@ -19,6 +19,8 @@
   --color-tertiary: #EE9B00;
   --color-accent:  #EE9B00;
   --color-accent-content: oklch(98% 0.01 160);
+  --color-error: #AE2012;
+  --color-error-content: oklch(98% 0.01 200);
 }
 @plugin "daisyui/theme" {
   name: "dark";
