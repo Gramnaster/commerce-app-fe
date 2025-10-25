@@ -62,6 +62,7 @@ const NewProducts = () => {
                     <img
                       src={product_image_url}
                       className="w-[280px] h-[280px] object-contain"
+                      alt={title}
                     />
                   </div>
                   <div className="uppercase text-base">
