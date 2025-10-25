@@ -37,8 +37,8 @@ const Categories = () => {
           POPULAR CATEGORIES
         </h2>
         <div className="relative h-[11px] w-[67px] mx-auto">
-          <img src={IconLineWhite} className="icon-line-white h-[11px] w-[67px] mx-auto" />
-          <img src={IconLineDark} className="icon-line-dark h-[11px] w-[67px] mx-auto" />
+          <img src={IconLineWhite} className="block dark:hidden h-[11px] w-[67px] mx-auto" />
+          <img src={IconLineDark} className="hidden dark:block h-[11px] w-[67px] mx-auto" />
         </div>
       </div>
       <ul className="grid grid-cols-4 gap-[40px]">

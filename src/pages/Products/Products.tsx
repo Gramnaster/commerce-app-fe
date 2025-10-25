@@ -24,6 +24,7 @@ export interface Product {
   price: number;
   promotion_id: boolean;
   product_image_url: string;
+  discount_percentage: number;
   updated_at: Date;
 }
 

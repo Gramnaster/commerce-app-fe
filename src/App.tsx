@@ -55,14 +55,14 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <ProductsAll />,
-            loader: productsLoader(queryClient, store),
+            // element: <ProductsAll />,
+            // loader: productsLoader(queryClient, store),
           },
           {
             path: 'categories/:id',
-            element: <ProductsPerCategory />,
-            loader: productsLoader(queryClient, store),
-          }
+            // element: <ProductsPerCategory />,
+            // loader: productsLoader(queryClient, store),
+          },
           {
             path: 'products/:id',
             element: <ProductView />,
