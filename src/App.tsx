@@ -17,6 +17,8 @@ import {
 } from './pages/index.ts';
 import { store } from './store.ts';
 
+// import { loader as dashboardLoader } from './pages/Dashboard/Dashboard.tsx';
+
 import { action as loginAction } from './pages/Login/Login';
 import { action as registerAction } from './pages/Signup/Signup';
 
@@ -46,6 +48,7 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Dashboard />,
+        // loader: dashboardLoader(queryClient, store)
       },
       {
         // Sidebar and Outlet goes here
@@ -55,14 +58,14 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <ProductsAll />,
-            loader: productsLoader(queryClient, store),
+            // element: <ProductsAll />,
+            // loader: productsLoader(queryClient, store),
           },
           {
             path: 'categories/:id',
-            element: <ProductsPerCategory />,
-            loader: productsLoader(queryClient, store),
-          }
+            // element: <ProductsPerCategory />,
+            // loader: productsLoader(queryClient, store),
+          },
           {
             path: 'products/:id',
             element: <ProductView />,

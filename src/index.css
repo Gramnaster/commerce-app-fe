@@ -1,11 +1,11 @@
 @import 'tailwindcss';
 @plugin "daisyui" {
-  themes: light --default, dark --prefersdark;
+  themes: light --default, dark;
 };
 @plugin "daisyui/theme" {
   name: "light";
   default: true;
-  prefersdark: false;
+  prefersdark: true;
   color-scheme: light;
 
   --color-base-100: #E6E6E6;      /* Main background */
@@ -85,6 +85,10 @@
   }
   .align-element {
     @apply mx-auto max-w-5xl px-8;
+  }
+
+  .align-social {
+    @apply mx-auto max-w-6xl;
   }
   .btn {
     @apply border-none shadow-none outline-none;
