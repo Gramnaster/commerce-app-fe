@@ -86,6 +86,10 @@
   .align-element {
     @apply mx-auto max-w-5xl px-8;
   }
+
+  .align-social {
+    @apply mx-auto max-w-6xl;
+  }
   .btn {
     @apply border-none shadow-none outline-none;
   }
