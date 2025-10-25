@@ -4,17 +4,17 @@ import { customFetch } from '../../utils';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
-interface ProductCategory {
+export interface ProductCategory {
   id: number;
   title: string;
 }
 
-interface Producer {
+export interface Producer {
   id: number;
   title: string;
 }
 
-interface Product {
+export interface Product {
   id: number;
   title: string;
   product_category: ProductCategory;
@@ -23,6 +23,7 @@ interface Product {
   price: number;
   promotion_id: boolean;
   product_image_url: string;
+  updated_at: Date;
 }
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
