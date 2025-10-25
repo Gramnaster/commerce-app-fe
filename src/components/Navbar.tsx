@@ -16,8 +16,13 @@ import {
   MainLogoLight,
 } from '../assets/images';
 
+const themes = {
+  light: 'light',
+  dark: 'dark',
+};
+
 const Navbar = () => {
-  const [theme, setTheme] = useState(false);
+  const [theme, setTheme] = useState(themes.light);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.userState.user);
@@ -31,7 +36,10 @@ const Navbar = () => {
   };
 
   const handleTheme = () => {
-    setTheme(!theme);
+    const { light, dark } = themes;
+    const newTheme = theme === light ? dark : light;
+    document.documentElement.setAttribute('data-theme', theme);
+    setTheme(newTheme);
   };
 
   return (
@@ -108,7 +116,9 @@ const Navbar = () => {
                 <button className="btn bg-transparent h-[30px] border-none shadow-none outline-none btn-circle">
                   <div className="indicator">
                     <img src={IconCart} alt="cart-icon" />
-                    <span className="badge badge-xs badge-error indicator-item text-xs">5</span>
+                    <span className="badge badge-xs badge-error indicator-item text-xs">
+                      5
+                    </span>
                   </div>
                 </button>
                 <label className="swap swap-rotate">
@@ -133,7 +143,7 @@ const Navbar = () => {
             </div>
           </div>
         </section>
-        <section className="navbar align-elements flex flex-col items-center justify-center max-h-[235px] mx-auto px-10 pt-[70px]">
+        <section className="navbar align-elements flex flex-col items-center justify-center max-h-[235px] mx-auto px-10 pt-[70px] bg-base-100">
           {/* <ul className="menu menu-horizontal">
             <NavLinks />
           </ul> */}
@@ -143,7 +153,7 @@ const Navbar = () => {
               className="hidden lg:flex btn bg-transparent border-none shadow-none text-secondary items-center"
             >
               <img
-                src={MainLogoLight}
+                src={theme === themes.dark ? MainLogoLight : MainLogoDark}
                 alt="Main-Logo"
                 className="w-[253px] h-[115px] ml-10"
               />

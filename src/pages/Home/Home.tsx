@@ -1,18 +1,17 @@
-import { Outlet, useNavigation } from 'react-router-dom'
-import { Navbar } from '../../components'
-
+import { Outlet, useNavigation } from 'react-router-dom';
+import { Navbar } from '../../components';
 
 const Home = () => {
   const navigation = useNavigation();
   const isPageLoading = navigation.state === 'loading';
 
   return (
-    <div>
+    <div className="bg-base-100" >
       <Navbar />
       <h1>
         <Outlet />
       </h1>
     </div>
-  )
-}
-export default Home
+  );
+};
+export default Home;

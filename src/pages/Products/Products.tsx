@@ -58,7 +58,7 @@ const Products = () => {
   const { allProducts } = useLoaderData() as {
     allProducts: Product[]
   };
-  const [products, setProducts] = useState(allProducts.data)
+  const [products, setProducts] = useState(allProducts)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const filteredProducts = products.filter((product: Product) => selectedCategory ? product.product_category.title === selectedCategory : true );

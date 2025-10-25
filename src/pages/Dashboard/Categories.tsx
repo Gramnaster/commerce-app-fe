@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import {
   IconLineDark,
+  IconLineWhite,
   SmallCategoryAirstrikes,
   SmallCategoryChildrenClothes,
   SmallCategoryElectronics,
@@ -35,7 +36,10 @@ const Categories = () => {
         <h2 className="font-primary text-base-content text-2xl text-center">
           POPULAR CATEGORIES
         </h2>
-        <img src={IconLineDark} className='h-[11px] w-[67px] mx-auto'/>
+        <div className="relative h-[11px] w-[67px] mx-auto">
+          <img src={IconLineWhite} className="icon-line-white h-[11px] w-[67px] mx-auto" />
+          <img src={IconLineDark} className="icon-line-dark h-[11px] w-[67px] mx-auto" />
+        </div>
       </div>
       <ul className="grid grid-cols-4 gap-[40px]">
         {categoriesLinks.map((link) => {
