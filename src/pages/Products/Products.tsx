@@ -1,8 +1,9 @@
-import { useLoaderData } from 'react-router-dom';
+import { Outlet, useLoaderData } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import Sidebar from '../../components/Sidebar';
 
 export interface ProductCategory {
   id: number;
@@ -64,29 +65,35 @@ const Products = () => {
   const filteredProducts = products.filter((product: Product) => selectedCategory ? product.product_category.title === selectedCategory : true );
 
   return (
-    <div>      
-      <button onClick={() => setSelectedCategory(null)}>All</button>
-      <button onClick={() => setSelectedCategory("men's clothing")}>men's clothingg</button>
-      <button onClick={() => setSelectedCategory("women's clothing")}>women's clothing</button>
-      <button onClick={() => setSelectedCategory("jewelery")}>jewelery</button>
-      <button onClick={() => setSelectedCategory("electronics")}>electronics</button>
-      Products
-      {filteredProducts.map((product: Product) => {
-        const { id, title, product_category, producer, description, price, promotion_id, product_image_url } = product;
-        return(
-          <div key={id}>
-            <div>Product Name: {title}</div>
-            <NavLink to={`/products/${id}`}><img src={product_image_url} className="w-[100px]" /></NavLink>
-            <div>Category: {product_category.title}</div>
-            <div>Producer: {producer.title}</div>
-            <div>Product Description:{description}</div>
-            <div>Price: {price}</div>
-            <div>{!promotion_id ? "No active promotions": "WHAATTT"}</div>
-          </div>
-        )
-      })}
+    <>
+      <Sidebar />
+      <div>
+        <Outlet />
+      </div>
+    </>
+    // <div>      
+    //   <button onClick={() => setSelectedCategory(null)}>All</button>
+    //   <button onClick={() => setSelectedCategory("men's clothing")}>men's clothingg</button>
+    //   <button onClick={() => setSelectedCategory("women's clothing")}>women's clothing</button>
+    //   <button onClick={() => setSelectedCategory("jewelery")}>jewelery</button>
+    //   <button onClick={() => setSelectedCategory("electronics")}>electronics</button>
+    //   Products
+    //   {filteredProducts.map((product: Product) => {
+    //     const { id, title, product_category, producer, description, price, promotion_id, product_image_url } = product;
+    //     return(
+    //       <div key={id}>
+    //         <div>Product Name: {title}</div>
+    //         <NavLink to={`/products/${id}`}><img src={product_image_url} className="w-[100px]" /></NavLink>
+    //         <div>Category: {product_category.title}</div>
+    //         <div>Producer: {producer.title}</div>
+    //         <div>Product Description:{description}</div>
+    //         <div>Price: {price}</div>
+    //         <div>{!promotion_id ? "No active promotions": "WHAATTT"}</div>
+    //       </div>
+    //     )
+    //   })}
 
-    </div>
+    // </div>
   )
 }
 
