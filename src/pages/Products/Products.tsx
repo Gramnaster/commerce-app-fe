@@ -65,8 +65,10 @@ const Products = () => {
 
   return (
     <div>
+      <div className='mb-20'>
       <ProductsBanner />
-      <div className='grid grid-cols-[0.25fr_1fr] gri d-rows-1 gap-0'>
+      </div>
+      <div className='grid grid-cols-[0.25fr_1fr] grid-rows-1 gap-0'>
         <Sidebar categoryData={ProductCategories.data} />
         <div>
           <Outlet />

@@ -62,19 +62,32 @@ const ProductsAll = () => {
   console.log(`ProductsAll allProducts`, allProducts)
 
   return (
-    <div className="grid grid-cols-[1fr_1fr_1fr_1fr] grid-rows-4 gap-0 h-full">
+    <div className="grid grid-cols-[1fr_1fr_1fr] gap-[20px] h-full grid-flow-row-dense align-element">
       {allProducts.data.map((product: Product) => {
-        const {id, title, price, final_price, discount_percentage, discount_amount_dollars, product_image_url} = product
+        const {id, title, price, discount_percentage, product_image_url, promotion_id} = product
         return (
-          <div key={id} className="p-1 w-[350px] h-[350px]">
-            <div><img src={product_image_url} className="max-w-[200px]" /></div>
-            <div><NavLink to={`/products/${id}`}>{title}</NavLink></div>
-            <div>
-              <span>{price}</span>
-              <span>{final_price}</span>
-              <span>{discount_percentage}</span>
-              <span>{discount_amount_dollars}</span>
-            </div>
+          <div key={id} className="font-secondary text-center ">
+            <NavLink to={`/products/${id}`}>
+              <div className="bg-gray-400 p-2 flex items-center justify-center mb-[20px]">
+                <img
+                  src={product_image_url}
+                  className="w-[260px] h-[280px] object-contain"
+                  alt={title}
+                />
+              </div>
+              <div className="uppercase text-base text-black">
+                {title.length > 25 ? title.slice(0, 25) + '. . .' : title}
+              </div>
+              <div className="font-secondary text-base font-extralight text-black">
+                PHP {price}
+                {promotion_id && discount_percentage && (
+                  <span className="ml-2 text-green-600 font-semibold">
+                    ({discount_percentage}%)
+                  </span>
+                )}
+              </div>
+              {/* <div>{!promotion_id ? 'No active promotions' : ''}</div> */}
+            </NavLink>
           </div>
         )
       })}
