@@ -19,14 +19,14 @@ interface CategoriesLinks {
 }
 
 const categoriesLinks: CategoriesLinks[] = [
-  { id: 0, url: '/categories/mens', image: SmallCategoryMenClothes },
-  { id: 1, url: '/categories/women', image: SmallCategoryWomenClothes },
-  { id: 3, url: '/categories/children', image: SmallCategoryChildrenClothes },
-  { id: 4, url: '/categories/jewel', image: SmallCategoryJewellery },
-  { id: 5, url: '/categories/electronics', image: SmallCategoryElectronics },
-  { id: 6, url: '/categories/snacks', image: SmallCategorySnacks },
-  { id: 7, url: '/categories/trinkets', image: SmallCategoryTrinkets },
-  { id: 8, url: '/categories/airstrikes', image: SmallCategoryAirstrikes },
+  { id: 0, url: '/products/categories/1', image: SmallCategoryMenClothes },
+  { id: 1, url: '/products/categories/2', image: SmallCategoryWomenClothes },
+  { id: 3, url: '/products/categories/children', image: SmallCategoryChildrenClothes },
+  { id: 4, url: '/products/categories/3', image: SmallCategoryJewellery },
+  { id: 5, url: '/products/categories/4', image: SmallCategoryElectronics },
+  { id: 6, url: '/products/categories/snacks', image: SmallCategorySnacks },
+  { id: 7, url: '/products/categories/trinkets', image: SmallCategoryTrinkets },
+  { id: 8, url: '/products/categories/airstrikes', image: SmallCategoryAirstrikes },
 ];
 
 const PopularCategories = () => {

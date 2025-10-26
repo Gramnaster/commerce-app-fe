@@ -14,6 +14,8 @@ import {
   Dashboard,
   ProfileView,
   ProfileEdit,
+  ProductsAll,
+  ProductsPerCategory
 } from './pages/index.ts';
 import { store } from './store.ts';
 
@@ -23,7 +25,9 @@ import { action as loginAction } from './pages/Login/Login';
 import { action as registerAction } from './pages/Signup/Signup';
 
 import { loader as productsLoader } from './pages/Products/Products.tsx';
-import { loader as productViewAction } from './pages/Products/ProductView.tsx';
+import { loader as productsAllLoader } from './pages/Products/ProductsAll.tsx';
+import { loader as productsPerCategoryLoader } from './pages/Products/ProductsPerCategory.tsx';
+import { loader as productViewloader } from './pages/Products/ProductView.tsx';
 
 import { loader as profileLoader } from './pages/Profile/Profile.tsx';
 import { loader as profileViewAction } from './pages/Profile/ProfileView.tsx';
@@ -58,18 +62,18 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            // element: <ProductsAll />,
-            // loader: productsLoader(queryClient, store),
+            element: <ProductsAll />,
+            loader: productsAllLoader(queryClient, store),
           },
           {
             path: 'categories/:id',
-            // element: <ProductsPerCategory />,
-            // loader: productsLoader(queryClient, store),
+            element: <ProductsPerCategory />,
+            loader: productsPerCategoryLoader(queryClient, store)
           },
           {
-            path: 'products/:id',
+            path: ':id',
             element: <ProductView />,
-            loader: productViewAction(queryClient, store),
+            loader: productViewloader(queryClient, store),
           },
         ],
       },
