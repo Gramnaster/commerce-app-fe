@@ -37,3 +37,10 @@ customFetch.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+export const formatPrice = (price: number) => {
+  return new Intl.NumberFormat('en-PH', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(price);
+};

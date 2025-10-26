@@ -15,6 +15,7 @@ import {
   MainLogoDark,
   MainLogoLight,
 } from '../assets/images';
+import CartModal from './CartModal';
 
 const themes = {
   light: 'light',
@@ -29,9 +30,11 @@ const Navbar = () => {
   // Always sync with the real data-theme attribute
   const getCurrentTheme = () => document.documentElement.getAttribute('data-theme') || themes.light;
   const [theme, setTheme] = useState(getThemeFromLocalStorage);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.userState.user);
+  const numItemsInCart = useSelector((state: RootState) => state.cartState.numItemsInCart);
 
   const handleLogout = () => {
     navigate('/');
@@ -125,12 +128,17 @@ const Navbar = () => {
                 {/* <button className="btn text-base bg-secondary text-white w-[128px] h-[33px]" onClick={handleLogout}>
                   Sign Up
                 </button> */}
-                <button className="btn bg-transparent h-[30px] border-none shadow-none outline-none btn-circle">
+                <button 
+                  className="btn bg-transparent h-[30px] border-none shadow-none outline-none btn-circle"
+                  onClick={() => setIsCartOpen(true)}
+                >
                   <div className="indicator">
                     <img src={IconCart} alt="cart-icon" />
-                    <span className="badge badge-xs badge-error indicator-item text-xs">
-                      5
-                    </span>
+                    {numItemsInCart > 0 && (
+                      <span className="badge badge-xs badge-error indicator-item text-xs">
+                        {numItemsInCart}
+                      </span>
+                    )}
                   </div>
                 </button>
                 <label className="swap swap-rotate">
@@ -176,6 +184,9 @@ const Navbar = () => {
           </div>
         </section>
       </nav>
+      
+      {/* Cart Modal */}
+      <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>
   );
 };
