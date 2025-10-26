@@ -1,7 +1,8 @@
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../store';
 import { Link } from 'react-router-dom';
 import { formatPrice } from '../utils';
+import { editItem, removeItem } from '../features/cart/cartSlice';
 
 interface CartModalProps {
   isOpen: boolean;
@@ -9,12 +10,22 @@ interface CartModalProps {
 }
 
 const CartModal = ({ isOpen, onClose }: CartModalProps) => {
+  const dispatch = useDispatch();
   const cartState = useSelector((state: RootState) => state.cartState);
   
   // Provide defaults if cart state is undefined or not initialized
   const cartItems = cartState?.cartItems || [];
   const numItemsInCart = cartState?.numItemsInCart || 0;
   const orderTotal = cartState?.orderTotal || 0;
+
+  const handleUpdateQuantity = (cartID: string, newAmount: number) => {
+    if (newAmount < 1) return;
+    dispatch(editItem({ cartID, amount: newAmount }));
+  };
+
+  const handleRemoveItem = (cartID: string) => {
+    dispatch(removeItem({ cartID }));
+  };
 
   if (!isOpen) return null;
 
@@ -49,14 +60,14 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
                 <p className="text-base-content/70">Your cart is empty</p>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {cartItems.map((item: any) => (
                   <div
                     key={item.cartID}
-                    className="flex gap-4 p-4 bg-base-200 rounded-lg"
+                    className="flex gap-3 p-3 bg-base-200 rounded-lg"
                   >
                     {/* Product Image */}
-                    <div className="w-20 h-20 flex-shrink-0">
+                    <div className="w-16 h-16 flex-shrink-0">
                       <img
                         src={item.image}
                         alt={item.title}
@@ -65,17 +76,48 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
                     </div>
 
                     {/* Product Details */}
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-base-content line-clamp-2">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-sm text-base-content line-clamp-1 mb-1">
                         {item.title}
                       </h3>
-                      <div className="flex items-center justify-between mt-2">
-                        <span className="text-sm text-base-content/70">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs text-base-content/70">
                           {item.amount}x
                         </span>
-                        <span className="font-bold text-base-content">
+                        <span className="font-bold text-sm text-base-content">
                           PHP {formatPrice(item.price * item.amount)}
                         </span>
+                      </div>
+                      
+                      {/* Quantity Controls */}
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="join join-horizontal">
+                          <button
+                            className="btn btn-xs join-item bg-neutral text-white"
+                            onClick={() => handleUpdateQuantity(item.cartID, item.amount - 1)}
+                            disabled={item.amount <= 1}
+                          >
+                            -
+                          </button>
+                          <div className="btn btn-xs join-item bg-base-100 text-base-content pointer-events-none">
+                            {item.amount}x
+                          </div>
+                          <button
+                            className="btn btn-xs join-item bg-neutral text-white"
+                            onClick={() => handleUpdateQuantity(item.cartID, item.amount + 1)}
+                          >
+                            +
+                          </button>
+                        </div>
+                        
+                        <button
+                          className="btn btn-xs btn-ghost text-error"
+                          onClick={() => handleRemoveItem(item.cartID)}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -92,7 +134,7 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
                 <p className="text-sm text-base-content/70">
                   Items: {numItemsInCart}x
                 </p>
-                <p className="text-xl font-bold text-primary">
+                <p className="text-xl font-bold text-error">
                   PHP {formatPrice(orderTotal)}
                 </p>
               </div>
@@ -100,7 +142,7 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
 
             <Link
               to="/cart"
-              className="btn btn-secondary btn-block"
+              className="btn btn-error text-white btn-block"
               onClick={onClose}
             >
               View Cart
