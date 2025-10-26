@@ -60,6 +60,7 @@ const ProductsPerCategory = () => {
     <div className="grid grid-cols-[1fr_1fr_1fr_1fr] grid-rows-4 gap-0 h-full">
       <div>
         ProductsPerCategory
+        {/* {image} */}
         {id}
         {title}
         {products_count}

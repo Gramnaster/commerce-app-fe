@@ -1,6 +1,6 @@
 import { Link, Navigate, NavLink, useNavigate } from 'react-router-dom';
 import NavLinks from './NavLinks';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../store';
 import { logoutUser } from '../features/user/userSlice';
@@ -21,10 +21,14 @@ const themes = {
   dark: 'dark',
 };
 
+const getThemeFromLocalStorage = () => {
+  return localStorage.getItem('theme') || themes.light;
+};
+
 const Navbar = () => {
   // Always sync with the real data-theme attribute
   const getCurrentTheme = () => document.documentElement.getAttribute('data-theme') || themes.light;
-  const [theme, setTheme] = useState(getCurrentTheme());
+  const [theme, setTheme] = useState(getThemeFromLocalStorage);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.userState.user);
@@ -39,9 +43,13 @@ const Navbar = () => {
   const handleTheme = () => {
   const { light, dark } = themes;
   const newTheme = theme === light ? dark : light;
-  document.documentElement.setAttribute('data-theme', newTheme);
   setTheme(newTheme);
   };
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   return (
     <>
