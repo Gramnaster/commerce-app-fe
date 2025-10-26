@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 import Sidebar from '../../components/Sidebar';
 import ProductsBanner from './ProductsBanner';
+import { useState } from 'react';
 
 export interface ProductCategory {
   id: number;
@@ -58,11 +59,6 @@ const Products = () => {
   const { ProductCategories } = useLoaderData() as {
     ProductCategories: { data: ProductCategory[] }
   };
-  // const [products, setProducts] = useState(allProducts)
-  // const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-
-  // const filteredProducts = products.filter((product: Product) => selectedCategory ? product.product_category.title === selectedCategory : true );
-
   return (
     <div>
       <div className='mb-20'>

@@ -59,6 +59,7 @@ const ProductsAll = () => {
   const { allProducts } = useLoaderData() as {
     allProducts: Product[]
   };
+  
   console.log(`ProductsAll allProducts`, allProducts)
 
   return (
