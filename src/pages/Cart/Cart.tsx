@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store';
 import { customFetch } from '../../utils';
@@ -32,6 +32,17 @@ const Cart = () => {
 
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const updateTimeoutRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(
+    new Map()
+  );
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      updateTimeoutRef.current.forEach((timeout) => clearTimeout(timeout));
+      updateTimeoutRef.current.clear();
+    };
+  }, []);
 
   // Fetch cart items from backend
   const fetchCartItems = async () => {
@@ -57,80 +68,137 @@ const Cart = () => {
     fetchCartItems();
   }, [user]);
 
-  // Update quantity in backend and local state
-  const updateQuantity = async (cartItemId: number, newQty: number) => {
-    if (newQty < 1) return;
+  // Debounced backend update
+  const updateBackend = useCallback(
+    async (cartItemId: number, newQty: number) => {
+      try {
+        await customFetch.patch(`/shopping_cart_items/${cartItemId}`, {
+          shopping_cart_item: {
+            qty: newQty,
+          },
+        });
 
-    try {
-      await customFetch.patch(`/shopping_cart_items/${cartItemId}`, {
-        shopping_cart_item: {
-          qty: newQty,
-        },
-      });
+        // Update Redux store
+        setCartItems((currentItems) => {
+          const cartItem = currentItems.find((item) => item.id === cartItemId);
+          if (cartItem) {
+            dispatch(
+              editItem({
+                cartID: cartItem.product.id + cartItem.product.title,
+                amount: newQty,
+              })
+            );
+          }
+          return currentItems;
+        });
 
-      // Update local state
+        toast.success('Cart updated');
+      } catch (error: any) {
+        console.error('Failed to update quantity:', error);
+        
+        // Handle specific error cases
+        if (error.response?.status === 502) {
+          toast.error('Server is temporarily unavailable. Please try again.');
+        } else if (error.response?.status === 404) {
+          // Item was deleted, refresh cart
+          toast.error('Item no longer exists');
+          fetchCartItems();
+        } else {
+          toast.error('Failed to update cart');
+          // Revert on error
+          fetchCartItems();
+        }
+      }
+    },
+    [dispatch]
+  );
+
+  // Updates quantity with debouncing
+  const updateQuantity = useCallback(
+    (cartItemId: number, newQty: number) => {
+      if (newQty < 1) return;
+
+      // Update local state immediately for responsive UI
       setCartItems((prev) =>
         prev.map((item) =>
           item.id === cartItemId
             ? {
                 ...item,
                 qty: newQty.toString(),
-                subtotal: (
-                  parseFloat(item.product.price) * newQty
-                ).toString(),
+                subtotal: (parseFloat(item.product.price) * newQty).toString(),
               }
             : item
         )
       );
 
-      // Update Redux store
-      const cartItem = cartItems.find((item) => item.id === cartItemId);
-      if (cartItem) {
-        dispatch(
-          editItem({
-            cartID: cartItem.product.id + cartItem.product.title,
-            amount: newQty,
-          })
-        );
+      // Clear existing timeout for this item
+      const existingTimeout = updateTimeoutRef.current.get(cartItemId);
+      if (existingTimeout) {
+        clearTimeout(existingTimeout);
       }
 
-      toast.success('Cart updated');
-    } catch (error: any) {
-      console.error('Failed to update quantity:', error);
-      toast.error('Failed to update cart');
-    }
-  };
+      // Set new timeout to update backend after 800ms of no changes
+      const timeoutId = setTimeout(() => {
+        updateBackend(cartItemId, newQty);
+        updateTimeoutRef.current.delete(cartItemId);
+      }, 800);
+
+      updateTimeoutRef.current.set(cartItemId, timeoutId);
+    },
+    [updateBackend]
+  );
 
   // Remove item from backend and local state
-  const removeCartItem = async (cartItemId: number) => {
+  const removeCartItem = useCallback(async (cartItemId: number) => {
+    // Cancel any pending updates for this item
+    const existingTimeout = updateTimeoutRef.current.get(cartItemId);
+    if (existingTimeout) {
+      clearTimeout(existingTimeout);
+      updateTimeoutRef.current.delete(cartItemId);
+    }
+
+    // Store item info before removing (for Redux and potential rollback)
+    let removedItem: CartItem | undefined;
+    setCartItems((prev) => {
+      removedItem = prev.find((item) => item.id === cartItemId);
+      return prev;
+    });
+
+    if (!removedItem) return;
+
+    // Optimistically update UI with standard filtering
+    setCartItems((prev) => prev.filter((item) => item.id !== cartItemId));
+
+    // Update Redux store
+    dispatch(
+      removeItemFromRedux({
+        cartID: removedItem.product.id + removedItem.product.title,
+      })
+    );
+
     try {
       await customFetch.delete(`/shopping_cart_items/${cartItemId}`);
-
-      // Update local state
-      setCartItems((prev) => prev.filter((item) => item.id !== cartItemId));
-
-      // Update Redux store
-      const cartItem = cartItems.find((item) => item.id === cartItemId);
-      if (cartItem) {
-        dispatch(
-          removeItemFromRedux({
-            cartID: cartItem.product.id + cartItem.product.title,
-          })
-        );
-      }
-
       toast.success('Item removed from cart');
     } catch (error: any) {
       console.error('Failed to remove item:', error);
-      toast.error('Failed to remove item');
+      
+      // Because little shit keeps crashing otherwise and we don't know why
+      if (error.response?.status === 502) {
+        toast.error('Server is temporarily unavailable. Reloading cart...');
+      } else {
+        toast.error('Failed to remove item');
+      }
+      
+      // Reload cart to sync with backend
+      fetchCartItems();
     }
-  };
+  }, [dispatch]);
 
   if (!user) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">
+          <h2 className="text-2xl font-bold mb-4 text-base-content">
             Please login to view your cart
           </h2>
         </div>
@@ -147,28 +215,33 @@ const Cart = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">SHOPPING CART</h1>
+    <div className="align-element py-8">
+      <h1 className="text-3xl font-bold mb-8 text-base-content">
+        SHOPPING CART
+      </h1>
 
-      {cartItems.length === 0 ? (
-        <div className="text-center py-16">
-          <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
-          <p className="text-base-content/70 mb-4">
-            Add some items to get started!
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {cartItems.length === 0 ? (
+          <div className="lg:col-span-2">
+            <div className="text-center py-16">
+              <h2 className="text-2xl font-bold mb-4 text-base-content">
+                Your cart is empty
+              </h2>
+              <p className="text-base-content/70 mb-4">
+                Add some items to get started!
+              </p>
+            </div>
+          </div>
+        ) : (
           <CartItemsList
             cartItems={cartItems}
             onUpdateQuantity={updateQuantity}
             onRemove={removeCartItem}
           />
-          <CartTotals cartItems={cartItems} />
-        </div>
-      )}
+        )}
+        
+        <CartTotals cartItems={cartItems} />
+      </div>
     </div>
   );
-};
-
-export default Cart;
+};export default Cart;

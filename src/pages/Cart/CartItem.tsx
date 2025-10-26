@@ -34,11 +34,11 @@ const CartItem = ({
 
           {/* Product Details */}
           <div className="flex-1">
-            <h3 className="font-bold text-lg mb-1">{product.title}</h3>
+            <h3 className="font-bold text-lg mb-1 text-base-content">{product.title}</h3>
 
             {/* Price Info */}
             <div className="flex items-center gap-2 mb-2">
-              <span className="font-bold text-lg">
+              <span className="font-bold text-lg text-base-content">
                 PHP {parseFloat(product.price).toFixed(2)}
               </span>
             </div>
@@ -78,7 +78,7 @@ const CartItem = ({
 
           {/* Subtotal */}
           <div className="text-right">
-            <p className="font-bold text-lg">
+            <p className="font-bold text-lg text-base-content">
               PHP {parseFloat(subtotal).toFixed(2)}
             </p>
           </div>

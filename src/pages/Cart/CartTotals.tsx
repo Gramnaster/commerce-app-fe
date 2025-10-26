@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { CartItem } from './Cart';
+import { socialPrograms } from '../../assets/data/socialPrograms';
 
 interface CartTotalsProps {
   cartItems: CartItem[];
@@ -22,11 +23,11 @@ const CartTotals = ({ cartItems }: CartTotalsProps) => {
     <div className="lg:col-span-1">
       <div className="card bg-base-100 shadow-md sticky top-4">
         <div className="card-body">
-          <h2 className="card-title text-xl mb-4">Order Summary:</h2>
+          <h2 className="card-title text-xl mb-4 text-base-content">Order Summary:</h2>
 
           <div className="space-y-2 mb-4">
             {cartItems.map((item) => (
-              <div key={item.id} className="flex justify-between text-sm">
+              <div key={item.id} className="flex justify-between text-sm text-base-content">
                 <span>
                   - {item.product.title.substring(0, 20)}
                   {item.product.title.length > 20 ? '...' : ''} ({item.qty}x)
@@ -39,15 +40,15 @@ const CartTotals = ({ cartItems }: CartTotalsProps) => {
           <div className="divider my-2"></div>
 
           <div className="space-y-2">
-            <div className="flex justify-between">
+            <div className="flex justify-between text-base-content">
               <span>Item Total</span>
               <span className="font-bold">PHP {subtotal.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-sm text-base-content">
               <span>Shipping</span>
               <span>PHP {shipping.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-sm text-base-content">
               <span>GST (12%)</span>
               <span>PHP {gst.toFixed(2)}</span>
             </div>
@@ -58,32 +59,34 @@ const CartTotals = ({ cartItems }: CartTotalsProps) => {
           {/* Social Program Donation */}
           <div className="form-control">
             <label className="label">
-              <span className="label-text font-medium">
+              <span className="label-text font-medium text-base-content">
                 Social Program to Donate to
               </span>
             </label>
             <select
-              className="select select-bordered select-sm"
+              className="select select-bordered select-sm text-base-content"
               value={selectedProgram}
               onChange={(e) => setSelectedProgram(e.target.value)}
             >
               <option value="">Select a program</option>
-              <option value="education">Education Fund</option>
-              <option value="health">Healthcare Initiative</option>
-              <option value="environment">Environmental Program</option>
+              {socialPrograms.map((program) => (
+                <option key={program.id} value={program.id}>
+                  {program.title}
+                </option>
+              ))}
             </select>
           </div>
 
           {selectedProgram && (
             <div className="form-control mt-2">
               <label className="label">
-                <span className="label-text text-sm">
+                <span className="label-text text-sm text-base-content">
                   Donation Amount (8%)
                 </span>
               </label>
               <input
                 type="text"
-                className="input input-bordered input-sm"
+                className="input input-bordered input-sm text-base-content"
                 value={`PHP ${donation.toFixed(2)}`}
                 readOnly
               />
@@ -92,7 +95,7 @@ const CartTotals = ({ cartItems }: CartTotalsProps) => {
 
           <div className="divider my-2"></div>
 
-          <div className="flex justify-between text-lg font-bold">
+          <div className="flex justify-between text-lg font-bold text-base-content">
             <span>SUBTOTAL</span>
             <span className="text-primary">PHP {total.toFixed(2)}</span>
           </div>
