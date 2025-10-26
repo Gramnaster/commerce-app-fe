@@ -33,11 +33,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
   const ProductDetailsQuery = {
     queryKey: ['ProductDetails', id],
     queryFn: async () => {
-      const response = await customFetch.get(`/products/${id}`, {
-        headers: {
-          Authorization: user.token,
-        },
-      });
+      const response = await customFetch.get(`/products/${id}`);
       return response.data;
     },
   };
@@ -56,6 +52,8 @@ const ProductView = () => {
   const { ProductDetails } = useLoaderData() as {
     ProductDetails: Product;
   }
+
+  // const { id, title, product_image_url, product_category: {title: category_title}, producer: { title: producer_}}
 
   const [cart, setCart] = useState<any[]>(() => {
     const saved = localStorage.getItem('cart');

@@ -7,6 +7,9 @@ interface LinksType {
   url: string;
   text: string;
 }
+
+
+
 const links: LinksType[] = [
   { id: 0, url: '/categories/mens', text: "Men's Clothes" },
   { id: 1, url: '/categories/women', text: "Women's Clothes" },
