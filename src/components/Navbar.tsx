@@ -1,6 +1,6 @@
 import { Link, Navigate, NavLink, useNavigate } from 'react-router-dom';
 import NavLinks from './NavLinks';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../store';
 import { logoutUser } from '../features/user/userSlice';
@@ -15,19 +15,26 @@ import {
   MainLogoDark,
   MainLogoLight,
 } from '../assets/images';
+import CartModal from './CartModal';
 
 const themes = {
   light: 'light',
   dark: 'dark',
 };
 
+const getThemeFromLocalStorage = () => {
+  return localStorage.getItem('theme') || themes.light;
+};
+
 const Navbar = () => {
   // Always sync with the real data-theme attribute
   const getCurrentTheme = () => document.documentElement.getAttribute('data-theme') || themes.light;
-  const [theme, setTheme] = useState(getCurrentTheme());
+  const [theme, setTheme] = useState(getThemeFromLocalStorage);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.userState.user);
+  const numItemsInCart = useSelector((state: RootState) => state.cartState.numItemsInCart);
 
   const handleLogout = () => {
     navigate('/');
@@ -39,9 +46,13 @@ const Navbar = () => {
   const handleTheme = () => {
   const { light, dark } = themes;
   const newTheme = theme === light ? dark : light;
-  document.documentElement.setAttribute('data-theme', newTheme);
   setTheme(newTheme);
   };
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   return (
     <>
@@ -117,12 +128,17 @@ const Navbar = () => {
                 {/* <button className="btn text-base bg-secondary text-white w-[128px] h-[33px]" onClick={handleLogout}>
                   Sign Up
                 </button> */}
-                <button className="btn bg-transparent h-[30px] border-none shadow-none outline-none btn-circle">
+                <button 
+                  className="btn bg-transparent h-[30px] border-none shadow-none outline-none btn-circle"
+                  onClick={() => setIsCartOpen(true)}
+                >
                   <div className="indicator">
                     <img src={IconCart} alt="cart-icon" />
-                    <span className="badge badge-xs badge-error indicator-item text-xs">
-                      5
-                    </span>
+                    {numItemsInCart > 0 && (
+                      <span className="badge badge-xs badge-error indicator-item text-xs">
+                        {numItemsInCart}
+                      </span>
+                    )}
                   </div>
                 </button>
                 <label className="swap swap-rotate">
@@ -168,6 +184,9 @@ const Navbar = () => {
           </div>
         </section>
       </nav>
+      
+      {/* Cart Modal */}
+      <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>
   );
 };

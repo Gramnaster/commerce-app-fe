@@ -1,8 +1,6 @@
-import { Outlet, useLoaderData, useLocation } from 'react-router-dom';
+import { Outlet, useLoaderData } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
-import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import ProductsBanner from './ProductsBanner';
 
@@ -28,13 +26,10 @@ export interface Product {
   discount_amount_dollars: string;
   promotion_id: boolean;
   product_image_url: string;
-  discount_percentage: number;
   updated_at: Date;
 }
 
-export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
-  const storeState = store.getState();
-  const user = storeState.userState?.user;
+export const loader = (queryClient: any) => async ({ params }: any) => {
   const id = params.id;
 
   const ProductCategoriesQuery = {
@@ -60,9 +55,8 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 };
 
 const Products = () => {
-  const location = useLocation();
   const { ProductCategories } = useLoaderData() as {
-    ProductCategories: Product[]
+    ProductCategories: { data: ProductCategory[] }
   };
   // const [products, setProducts] = useState(allProducts)
   // const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
