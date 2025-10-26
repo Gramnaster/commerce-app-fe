@@ -29,7 +29,7 @@ const categoriesLinks: CategoriesLinks[] = [
   { id: 8, url: '/categories/airstrikes', image: SmallCategoryAirstrikes },
 ];
 
-const Categories = () => {
+const PopularCategories = () => {
   return (
     <section className="align-element mt-[85px] my-[95px]">
       <div className='flex justify-center align-middle flex-col my-[85px]'>
@@ -56,4 +56,4 @@ const Categories = () => {
     </section>
   );
 };
-export default Categories;
+export default PopularCategories;
