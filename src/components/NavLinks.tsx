@@ -8,8 +8,6 @@ interface LinksType {
   text: string;
 }
 
-
-
 const links: LinksType[] = [
   { id: 0, url: '/products/categories/1', text: "Men's Clothes" },
   { id: 1, url: '/products/categories/2', text: "Women's Clothes" },

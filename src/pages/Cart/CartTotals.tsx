@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { CartItem } from './Cart';
 import { socialPrograms } from '../../assets/data/socialPrograms';
 
@@ -7,6 +8,7 @@ interface CartTotalsProps {
 }
 
 const CartTotals = ({ cartItems }: CartTotalsProps) => {
+  const navigate = useNavigate();
   const [selectedProgram, setSelectedProgram] = useState<string>('');
 
   // Calculate totals
@@ -100,7 +102,10 @@ const CartTotals = ({ cartItems }: CartTotalsProps) => {
             <span className="text-primary">PHP {total.toFixed(2)}</span>
           </div>
 
-          <button className="btn btn-primary btn-block mt-4">
+          <button 
+            className="btn btn-primary btn-block mt-4"
+            onClick={() => navigate('/checkout')}
+          >
             Proceed to Checkout
           </button>
 
