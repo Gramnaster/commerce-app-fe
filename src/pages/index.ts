@@ -12,3 +12,4 @@ export { default as ProductsAll } from './Products/ProductsAll';
 export { default as ProductsPerCategory } from './Products/ProductsPerCategory';
 export { default as ProductView } from './Products/ProductView';
 export { default as Dashboard } from './Dashboard/Dashboard';
+export { default as Wallet } from './Wallet/Wallet';

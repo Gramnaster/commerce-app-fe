@@ -54,19 +54,16 @@ const ProfileView = () => {
     console.log(`user`, user)
 
   return (
-    <div>
-      {user?.id}
-      {user?.email}
-      {user?.jti}
-      
+    <div className="text-black">
       <div className="flex flex-col items-center justify-center">
-        {userDetails.data.user_detail.first_name}
-        {userDetails.data.user_detail.last_name}
-        {userDetails.data.user_detail.dob}
+        <div>{user?.email}</div>
+        <div>{userDetails.data.user_detail.first_name}</div>
+        <div>{userDetails.data.user_detail.last_name}</div>
+        <div>{userDetails.data.user_detail.dob}</div>
+        <NavLink to={`/profile/edit/${user?.id}`}>
+        Edit Profile
+        </NavLink>
       </div>
-      <NavLink to={`/dashboard/profile/edit/${user?.id}`}>
-      Edit Profile
-      </NavLink>
     </div>
   )
 }
