@@ -1,0 +1,386 @@
+import { redirect, useLoaderData } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { customFetch } from '../../utils';
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../store';
+// import type { AppDispatch } from "../../store";
+
+console.log('Wallet.tsx should be loading');
+
+export const loader = (queryClient: any, store: any) => async () => {
+  const storeState = store.getState();
+  console.log('Full store state:', storeState);
+
+  const user = storeState.userState?.user;
+  console.log('Store state:', store.getState());
+  console.log(
+    'User from store (correct path):',
+    store.getState().userState?.user
+  );
+
+  if (!user) {
+    console.log('No user found, redirecting to login');
+    toast.warn('You must be logged in to checkout');
+    return redirect('/login');
+  }
+
+  console.log('User found:', user);
+  console.log('User token:', user.token);
+
+  // await queryClient.removeQueries(['wallet-stocks', user.id]);
+
+  const walletQuery = {
+    queryKey: ['wallet', user.id],
+    queryFn: async () => {
+      console.log(
+        'Making GET request with Authorization header via Vite proxy'
+      );
+      console.log('Token from user object:', user.token);
+
+      return customFetch.get('/user_payment_methods/balance', {
+        headers: {
+          Authorization: user.token,
+        },
+      });
+    },
+  };
+
+  console.log('Wallet.tsx wallet:', walletQuery);
+
+  try {
+    const response = await queryClient.ensureQueryData(walletQuery);
+    const wallet = response.data;
+    console.log('Wallet.tsx wallet:', wallet);
+    return { wallet };
+  } catch (error: any) {
+    console.error('Failed to load wallet data:', error);
+    console.error('Error details:', error.response?.data);
+    toast.error('Failed to load wallet data');
+    return { wallet: {} };
+  }
+};
+
+// Unified Wallet Action
+export const action =
+  (store: any) =>
+  async ({ request }: any) => {
+    const storeState = store.getState();
+    const user = storeState.userState?.user;
+
+    if (!user) {
+      toast.error('You must be logged in');
+      return redirect('/login');
+    }
+
+    const formData = await request.formData();
+    const action = formData.get('action');
+    const amount = formData.get('amount');
+
+    try {
+      const endpoint =
+        action === 'deposit' ? '/user_payment_methods/deposit' : '/user_payment_methods/withdraw';
+
+      await customFetch.post(
+        endpoint,
+        { amount: parseFloat(amount as string) }, // Send as JSON object
+        {
+          headers: {
+            Authorization: user.token,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const actionText = action === 'deposit' ? 'deposited' : 'withdrew';
+      toast.success(`Successfully ${actionText} $${amount}`);
+      return { success: true };
+    } catch (error: any) {
+      console.error(`${action} failed:`, error);
+      const errorMessage =
+        error.response?.data?.message || `${action} failed. Please try again.`;
+      toast.error(errorMessage);
+      return { error: errorMessage };
+    }
+  };
+
+const Wallet = () => {
+  const { wallet: initialWallet } = useLoaderData() as { wallet: any };
+  const [activeTab, setActiveTab] = useState<'deposit' | 'withdraw'>('deposit');
+  const queryClient = useQueryClient();
+  const user = useSelector((state: RootState) => state.userState.user);
+
+  const { data: wallet } = useQuery({
+    queryKey: ['wallet', user?.id],
+    queryFn: async () => {
+      const response = await customFetch.get('/user_payment_methods/balance', {
+        headers: {
+          Authorization: user?.token,
+        },
+      });
+      return response.data;
+    },
+    initialData: initialWallet,
+    refetchOnWindowFocus: false,
+    staleTime: 0,
+  });
+
+  // Deposit Mutation
+  const depositMutation = useMutation({
+    mutationFn: async (amount: number) => {
+      const response = await customFetch.post(
+        '/user_payment_methods/deposit',
+        { amount },
+        {
+          headers: {
+            Authorization: user?.token,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      return response.data;
+    },
+    onMutate: async (amount) => {
+      await queryClient.cancelQueries({ queryKey: ['wallet', user?.id] });
+
+      const previousWallet = queryClient.getQueryData(['wallet', user?.id]);
+
+      queryClient.setQueryData(['wallet', user?.id], (old: any) => ({
+        ...old,
+        balance: (parseFloat(old?.balance || '0') + amount).toFixed(2),
+      }));
+
+      return { previousWallet };
+    },
+    onError: (err, _amount, context) => {
+      queryClient.setQueryData(['wallet', user?.id], context?.previousWallet);
+      console.error('Deposit failed:', err);
+      const errorMessage =
+        (err as any).response?.data?.message ||
+        'Deposit failed. Please try again.';
+      toast.error(errorMessage);
+    },
+    onSuccess: (data, amount) => {
+      queryClient.setQueryData(
+        ['wallet', user?.id],
+        data.receipt
+          ? {
+              ...wallet,
+              balance: data.receipt.wallet_balance,
+            }
+          : wallet
+      );
+      toast.success(`Successfully deposited $${amount}`);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['wallet', user?.id] });
+    },
+  });
+
+  // Withdraw Mutation
+  const withdrawMutation = useMutation({
+    mutationFn: async (amount: number) => {
+      const response = await customFetch.post(
+        '/user_payment_methods/withdraw',
+        { amount },
+        {
+          headers: {
+            Authorization: user?.token,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      return response.data;
+    },
+    onMutate: async (amount) => {
+      await queryClient.cancelQueries({ queryKey: ['wallet', user?.id] });
+      const previousWallet = queryClient.getQueryData(['wallet', user?.id]);
+
+      queryClient.setQueryData(['wallet', user?.id], (old: any) => ({
+        ...old,
+        balance: (parseFloat(old?.balance || '0') - amount).toFixed(2),
+      }));
+
+      return { previousWallet };
+    },
+    onError: (err, _amount, context) => {
+      queryClient.setQueryData(['wallet', user?.id], context?.previousWallet);
+      console.error('Withdrawal failed:', err);
+      const errorMessage =
+        (err as any).response?.data?.message ||
+        'Withdrawal failed. Please try again.';
+      toast.error(errorMessage);
+    },
+    onSuccess: (data, amount) => {
+      queryClient.setQueryData(
+        ['wallet', user?.id],
+        data.receipt
+          ? {
+              ...wallet,
+              balance: data.receipt.wallet_balance,
+            }
+          : wallet
+      );
+      toast.success(`Successfully withdrew $${amount}`);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['wallet', user?.id] });
+    },
+  });
+
+  const handleDeposit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const amount = parseFloat(formData.get('amount') as string);
+    if (amount > 0) {
+      depositMutation.mutate(amount);
+      e.currentTarget.reset();
+    }
+  };
+
+  const handleWithdraw = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const amount = parseFloat(formData.get('amount') as string);
+    if (amount > 0 && amount <= parseFloat(wallet?.balance || '0')) {
+      withdrawMutation.mutate(amount);
+      e.currentTarget.reset();
+    } else if (amount > parseFloat(wallet?.balance || '0')) {
+      toast.error('Insufficient funds');
+    }
+  };
+// 808080
+  return (
+    <div className="min-h-screen bg-[#E6E6E6] text-black p-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left Side - My Wallet */}
+          <div className="lg:col-span-1">
+            <div className="bg-[#E6E6E6] rounded-lg p-6 border border-[#808080]">
+              <h2 className="text-xl font-bold mb-6">My Wallet</h2>
+
+              {/* Balance Display */}
+              <div className="mb-8">
+                <div className="text-4xl font-bold mb-2">
+                  $ {wallet?.balance || '0.00'}
+                  <span className="text-sm font-normal text-black">USD</span>
+                </div>
+                <div className="text-sm text-black">= ₱ 0.00PHP</div>
+              </div>
+
+              {/* Portfolio Summary */}
+            </div>
+          </div>
+
+          {/* Right Side - Deposit/Withdraw Forms */}
+          <div className="lg:col-span-1">
+            <div className="bg-[#E6E6E6] rounded-lg p-6 border border-[#808080]">
+              <h2 className="text-xl font-bold mb-6">Manage Funds</h2>
+              
+              {/* Tab Buttons */}
+              <div className="flex mb-6">
+                <button
+                  onClick={() => setActiveTab('deposit')}
+                  className={`px-6 py-2 rounded-l-lg font-semibold transition-colors ${
+                    activeTab === 'deposit'
+                      ? 'bg-secondary text-white'
+                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  }`}
+                >
+                  Deposit
+                </button>
+                <button
+                  onClick={() => setActiveTab('withdraw')}
+                  className={`px-6 py-2 rounded-r-lg font-semibold transition-colors ${
+                    activeTab === 'withdraw'
+                      ? 'bg-secondary text-white'
+                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  }`}
+                >
+                  Withdraw
+                </button>
+              </div>
+
+              {/* Deposit Form */}
+              {activeTab === 'deposit' && (
+                <form onSubmit={handleDeposit} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Deposit from
+                    </label>
+                    <select className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-black">
+                      <option>[MC] ****-****-****-0010</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Amount (USD)
+                    </label>
+                    <input
+                      type="number"
+                      name="amount"
+                      step="0.01"
+                      min="0"
+                      placeholder="0.00"
+                      className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-black text-right text-2xl"
+                      required
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={depositMutation.isPending}
+                    className="w-full bg-secondary disabled:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+                  >
+                    {depositMutation.isPending ? 'Processing...' : 'Deposit'}
+                  </button>
+                </form>
+              )}
+
+              {/* Withdraw Form */}
+              {activeTab === 'withdraw' && (
+                <form onSubmit={handleWithdraw} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Withdraw into
+                    </label>
+                    <select className="w-full bg-[#ffffff] border border-black rounded-lg p-3 text-black">
+                      <option>[MC] ****-****-****-0010</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Amount (USD)
+                    </label>
+                    <input
+                      type="number"
+                      name="amount"
+                      step="0.01"
+                      min="0"
+                      max={wallet?.balance || 0}
+                      placeholder="0.00"
+                      className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-black text-right text-2xl"
+                      required
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={withdrawMutation.isPending}
+                    className="w-full bg-secondary disabled:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+                  >
+                    {withdrawMutation.isPending ? 'Processing...' : 'Withdraw'}
+                  </button>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+export default Wallet;

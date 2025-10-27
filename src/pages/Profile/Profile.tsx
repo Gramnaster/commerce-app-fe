@@ -44,15 +44,11 @@ const Profile = () => {
   const user = useSelector((state: RootState) => state.userState.user);
 
   return (
-    <div>
-      <ProfileSidebar />
+    <div className=' grid grid-cols-[0.25fr_1fr] gap-0'>
+      <ProfileSidebar user={user} />
+      <div>
         <Outlet />
-      <button className="px-6 py-1 rounded text-sm font-medium hover:opacity-80 transition-opacity">
-        <NavLink to={`view/${user?.id}`}>
-          View
-        </NavLink>
-      </button>
-      YAWA YAWA YAWA
+      </div>
     </div>
   )
 }
