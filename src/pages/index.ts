@@ -6,6 +6,7 @@ export {default as Profile} from "./Profile/Profile";
 export {default as ProfileView} from "./Profile/ProfileView";
 export {default as ProfileEdit} from "./Profile/ProfileEdit";
 export {default as Cart} from "./Cart/Cart";
+export {default as Checkout} from "./Cart/Checkout";
 export { default as Products } from './Products/Products';
 export { default as ProductsAll } from './Products/ProductsAll';
 export { default as ProductsPerCategory } from './Products/ProductsPerCategory';

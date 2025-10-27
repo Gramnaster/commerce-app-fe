@@ -9,6 +9,7 @@ import {
   Signup,
   Profile,
   Cart,
+  Checkout,
   Products,
   ProductView,
   Dashboard,
@@ -105,6 +106,10 @@ const router = createBrowserRouter([
       {
         path: 'cart',
         element: <Cart />,
+      },
+      {
+        path: 'checkout',
+        element: <Checkout />,
       },
     ],
   },
