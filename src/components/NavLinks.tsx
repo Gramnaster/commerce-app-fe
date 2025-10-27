@@ -11,14 +11,14 @@ interface LinksType {
 
 
 const links: LinksType[] = [
-  { id: 0, url: '/categories/mens', text: "Men's Clothes" },
-  { id: 1, url: '/categories/women', text: "Women's Clothes" },
-  { id: 3, url: '/categories/children', text: "Children's Clothes" },
-  { id: 4, url: '/categories/jewel', text: 'Jewellery' },
-  { id: 5, url: '/categories/electronics', text: 'Electronics' },
-  { id: 6, url: '/categories/snacks', text: 'Snacks' },
-  { id: 7, url: '/categories/trinkets', text: 'Trinkets' },
-  { id: 8, url: '/categories/airstrikes', text: 'Air Strikes' },
+  { id: 0, url: '/products/categories/1', text: "Men's Clothes" },
+  { id: 1, url: '/products/categories/2', text: "Women's Clothes" },
+  { id: 3, url: '/products/categories/5', text: "Children's Clothes" },
+  { id: 4, url: '/products/categories/3', text: 'Jewellery' },
+  { id: 5, url: '/products/categories/4', text: 'Electronics' },
+  { id: 6, url: '/products/categories/6', text: 'Snacks' },
+  { id: 7, url: '/products/categories/7', text: 'Trinkets' },
+  { id: 8, url: '/products/categories/8', text: 'Air Strikes' },
 ];
 
 const NavLinks = () => {
