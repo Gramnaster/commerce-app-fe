@@ -7,7 +7,6 @@ interface ProductCategory {
   title: string;
 }
 
-
 interface SidebarProps {
   categoryData: ProductCategory[];
   filters: { search: string; category: string | null; discountsOnly: boolean };

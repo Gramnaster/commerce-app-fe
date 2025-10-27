@@ -1,7 +1,6 @@
 import { Link, Navigate, NavLink, useNavigate } from 'react-router-dom';
 import NavLinks from './NavLinks';
 import { useEffect, useState } from 'react';
-// import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../store';
 import { logoutUser } from '../features/user/userSlice';
 import { useDispatch, useSelector } from 'react-redux';

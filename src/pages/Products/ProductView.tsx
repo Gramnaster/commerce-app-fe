@@ -115,7 +115,7 @@ const ProductView = () => {
 
   console.log(`ProductView ProductDetails`, ProductDetails);
   return (
-    <div>
+    <div className='text-base-content'>
       <div>
         <div>Product Name: {product.title}</div>
         <img
