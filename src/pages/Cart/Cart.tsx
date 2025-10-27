@@ -9,6 +9,7 @@ import {
 } from '../../features/cart/cartSlice';
 import CartItemsList from './CartItemsList';
 import CartTotals from './CartTotals';
+import { IconLineDark, IconLineWhite } from '../../assets/images';
 
 export interface Product {
   id: number;
@@ -216,9 +217,15 @@ const Cart = () => {
 
   return (
     <div className="align-element py-8">
-      <h1 className="text-3xl font-bold mb-8 text-base-content">
-        SHOPPING CART
-      </h1>
+      <div className='flex justify-center align-middle flex-col my-[85px]'>
+        <h2 className="font-primary text-base-content text-2xl text-center">
+          POPULAR CATEGORIES
+        </h2>
+        <div className="relative h-[11px] w-[67px] mx-auto">
+          <img src={IconLineWhite} className="block dark:hidden h-[11px] w-[67px] mx-auto" />
+          <img src={IconLineDark} className="hidden dark:block h-[11px] w-[67px] mx-auto" />
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {cartItems.length === 0 ? (

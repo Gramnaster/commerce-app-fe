@@ -5,6 +5,7 @@ import { NavLink, Outlet, redirect, useNavigation } from 'react-router-dom';
 import { customFetch } from '../../utils';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
+import ProfileSidebar from './ProfileSidebar';
 
 
 export const loader = (queryClient: any, store: any) => async () => {
@@ -44,7 +45,7 @@ const Profile = () => {
 
   return (
     <div>
-      <Sidebar />
+      <ProfileSidebar />
         <Outlet />
       <button className="px-6 py-1 rounded text-sm font-medium hover:opacity-80 transition-opacity">
         <NavLink to={`view/${user?.id}`}>
