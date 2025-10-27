@@ -7,7 +7,14 @@ interface ProductCategory {
   title: string;
 }
 
-const Sidebar = ({categoryData}) => {
+
+interface SidebarProps {
+  categoryData: ProductCategory[];
+  filters: { search: string; category: string | null; discountsOnly: boolean };
+  setFilters: React.Dispatch<React.SetStateAction<any>>;
+}
+
+const Sidebar = ({ categoryData, filters, setFilters }: SidebarProps) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchWord, setSearchWord] = useState('');
 
@@ -23,26 +30,15 @@ const Sidebar = ({categoryData}) => {
                 >
                   <option>Featured</option>
                 </select>
-                {/* <svg
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-black"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg> */}
               </div>
               <div className="flex-1 relative font-bold flex flex-col justify-end items-end">
                 <input
                   type="text"
                   placeholder="Filter by Products . . ."
-                  value={searchWord}
-                  onChange={(e) => setSearchWord(e.target.value)}
+                  value={filters.search}
+                  onChange={(e) =>
+                    setFilters((prev) => ({ ...prev, search: e.target.value }))
+                  }
                   className="place bg-white border border-[#B3B3B3] font-normal italic rounded-4xl py-2 pl-10 pr-3 text-center text-black placeholder-[#B3B3B3]"
                 />
                 <svg
@@ -66,6 +62,12 @@ const Sidebar = ({categoryData}) => {
                   </span>
                   <input
                     type="checkbox"
+                    checked={filters.discountsOnly}
+                    onChange={(e) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        discountsOnly: e.target.checked,
+                      }))}
                     data-theme="light"
                     className="rounded-[5px] border border-[#B3B3B3] w-[20px] h-[20px]"
                   />
@@ -91,11 +93,11 @@ const Sidebar = ({categoryData}) => {
         </div>
         <div className='font-bold flex flex-col justify-end items-end mr-4 text-black'>
           <div>Categories</div>
-          <button onClick={() => setSelectedCategory(null)} className='m-1 rounded-2xl hover:cursor-pointer font-semibold hover:underline'>All</button>
+          <button onClick={() => setFilters((prev) => ({ ...prev, category: null }))} className='m-1 rounded-2xl hover:cursor-pointer font-semibold hover:underline'>All</button>
           {categoryData.map((category: ProductCategory) => {
             const { id, title } = category;
             return (
-              <button onClick={() => setSelectedCategory(`${title}`)} className='m-1 rounded-2xl hover:cursor-pointer hover:underline capitalize' key={id}>{title}</button>
+              <button onClick={() => setFilters((prev) => ({ ...prev, category: title }))} className='m-1 rounded-2xl hover:cursor-pointer hover:underline capitalize' key={id}>{title}</button>
             )
           })}
         </div>
