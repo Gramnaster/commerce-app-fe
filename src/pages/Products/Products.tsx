@@ -59,15 +59,22 @@ const Products = () => {
   const { ProductCategories } = useLoaderData() as {
     ProductCategories: { data: ProductCategory[] }
   };
+
+  const [filters, setFilters] = useState({
+    search: '',
+    category: null as string | null,
+    discountsOnly: false,
+  });
+
   return (
     <div>
       <div className='mb-20'>
       <ProductsBanner />
       </div>
       <div className='grid grid-cols-[0.25fr_1fr] grid-rows-1 gap-0'>
-        <Sidebar categoryData={ProductCategories.data} />
+        <Sidebar categoryData={ProductCategories.data} filters={filters} setFilters={setFilters}  />
         <div>
-          <Outlet />
+          <Outlet context={{ filters, setFilters }} />
         </div>
       </div>
     </div>

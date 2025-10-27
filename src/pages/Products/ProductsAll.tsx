@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
-import { NavLink, useLoaderData } from "react-router-dom";
+import { NavLink, useLoaderData, useOutletContext } from "react-router-dom";
 
 export interface ProductCategory {
   id: number;
@@ -59,13 +59,19 @@ const ProductsAll = () => {
   const { allProducts } = useLoaderData() as {
     allProducts: Product[]
   };
+  const { filters } = useOutletContext<{ filters: { search: string; category: string | null; discountsOnly: boolean } }>();
+
+  const filteredProducts = allProducts.data
+    .filter(p => !filters.category || p.product_category.title === filters.category)
+    .filter(p => !filters.discountsOnly || p.promotion !== null)
+    .filter(p => p.title.toLowerCase().includes(filters.search.toLowerCase()));
   
   console.log(`ProductsAll allProducts`, allProducts)
 
   return (
     <div className="grid grid-cols-[1fr_1fr_1fr] gap-[20px] h-full grid-flow-row-dense align-element">
-      {allProducts.data.map((product: Product) => {
-        const {id, title, price, discount_percentage, product_image_url, promotion_id} = product
+      {filteredProducts.map((product: Product) => {
+        const {id, title, price, discount_percentage, product_image_url, product_category: { title: category_title }, promotion_id} = product
         return (
           <div key={id} className="font-secondary text-center ">
             <NavLink to={`/products/${id}`}>
