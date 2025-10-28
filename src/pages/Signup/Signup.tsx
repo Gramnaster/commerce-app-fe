@@ -99,6 +99,13 @@ const Signup = () => {
       e.preventDefault();
     }
   };
+
+   const today = new Date();
+   const year = today.getFullYear();
+   const month = String(today.getMonth() + 1).padStart(2, '0');
+   const day = String(today.getDate()).padStart(2, '0');
+   const formattedDate = `${year}-${month}-${day}`;
+
   // const [countries, setCountries] = useState<Country[]>([]);
 
   // useEffect(() => {
@@ -134,7 +141,7 @@ const Signup = () => {
         <div className="flex flex-col gap-x-10 mx-10 font-secondary">
           <FormInput
             type="email"
-            label="Email (required)"
+            label="Email*"
             name="email"
             placeholder="user@email.com"
             inputRef={inputElement => (inputRefs.current.email = inputElement)}
@@ -143,7 +150,7 @@ const Signup = () => {
           />
           <FormInput
             type="password"
-            label="Password (required)"
+            label="Password*"
             name="password"
             placeholder="user123456"
             inputRef={inputElement => (inputRefs.current.password = inputElement)}
@@ -152,7 +159,7 @@ const Signup = () => {
           />
           <FormInput
             type="password"
-            label="Password Confirmation (required)"
+            label="Password Confirmation*"
             name="password_confirmation"
             placeholder="user123456"
             inputRef={inputElement => (inputRefs.current.password_confirmation = inputElement)}
@@ -161,7 +168,7 @@ const Signup = () => {
           />
           <FormInput
             type="text"
-            label="First Name (required)"
+            label="First Name*"
             name="first_name"
             placeholder="Bien"
             inputRef={inputElement => (inputRefs.current.first_name = inputElement)}
@@ -170,7 +177,7 @@ const Signup = () => {
           />
           <FormInput
             type="text"
-            label="Last Name (required)"
+            label="Last Name*"
             name="last_name"
             placeholder="Sayson"
             inputRef={inputElement => (inputRefs.current.last_name = inputElement)}
@@ -179,12 +186,14 @@ const Signup = () => {
           />
           <FormInput
             type="date"
-            label="Date of Birth (required)"
+            label="Date of Birth*"
             name="dob"
             placeholder="1990/01/01"
             inputRef={inputElement => (inputRefs.current.dob = inputElement)}
             onBlur={handleBlur}
             error={!!errors.dob && touched.dob}
+            min='1901-01-01'
+            max={formattedDate}
           />
           <div className="my-6 gap-y-4 flex flex-row w-full space-x-4">
             <Link to="/" className="flex-1">

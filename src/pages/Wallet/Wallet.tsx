@@ -323,6 +323,7 @@ const Wallet = () => {
                       name="amount"
                       step="0.01"
                       min="0"
+                      max="500000"
                       placeholder="0.00"
                       className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-black text-right text-2xl"
                       required
