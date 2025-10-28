@@ -110,9 +110,9 @@ const Transactions = () => {
     //   })}
     // </div>
     
-    <div className="min-h-screen bg-base-100 text-black p-6">
+    <div className="min-h-screen bg-base-100 text-base-content p-6 align-element">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-secondary rounded-lg border border-gray-700">
+        <div className="bg-transparent rounded-lg border border-gray-700">
           {/* Header */}
           <div className="p-6 border-b border-gray-700">
             <div className="flex justify-between items-center">
@@ -122,7 +122,7 @@ const Transactions = () => {
                   <input
                     type="text"
                     placeholder="Search Company Name or Ticker ID"
-                    className="bg-[#2a2740] border border-gray-600 rounded-lg px-4 py-2 text-white placeholder-gray-400 w-100"
+                    className="bg-transparent border border-gray-600 rounded-lg px-4 py-2 text-base-content placeholder-gray-400 w-100"
                   />
                   <svg className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -136,13 +136,14 @@ const Transactions = () => {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-700">
-                  <th className="text-left p-4 font-medium text-gray-300">Type</th>
-                  <th className="text-left p-4 font-medium text-gray-300">Balance Before</th>
-                  <th className="text-right p-4 font-medium text-gray-300">Balance After</th>
-                  <th className="text-right p-4 font-medium text-gray-300">Amount</th>
-                  <th className="text-right p-4 font-medium text-gray-300">Order Status</th>
-                  <th className="text-right p-4 font-medium text-gray-300">Date</th>
+                <tr className="border-b text-base-content border-gray-700">
+                  <th className="text-left p-4 font-medium">Type</th>
+                  <th className="text-left p-4 font-medium">Balance Before</th>
+                  <th className="text-left p-4 font-medium">Balance After</th>
+                  <th className="text-right p-4 font-medium">Amount</th>
+                  <th className="text-right p-4 font-medium">Order Status</th>
+                  <th className="text-right p-4 font-medium">Date</th>
+                  <th className="text-right p-4 font-medium"></th>
                 </tr>
               </thead>
               <tbody>
@@ -150,12 +151,11 @@ const Transactions = () => {
                   TransactionReceipts.map((transaction: Transaction, index: number) => (
                     <tr 
                       key={transaction.id} 
-                      className={`border-b border-gray-800 hover:bg-[#2a2740] transition-colors ${
-                        index % 2 === 0 ? 'bg-[#1e1b2e]' : 'bg-[#252238]'
+                      className={`border-b border-gray-800 hover:bg-transparent transition-colors ${
+                        index % 2 === 0 ? 'bg-transparent' : 'bg-transparent'
                       }`}
                     >
                       <td className="p-4">
-                        <NavLink to={`${transaction.id}`}>
                           <span className={`inline-block px-2 py-1 rounded text-sm font-medium ${
                             transaction.transaction_type === 'purchase' ? 'bg-green-600 text-white' :
                             transaction.transaction_type === 'withdraw' ? 'bg-red-600 text-white' :
@@ -164,7 +164,6 @@ const Transactions = () => {
                           }`}>
                             {getTransactionTypeDisplay(transaction.transaction_type)}
                           </span>
-                        </NavLink>
                       </td>
                       <td className="p-4">
                         {/* <div className="flex items-center space-x-3">
@@ -195,7 +194,7 @@ const Transactions = () => {
                           }
                         </div>
                       </td>
-                      <td className="p-4 text-right text-white">
+                      <td className="p-4 text-right text-base-content">
                         {/* {transaction.quantity && transaction.quantity !== '0.0' 
                           ? parseFloat(transaction.quantity).toLocaleString()
                           : '-'
@@ -207,29 +206,34 @@ const Transactions = () => {
                           }
                         </div>
                       </td>
-                      <td className="p-4 text-right text-white">
+                      <td className="p-4 text-right text-base-content">
                         {/* {transaction.price_per_share && transaction.price_per_share !== '0.0'
                           ? `$${parseFloat(transaction.price_per_share).toFixed(2)}`
                           : '-'
                         } */}
-                        <div className="flex items-center space-x-3">
+                        <div className="text-right space-x-3">
                           {transaction.amount && transaction.amount !== 0
                             ? transaction.amount
                             : '-'
                           }
                         </div>
                       </td>
-                      <td className="p-4 text-right text-white font-medium">
+                      <td className="p-4 text-right text-base-content font-medium">
                         {/* ${parseFloat(transaction.total_amount).toFixed(2)} */}
                         {transaction.order?.cart_status ? transaction.order.cart_status : '-' }
                       </td>
-                      <td className="p-4 text-right text-gray-300">
+                      <td className="p-4 text-right text-base-content">
                         <div className="text-right">
                           <div>{formatDate(transaction.created_at)}</div>
-                          <div className="text-sm text-gray-400">
+                          <div className="text-sm text-base-content">
                             {formatTime(transaction.created_at)}
                           </div>
                         </div>
+                      </td>
+                      <td>
+                        <NavLink to={`${transaction.id}`} className={'hover:underline hover:cursor-pointer'}>
+                          View
+                        </NavLink>
                       </td>
                     </tr>
                   ))

@@ -65,16 +65,16 @@ const Navbar = () => {
         <section className="w-full bg-primary">
           <div className="navbar align-headers flex items-center max-w-full px-10 max-h-[75px] mx-auto">
             <div className="navbar-start flex-1 items-right">
-              <NavLink
+              {/* <NavLink
                 to="/"
                 className="hidden lg:flex btn bg-transparent border-none shadow-none text-secondary items-center"
               >
                 <img
-                  src={MainLogoDark}
+                  src={theme === 'dark' ? MainLogoDark : MainLogoLight}
                   alt="Logo"
                   className="w-[110px] h-[50px]"
                 />
-              </NavLink>
+              </NavLink> */}
               {/* Dropdown Menu */}
               <div className="dropdown">
                 <label tabIndex={0} className="btn btn-ghost lg:hidden">
@@ -187,8 +187,8 @@ const Navbar = () => {
             >
               <img
                 src={
-                  getCurrentTheme() === themes.dark
-                    ? MainLogoDark
+                  theme === 'dark' 
+                    ? MainLogoDark 
                     : MainLogoLight
                 }
                 alt="Main-Logo"

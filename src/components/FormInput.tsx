@@ -15,14 +15,14 @@ interface FormInputType {
   error?: boolean;
 }
 
-const FormInput = ({ label, name, type = 'text', placeholder = '', as = 'input', options = [], inputRef, onBlur, error }: FormInputType) => {
+const FormInput = ({ label, name, type = 'text', placeholder = '', as = 'input', options = [], inputRef, onBlur, error, ...rest }: FormInputType) => {
   // Use DaisyUI input-error for error state
-  const inputClass = `input font-secondary h-6 max-w-[375px] w-full bg-[#001a33] text-white border border-gray-600 ${error ? 'input-error border-error' : ''}`;
+  const inputClass = `input font-secondary h-6 max-w-[375px] [.validated_&:invalid]:border-pink-600 w-full bg-[#001a33] text-white border border-gray-600 ${error ? 'input-error border-error' : ''}`;
   return (
     <fieldset className="fieldset my-1 ">
       <legend className="fieldset-legend text-white">{label}</legend>
       {as === 'select' ? (
-        <select name={name} className={inputClass}>
+        <select name={name} className={inputClass} {...rest}>
           <option value="">Select...</option>
           {options.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -38,6 +38,7 @@ const FormInput = ({ label, name, type = 'text', placeholder = '', as = 'input',
           placeholder={placeholder}
           ref={inputRef}
           onBlur={onBlur}
+          {...rest}
         />
       )}
       {/* <p className="label">Optional</p> */}
