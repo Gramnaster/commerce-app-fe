@@ -5,6 +5,8 @@ export {default as Home} from "./Home/Home";
 export {default as Profile} from "./Profile/Profile";
 export {default as ProfileView} from "./Profile/ProfileView";
 export {default as ProfileEdit} from "./Profile/ProfileEdit";
+export {default as Transactions} from "./Transactions/Transactions";
+export {default as TransactionsView} from "./Transactions/TransactionView";
 export {default as Cart} from "./Cart/Cart";
 export {default as Checkout} from "./Cart/Checkout";
 export { default as Products } from './Products/Products';

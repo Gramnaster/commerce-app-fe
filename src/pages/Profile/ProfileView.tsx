@@ -18,11 +18,6 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
   const id = params.id;
 
-  if (!id) {
-    toast.error('User ID is required');
-    return redirect('/admin');
-  }
-
   const userDetailsQuery = {
     queryKey: ['userDetails', id],
     queryFn: async () => {
