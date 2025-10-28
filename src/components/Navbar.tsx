@@ -1,8 +1,9 @@
-import { Link, Navigate, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import NavLinks from './NavLinks';
 import { useEffect, useState } from 'react';
 import type { RootState } from '../store';
 import { logoutUser } from '../features/user/userSlice';
+import { clearCart } from '../features/cart/cartSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   IconCart,
@@ -40,10 +41,11 @@ const Navbar = () => {
   );
 
   const handleLogout = () => {
-    navigate('/');
+    // Clear cart and close modal
+    dispatch(clearCart());
+    setIsCartOpen(false);
     dispatch(logoutUser());
-
-    console.log('logout function here');
+    navigate('/');
   };
 
   const handleTheme = () => {

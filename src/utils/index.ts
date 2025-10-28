@@ -44,3 +44,47 @@ export const formatPrice = (price: number) => {
     maximumFractionDigits: 2,
   }).format(price);
 };
+
+// Generate consistent cartID from product data
+// Must match format used in Cart.tsx: product.id + product.title
+export const generateCartID = (productId: number | string, productTitle: string): string => {
+  return String(productId) + productTitle;
+};
+
+// Sync Redux cart state with backend cart items
+export const syncCartWithBackend = async (dispatch: any) => {
+  try {
+    const response = await customFetch.get('/shopping_cart_items');
+    const items = response.data?.data || [];
+    
+    // Import actions at top level for better performance
+    const { clearCart, syncCart } = await import('../features/cart/cartSlice');
+    
+    // If no items in backend, clear the cart
+    if (!items.length) {
+      dispatch(clearCart());
+      return { success: true, itemCount: 0 };
+    }
+    
+    // Transform backend items to match Redux CartItem shape
+    const cartItems = items.map((item: any) => {
+      const product = item.product || {};
+      return {
+        cartID: generateCartID(product.id || '', product.title || ''),
+        title: product.title || 'Unknown Product',
+        price: parseFloat(product.price) || 0,
+        image: product.product_image_url || '',
+        amount: parseInt(item.qty, 10) || 1,
+      };
+    });
+    
+    // Update cart state without toast notifications
+    dispatch(syncCart({ items: cartItems }));
+    
+    return { success: true, itemCount: cartItems.length };
+  } catch (error) {
+    console.error('Failed to sync cart:', error);
+    // Don't throw - fail silently to avoid disrupting user experience
+    return { success: false, itemCount: 0 };
+  }
+};

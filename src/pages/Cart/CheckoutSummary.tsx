@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store';
 import { socialPrograms } from '../../assets/data/socialPrograms';
 import { customFetch } from '../../utils';
 import { toast } from 'react-toastify';
+import { clearCart } from '../../features/cart/cartSlice';
 
 interface CheckoutSummaryProps {
   userAddressId: number | null;
@@ -11,6 +12,7 @@ interface CheckoutSummaryProps {
 }
 
 const CheckoutSummary = ({ userAddressId, onOrderComplete }: CheckoutSummaryProps) => {
+  const dispatch = useDispatch();
   const { cartItems, cartTotal } = useSelector(
     (state: RootState) => state.cartState
   );
@@ -64,6 +66,10 @@ const CheckoutSummary = ({ userAddressId, onOrderComplete }: CheckoutSummaryProp
       });
 
       toast.success('Order placed successfully!');
+      
+      // Clear cart after successful order
+      dispatch(clearCart());
+      
       onOrderComplete();
     } catch (error: any) {
       console.error('Failed to complete payment:', error);

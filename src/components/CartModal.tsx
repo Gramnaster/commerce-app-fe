@@ -1,8 +1,9 @@
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../store';
 import { Link } from 'react-router-dom';
-import { formatPrice } from '../utils';
+import { formatPrice, syncCartWithBackend } from '../utils';
 import { editItem, removeItem } from '../features/cart/cartSlice';
+import { useEffect, useRef } from 'react';
 
 interface CartModalProps {
   isOpen: boolean;
@@ -11,12 +12,32 @@ interface CartModalProps {
 
 const CartModal = ({ isOpen, onClose }: CartModalProps) => {
   const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.userState.user);
   const cartState = useSelector((state: RootState) => state.cartState);
+  
+  // Track last synced user ID to prevent duplicate syncs
+  const lastSyncedUserIdRef = useRef<number | null>(null);
   
   // Provide defaults if cart state is undefined or not initialized
   const cartItems = cartState?.cartItems || [];
   const numItemsInCart = cartState?.numItemsInCart || 0;
   const orderTotal = cartState?.orderTotal || 0;
+
+  // Sync cart with backend when user changes (login/switch user)
+  useEffect(() => {
+    const currentUserId = user?.id;
+    
+    // Sync only if user exists and is different from last synced user
+    if (currentUserId && currentUserId !== lastSyncedUserIdRef.current) {
+      syncCartWithBackend(dispatch);
+      lastSyncedUserIdRef.current = currentUserId;
+    }
+    
+    // Clear tracking when user logs out
+    if (!currentUserId) {
+      lastSyncedUserIdRef.current = null;
+    }
+  }, [user?.id, dispatch]);
 
   const handleUpdateQuantity = (cartID: string, newAmount: number) => {
     if (newAmount < 1) return;
