@@ -29,9 +29,7 @@ interface Product {
   final_price?: number;
 }
 
-export const loader =
-  (queryClient: any, store: any) =>
-  async ({ params }: any) => {
+export const loader =  (queryClient: any, store: any) =>  async ({ params }: any) => {
     const id = params.id;
 
     const ProductDetailsQuery = {
@@ -51,7 +49,7 @@ export const loader =
       toast.error('Failed to load product details');
       return redirect('/products');
     }
-  };
+};
 
 const ProductView = () => {
   const dispatch = useDispatch();

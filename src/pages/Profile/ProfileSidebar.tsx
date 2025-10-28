@@ -15,6 +15,7 @@ const ProfileSidebar = ({user}) => {
 const links: LinksType[] = [
   { id: 0, url: '/profile/wallet', text: "Wallet" },
   { id: 0, url: `/profile/view/${user?.id}`, text: "Profile" },
+  { id: 0, url: `/profile/transactions/`, text: "Transactions" },
   // { id: 0, url: '/profile/view/:id', text: "Men's Clothes" },
   // { id: 1, url: '/profile/edit', text: "Women's Clothes" },
   // { id: 3, url: '/profile/receipts', text: "Children's Clothes" },

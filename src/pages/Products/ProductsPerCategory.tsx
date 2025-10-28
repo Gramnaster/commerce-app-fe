@@ -1,4 +1,4 @@
-import { NavLink, redirect, useLoaderData, useNavigate } from "react-router-dom";
+import { NavLink, redirect, useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
 import { customFetch } from "../../utils";
 import { toast } from "react-toastify";
 import type { ProductCategory, Product, Producer } from "./Products";
@@ -31,13 +31,18 @@ const ProductsPerCategory = () => {
   const { CategoryDetails } = useLoaderData() as {
     CategoryDetails: ProductCategory;
   }
+  const { filters } = useOutletContext<{ filters: { search: string; category: string | null; discountsOnly: boolean } }>();
   const navigate = useNavigate();
-  const { id, title, products, } = CategoryDetails.data;
-  console.log(`ProductsPerCategory CategoryDetails.data`, CategoryDetails.data)
+  const { products, } = CategoryDetails.data;
+  
+  const filteredProducts = products
+    .filter(p => !filters.category || p.product_category.title === filters.category)
+    .filter(p => !filters.discountsOnly || p.promotion_id !== null)
+    .filter(p => p.title.toLowerCase().includes(filters.search.toLowerCase()));
 
   return (
     <div className="grid grid-cols-[1fr_1fr_1fr] gap-[20px] h-full grid-flow-row-dense align-element mb-3">
-        {products.map((product: Product) => {
+        {filteredProducts.map((product: Product) => {
         const {id, title, price, discount_percentage, product_image_url, promotion_id} = product
           return (
               <div key={id} className="font-secondary text-center">

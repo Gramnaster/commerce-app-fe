@@ -250,7 +250,7 @@ const Wallet = () => {
       toast.error('Insufficient funds');
     }
   };
-// 808080
+
   return (
     <div className="min-h-screen bg-[#E6E6E6] text-black p-6">
       <div className="max-w-7xl mx-auto">

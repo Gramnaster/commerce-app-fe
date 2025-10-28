@@ -14,6 +14,8 @@ import {
   ProductView,
   Dashboard,
   ProfileView,
+  Transactions,
+  TransactionsView,
   ProfileEdit,
   ProductsAll,
   ProductsPerCategory,
@@ -37,6 +39,9 @@ import { loader as profileEditAction } from './pages/Profile/ProfileEdit.tsx';
 
 import { action as walletAction } from './pages/Wallet/Wallet';
 import { loader as walletLoader } from './pages/Wallet/Wallet';
+
+import { loader as transactionLoader } from './pages/Transactions/Transactions.tsx';
+import { loader as transactionViewLoader } from './pages/Transactions/TransactionView.tsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -63,7 +68,7 @@ const router = createBrowserRouter([
         // Sidebar and Outlet goes here
         path: 'products',
         element: <Products />,
-        loader: productsLoader(queryClient, store),
+        loader: productsLoader(queryClient),
         children: [
           {
             index: true,
@@ -109,7 +114,13 @@ const router = createBrowserRouter([
           },
           {
             path: 'transactions',
-            // element: <ProfileReceipts />
+            element: <Transactions />,
+            loader: transactionLoader(queryClient),
+          },
+          {
+            path: 'transactions/:id',
+            element: <TransactionsView />,
+            loader: transactionViewLoader(queryClient, store)
           },
         ],
       },
