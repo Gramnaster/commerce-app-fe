@@ -118,9 +118,21 @@ const cartSlice = createSlice({
       state.orderTotal = state.cartTotal + state.shipping + state.tax;
       localStorage.setItem('cart', JSON.stringify(state));
     },
+    syncCart: (state, action: PayloadAction<{ items: CartItem[] }>) => {
+      // Sync cart from backend without toast notifications
+      const { items = [] } = action.payload;
+      
+      // Ensure items is always an array
+      const validItems = Array.isArray(items) ? items : [];
+      
+      state.cartItems = validItems;
+      state.numItemsInCart = validItems.reduce((sum, item) => sum + (item.amount || 0), 0);
+      state.cartTotal = validItems.reduce((sum, item) => sum + ((item.price || 0) * (item.amount || 0)), 0);
+      cartSlice.caseReducers.calculateTotals(state);
+    },
   },
 });
 
-export const { addItem, clearCart, removeItem, editItem } = cartSlice.actions;
+export const { addItem, clearCart, removeItem, editItem, syncCart } = cartSlice.actions;
 
 export default cartSlice.reducer;

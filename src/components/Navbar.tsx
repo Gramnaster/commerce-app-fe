@@ -1,8 +1,9 @@
-import { Link, Navigate, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import NavLinks from './NavLinks';
 import { useEffect, useState } from 'react';
 import type { RootState } from '../store';
 import { logoutUser } from '../features/user/userSlice';
+import { clearCart } from '../features/cart/cartSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   IconCart,
@@ -15,6 +16,7 @@ import {
   MainLogoLight,
 } from '../assets/images';
 import CartModal from './CartModal';
+import ProfileLinks from './ProfileLinks';
 
 const themes = {
   light: 'light',
@@ -27,25 +29,29 @@ const getThemeFromLocalStorage = () => {
 
 const Navbar = () => {
   // Always sync with the real data-theme attribute
-  const getCurrentTheme = () => document.documentElement.getAttribute('data-theme') || themes.light;
+  const getCurrentTheme = () =>
+    document.documentElement.getAttribute('data-theme') || themes.light;
   const [theme, setTheme] = useState(getThemeFromLocalStorage);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.userState.user);
-  const numItemsInCart = useSelector((state: RootState) => state.cartState.numItemsInCart);
+  const numItemsInCart = useSelector(
+    (state: RootState) => state.cartState.numItemsInCart
+  );
 
   const handleLogout = () => {
-    navigate('/');
+    // Clear cart and close modal
+    dispatch(clearCart());
+    setIsCartOpen(false);
     dispatch(logoutUser());
-
-    console.log('logout function here');
+    navigate('/');
   };
 
   const handleTheme = () => {
-  const { light, dark } = themes;
-  const newTheme = theme === light ? dark : light;
-  setTheme(newTheme);
+    const { light, dark } = themes;
+    const newTheme = theme === light ? dark : light;
+    setTheme(newTheme);
   };
 
   useEffect(() => {
@@ -100,12 +106,20 @@ const Navbar = () => {
               <div className="flex gap-x-y justify-center items-center px-1 gap-[20px]">
                 {user ? (
                   <div className="flex gap-x-2 sm:gap-x-8 items-center">
-                    <button
-                      className="btn border-none shadow-none outline-none text-base bg-secondary text-white w-[110px] h-[33px]"
-                      onClick={handleLogout}
-                    >
-                      Logout
-                    </button>
+                      <div className="dropdown">
+                      <label
+                        tabIndex={0}
+                        className="btn bg-transparent h-[30px] border-none shadow-none outline-none btn-circle"
+                      >
+                        <img src={IconProfile} alt="user-icon" />
+                      </label>
+                      <ul
+                        tabIndex={0}
+                        className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-200 rounded-box"
+                      >
+                        <ProfileLinks user={user} onLogout={handleLogout}/>
+                      </ul>
+                    </div>
                   </div>
                 ) : (
                   <>
@@ -127,7 +141,7 @@ const Navbar = () => {
                 {/* <button className="btn text-base bg-secondary text-white w-[128px] h-[33px]" onClick={handleLogout}>
                   Sign Up
                 </button> */}
-                <button 
+                <button
                   className="btn bg-transparent h-[30px] border-none shadow-none outline-none btn-circle"
                   onClick={() => setIsCartOpen(true)}
                 >
@@ -172,7 +186,11 @@ const Navbar = () => {
               className="hidden lg:flex btn bg-transparent border-none shadow-none text-secondary items-center"
             >
               <img
-                src={getCurrentTheme() === themes.dark ? MainLogoDark : MainLogoLight}
+                src={
+                  getCurrentTheme() === themes.dark
+                    ? MainLogoDark
+                    : MainLogoLight
+                }
                 alt="Main-Logo"
                 className="w-[253px] h-[115px] ml-10"
               />
@@ -183,7 +201,7 @@ const Navbar = () => {
           </div>
         </section>
       </nav>
-      
+
       {/* Cart Modal */}
       <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>

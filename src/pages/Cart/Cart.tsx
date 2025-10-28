@@ -10,6 +10,7 @@ import {
 import CartItemsList from './CartItemsList';
 import CartTotals from './CartTotals';
 import { IconLineDark, IconLineWhite } from '../../assets/images';
+import { useNavigate } from 'react-router-dom';
 
 export interface Product {
   id: number;
@@ -36,6 +37,14 @@ const Cart = () => {
   const updateTimeoutRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(
     new Map()
   );
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/login', { replace: true });
+    }
+  }, [user, navigate]);
 
   // Cleanup timeouts on unmount
   useEffect(() => {
