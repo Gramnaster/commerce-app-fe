@@ -1,20 +1,18 @@
 // import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
+import type { User } from './ProfileEdit';
 // import type { RootState } from '../store';
 
-interface LinksType {
+export interface LinksType {
   id: number;
   url: string;
   text: string;
 }
 
-const ProfileSidebar = ({user}) => {
-  // const user = useSelector((state: RootState) => state.userState.user);
 
-  
-const links: LinksType[] = [
+export const getProfileLinks = (user: User | null): LinksType[] => [
   { id: 0, url: '/profile/wallet', text: "Wallet" },
-  { id: 0, url: `/profile/view/${user?.id}`, text: "Profile" },
+  { id: 1, url: `/profile/view/${user?.id ?? ''}`, text: "Profile" },
   // { id: 0, url: '/profile/view/:id', text: "Men's Clothes" },
   // { id: 1, url: '/profile/edit', text: "Women's Clothes" },
   // { id: 3, url: '/profile/receipts', text: "Children's Clothes" },
@@ -24,31 +22,13 @@ const links: LinksType[] = [
   // { id: 7, url: '/categories/trinkets', text: 'Trinkets' },
   // { id: 8, url: '/categories/airstrikes', text: 'Air Strikes' },
 ];
+
+const ProfileSidebar = ({user}: {user: User}) => {
+  const links = getProfileLinks(user);
   return (
     <div>
       {links.map((link) => {
         const { id, url, text } = link;
-        // if (
-        //   (url === 'home' ||
-        //     url === 'products' ||
-        //     url === 'searchbar' ||
-        //     url === 'profile' ||
-        //     url === 'cart')  &&
-        //   (!user || user.user_role === 'admin')
-        // )
-        //   return null;
-
-        // if (
-        //   (url === 'admin' ||
-        //     url === 'admin/transactions')
-        //     // &&
-        //   // (!user || user.user_role !== 'admin')
-        // )
-        //   return null;
-
-        // Hide "About Us" when user is logged in\
-        // if (url === 'about' && user) return null;
-        // if (url === 'about') return null;
         return (
           <li key={id} className="li font-secondary text-black">
             <NavLink to={url} className="capitalize">
