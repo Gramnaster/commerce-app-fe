@@ -12,10 +12,21 @@ export default defineConfig({
     }),
     tailwindcss(),
   ],
+  	preview: {
+		port: 5173,
+		host: true,    // This enables listening on all network interfaces
+	},
   server: {
+    host: true,
+    port: 5173,
     proxy: {
-      // '/api': 'http://localhost:3001',
-      '/api': 'https://commerce-app-db.onrender.com/',
+      '/api': {
+        target: process.env.VITE_BACKEND_URL || 'http://localhost:3001',
+        changeOrigin: true,
+        secure: false,
+        timeout: 10000,
+      },
     },
   },
+  
 })
