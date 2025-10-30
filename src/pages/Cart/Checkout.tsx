@@ -1,11 +1,74 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import type { RootState } from '../../store';
 import CheckoutAddressForm from './CheckoutAddressForm';
 import CheckoutSummary from './CheckoutSummary';
+import { toast } from 'react-toastify';
+import { customFetch } from '../../utils';
+
+interface Address {
+  unit_no: string;
+  street_no: string;
+  address_line1: string;
+  address_line2: string;
+  city: string;
+  region: string;
+  barangay: string;
+  zipcode: string;
+  country_id: string;
+}
+
+export interface SocialProgram {
+  id: number;
+  title: string;
+  description: string;
+  address: Address;
+}
+
+export interface Pagination {
+  current_page: number | null;
+  per_page: number | null;
+  total_entries: number | null;
+  total_pages: number | null;
+  next_page: number | null;
+  previous_page: number | null;
+}
+
+export interface SocialProgramResponse {
+  data: SocialProgram[];
+  pagination: Pagination;
+}
+
+export const loader = (queryClient: any) => async ({ params }: any) => {
+  const id = params.id;
+
+  const SocialProgramsQuery = {
+    queryKey: ['SocialProgramsDetails', id],
+    queryFn: async () => {
+      const response = await customFetch.get(`/social_programs`);
+      console.log(`Checkout SocialPrograms`, response.data)
+      return response.data;
+    },
+  };
+
+  try {
+    const [SocialPrograms] = await Promise.all([
+      queryClient.ensureQueryData(SocialProgramsQuery)
+    ]);
+    console.log('Checkout SocialPrograms :', SocialPrograms)
+    return { SocialPrograms };
+  } catch (error: any) {
+    console.error('Failed to load Category data:', error);
+    toast.error('Failed to load Category data');
+    return { allProductCategories: [] };
+  }
+};
 
 const Checkout = () => {
+  const { SocialPrograms } = useLoaderData() as {
+    SocialPrograms: SocialProgramResponse
+  };
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.userState.user);
   const { cartItems } = useSelector((state: RootState) => state.cartState);
@@ -93,6 +156,7 @@ const Checkout = () => {
           <CheckoutSummary
             userAddressId={userAddressId}
             onOrderComplete={handleOrderComplete}
+            SocialPrograms={SocialPrograms}
           />
         </div>
       </div>

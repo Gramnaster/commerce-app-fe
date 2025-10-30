@@ -21,12 +21,12 @@ interface CategoriesLinks {
 const categoriesLinks: CategoriesLinks[] = [
   { id: 0, url: '/products/categories/1', image: SmallCategoryMenClothes },
   { id: 1, url: '/products/categories/2', image: SmallCategoryWomenClothes },
-  { id: 3, url: '/products/categories/children', image: SmallCategoryChildrenClothes },
-  { id: 4, url: '/products/categories/3', image: SmallCategoryJewellery },
-  { id: 5, url: '/products/categories/4', image: SmallCategoryElectronics },
-  { id: 6, url: '/products/categories/snacks', image: SmallCategorySnacks },
-  { id: 7, url: '/products/categories/trinkets', image: SmallCategoryTrinkets },
-  { id: 8, url: '/products/categories/airstrikes', image: SmallCategoryAirstrikes },
+  { id: 3, url: '/products/categories/3', image: SmallCategoryChildrenClothes },
+  { id: 4, url: '/products/categories/4', image: SmallCategoryJewellery },
+  { id: 5, url: '/products/categories/5', image: SmallCategoryElectronics },
+  { id: 6, url: '/products/categories/6', image: SmallCategorySnacks },
+  { id: 7, url: '/products/categories/7', image: SmallCategoryTrinkets },
+  { id: 8, url: '/products/categories/8', image: SmallCategoryAirstrikes },
 ];
 
 const PopularCategories = () => {

@@ -5,13 +5,19 @@ import { socialPrograms } from '../../assets/data/socialPrograms';
 import { customFetch } from '../../utils';
 import { toast } from 'react-toastify';
 import { clearCart } from '../../features/cart/cartSlice';
+import type { SocialProgramResponse, SocialProgram } from './Checkout';
 
 interface CheckoutSummaryProps {
   userAddressId: number | null;
   onOrderComplete: () => void;
+  SocialPrograms: SocialProgramResponse;
 }
 
-const CheckoutSummary = ({ userAddressId, onOrderComplete }: CheckoutSummaryProps) => {
+const CheckoutSummary = ({
+  userAddressId,
+  onOrderComplete,
+  SocialPrograms,
+}: CheckoutSummaryProps) => {
   const dispatch = useDispatch();
   const { cartItems, cartTotal } = useSelector(
     (state: RootState) => state.cartState
@@ -134,7 +140,7 @@ const CheckoutSummary = ({ userAddressId, onOrderComplete }: CheckoutSummaryProp
           onChange={(e) => setSelectedProgram(e.target.value)}
         >
           <option value="">Select a program (optional)</option>
-          {socialPrograms.map((program) => (
+          {SocialPrograms.data.map((program: SocialProgram) => (
             <option key={program.id} value={program.id}>
               {program.title}
             </option>

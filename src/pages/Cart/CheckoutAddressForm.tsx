@@ -9,6 +9,7 @@ export interface AddressFormData {
   address_line2: string;
   city: string;
   region: string;
+  barangay: string;
   zipcode: string;
   country_id: string;
 }
@@ -28,6 +29,7 @@ const CheckoutAddressForm = ({ onAddressSaved, userEmail, userId }: CheckoutAddr
     address_line2: '',
     city: '',
     region: '',
+    barangay: '',
     zipcode: '',
     country_id: '1', // Default to Philippines
   });
@@ -164,7 +166,7 @@ const CheckoutAddressForm = ({ onAddressSaved, userEmail, userId }: CheckoutAddr
           />
         </div>
 
-        {/* Region & Zipcode */}
+        {/* Region */}
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div className="form-control">
             <label className="label">
@@ -178,7 +180,24 @@ const CheckoutAddressForm = ({ onAddressSaved, userEmail, userId }: CheckoutAddr
               className="input input-bordered w-full text-base-content"
               placeholder="Metro Manila"
             />
-          </div>
+            <div className="form-control mt-4">
+              <label className="label">
+                <span className="label-text text-base-content">Barangay</span>
+              </label>
+              <input
+                type="text"
+                name="barangay"
+                value={formData.barangay}
+                onChange={handleChange}
+                className="input input-bordered w-full text-base-content"
+                placeholder="e.g. Barangay Uno Dos Tres"
+              />
+            </div>
+        </div>
+
+
+          
+        {/* Zipcode */}
           <div className="form-control">
             <label className="label">
               <span className="label-text text-base-content">Postal Code</span>
