@@ -1,9 +1,8 @@
 import axios from "axios";
 
-// Use proxy in development, full URL in production
-const isDevelopment = import.meta.env.DEV;
-const productionUrl = import.meta.env.VITE_API_URL;
-const baseURL = isDevelopment ? '/api/v1' : productionUrl;
+// Always use direct URL - Vite proxy doesn't work well with HTTPS (ngrok)
+// Browser can handle HTTPS directly, and CORS is already configured
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1';
 
 // const url = import.meta.env.VITE_API_URL;
 
@@ -14,18 +13,20 @@ export const customFetch = axios.create({
 console.log('API Base URL:', baseURL);
 
 customFetch.defaults.headers.common['Accept'] = 'application/json';
+customFetch.defaults.headers.common['ngrok-skip-browser-warning'] = 'true';
 // Don't set Content-Type globally - let axios set it based on request data (JSON or FormData)
 // customFetch.defaults.headers.common['Content-Type'] = 'application/json';
 
 customFetch.interceptors.request.use(
   (config) => {
+    console.log(`REQUEST: ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`);
     const userString = localStorage.getItem('user');
     if (userString) {
       try {
         const user = JSON.parse(userString);
         if (user && user.token) {
           config.headers['Authorization'] = user.token;
-          console.log('Interceptor: Added Authorization header via proxy');
+          console.log('Interceptor: Added Authorization header');
         }
       } catch (error) {
         console.error('Error parsing user from localStorage:', error);
@@ -34,6 +35,26 @@ customFetch.interceptors.request.use(
     return config;
   },
   (error) => {
+    console.error('REQUEST ERROR:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor to log all responses
+customFetch.interceptors.response.use(
+  (response) => {
+    console.log(`RESPONSE: ${response.config.method?.toUpperCase()} ${response.config.url}`, {
+      status: response.status,
+      data: response.data
+    });
+    return response;
+  },
+  (error) => {
+    console.error(`RESPONSE ERROR: ${error.config?.method?.toUpperCase()} ${error.config?.url}`, {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message
+    });
     return Promise.reject(error);
   }
 );

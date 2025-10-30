@@ -5,7 +5,10 @@ import { NavLink } from 'react-router-dom';
 import { IconLineWhite } from '../../assets/images';
 
 const fetchProducts = async () => {
+  console.log('NewProducts: Starting fetch');
   const response = await customFetch.get('/products/top_newest');
+  console.log('NewProducts: Response received:', response);
+  console.log('NewProducts: Returning data:', response.data.data);
   return response.data.data;
 };
 
