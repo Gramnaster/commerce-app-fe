@@ -1,6 +1,7 @@
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
 import { NavLink, useLoaderData, useOutletContext } from "react-router-dom";
+import type Products from "./Products";
 
 export interface ProductCategory {
   id: number;
@@ -22,7 +23,7 @@ export interface Product {
   final_price: string;
   discount_percentage: number;
   discount_amount_dollars: string;
-  promotion_id: boolean;
+  promotion: boolean | null;
   product_image_url: string;
   updated_at: Date;
 }
@@ -62,16 +63,16 @@ const ProductsAll = () => {
   const { filters } = useOutletContext<{ filters: { search: string; category: string | null; discountsOnly: boolean } }>();
 
   const filteredProducts = allProducts.data
-    .filter(p => !filters.category || p.product_category.title === filters.category)
-    .filter(p => !filters.discountsOnly || p.promotion !== null)
-    .filter(p => p.title.toLowerCase().includes(filters.search.toLowerCase()));
+    .filter((p: Product) => !filters.category || p.product_category.title === filters.category)
+    .filter((p: Product) => !filters.discountsOnly || p.promotion !== null)
+    .filter((p: Product) => p.title.toLowerCase().includes(filters.search.toLowerCase()));
   
   console.log(`ProductsAll allProducts`, allProducts)
 
   return (
     <div className="grid grid-cols-[1fr_1fr_1fr] gap-[20px] h-full grid-flow-row-dense align-element">
       {filteredProducts.map((product: Product) => {
-        const {id, title, price, discount_percentage, product_image_url, product_category: { title: category_title }, promotion_id} = product
+        const {id, title, price, discount_percentage, product_image_url, product_category: { title: category_title }, promotion} = product
         return (
           <div key={id} className="font-secondary text-center ">
             <NavLink to={`/products/${id}`}>
@@ -87,13 +88,12 @@ const ProductsAll = () => {
               </div>
               <div className="font-secondary text-base font-extralight text-black">
                 PHP {price}
-                {promotion_id && discount_percentage && (
+                {promotion && discount_percentage && (
                   <span className="ml-2 text-green-600 font-semibold">
                     ({discount_percentage}%)
                   </span>
                 )}
               </div>
-              {/* <div>{!promotion_id ? 'No active promotions' : ''}</div> */}
             </NavLink>
           </div>
         )

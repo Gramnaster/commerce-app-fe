@@ -78,7 +78,6 @@ const CartTotals = ({ cartItems }: CartTotalsProps) => {
               ))}
             </select>
           </div>
-
           {selectedProgram && (
             <div className="form-control mt-2">
               <label className="label">
