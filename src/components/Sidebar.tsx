@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { useMatch } from "react-router-dom";
 
 
 interface ProductCategory {
@@ -16,12 +16,18 @@ interface SidebarProps {
 const Sidebar = ({ categoryData, filters, setFilters }: SidebarProps) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchWord, setSearchWord] = useState('');
+  
+  // Check if we're on a product detail page like '/products/123'
+  // useMatch checks if route matches a pattern
+  const isProductDetailPage = useMatch('/products/:id');
 
   return (
     <div className="h-full">
       <div className="h-[468px] border-r border-[#808080] ">
-        <div className="rounded-lg p-6">
-          <div className="flex items-center justify-end gap-4">
+        <div className="rounded-lg">
+          <div className="flex items-centergap-4">
+            {/* Search Options - Only show on category pages, not product detail pages */}
+            {!isProductDetailPage && (
             <div className="">
               <div className="flex-1 relative font-bold flex flex-col justify-end items-end">
                 <select
@@ -73,6 +79,7 @@ const Sidebar = ({ categoryData, filters, setFilters }: SidebarProps) => {
                 </div>
               </div>
             </div>
+            )}
             {/* <button className="p-3 bg-[#924b43] hover:bg-[#743b35] border border-[#75332d] rounded-lg hover:cursor-pointer transition-colors">
               <svg
                 className="w-5 h-5"
@@ -91,12 +98,12 @@ const Sidebar = ({ categoryData, filters, setFilters }: SidebarProps) => {
           </div>
         </div>
         <div className='font-bold flex flex-col justify-end items-end mr-4 text-black'>
-          <div>Categories</div>
-          <button onClick={() => setFilters((prev) => ({ ...prev, category: null }))} className='m-1 rounded-2xl hover:cursor-pointer font-semibold hover:underline'>All</button>
+          <h3 className="font-primary font-light text-[24px]">Categories</h3>
+          <button onClick={() => setFilters((prev) => ({ ...prev, category: null }))} className='m-1 rounded-2xl hover:cursor-pointer font-bold hover:underline text-[16px]'>All</button>
           {categoryData.map((category: ProductCategory) => {
             const { id, title } = category;
             return (
-              <button onClick={() => setFilters((prev) => ({ ...prev, category: title }))} className='m-1 rounded-2xl hover:cursor-pointer hover:underline capitalize' key={id}>{title}</button>
+              <button onClick={() => setFilters((prev) => ({ ...prev, category: title }))} className='m-1 rounded-2xl hover:cursor-pointer hover:underline capitalize font-secondary font-light text-[16px]' key={id}>{title}</button>
             )
           })}
         </div>

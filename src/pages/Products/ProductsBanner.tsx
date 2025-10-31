@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useMatch } from 'react-router-dom';
 import {
   MainCategoryMenClothes,
   MainCategoryWomenClothes,
@@ -12,14 +12,23 @@ import {
 } from '../../assets/images';
 import { useEffect, useState } from 'react';
 
-interface featuredImage {
-  id: number;
-  url: string;
-}
+// interface featuredImage {
+//   id: number;
+//   url: string;
+// }
 
 const ProductsBanner = () => {
   const [ banner, setBanner ] = useState('')
   const currentPath = useLocation();
+  
+  // Check if we're on a product detail page like '/products/123'
+  // useMatch checks if route matches a pattern
+  const isProductDetailPage = useMatch('/products/:id');
+
+    // Don't render banner on product detail pages as per Figma design
+  if (isProductDetailPage) {
+    return null;
+  }
 
   const theHulk = () => {
     if (currentPath.pathname === '/products/categories/1') {

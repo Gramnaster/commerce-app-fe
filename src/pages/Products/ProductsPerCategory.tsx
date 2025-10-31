@@ -1,11 +1,16 @@
-import { NavLink, redirect, useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
+import { NavLink, redirect, useLoaderData, useOutletContext } from "react-router-dom";
 import { customFetch } from "../../utils";
 import { toast } from "react-toastify";
-import type { ProductCategory, Product, Producer } from "./Products";
+import type { ProductCategory, Product } from "./Products";
 
-export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
-  const storeState = store.getState();
+// Type for the category details response from the API
+interface CategoryDetailsResponse {
+  data: ProductCategory & {
+    products: Product[];
+  };
+}
 
+export const loader = (queryClient: any) => async ({ params }: any) => {
   const id = params.id;
 
   const CategoryViewQuery = {
@@ -18,7 +23,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
   try {
     const CategoryDetails = await queryClient.ensureQueryData(CategoryViewQuery);
-  console.log(`ProductsPerCategory CategoryDetails`, CategoryDetails.data)
+    console.log(`ProductsPerCategory CategoryDetails`, CategoryDetails.data)
     return { CategoryDetails };
   } catch (error: any) {
     console.error('Failed to load category details:', error);
@@ -29,11 +34,10 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
 const ProductsPerCategory = () => {
   const { CategoryDetails } = useLoaderData() as {
-    CategoryDetails: ProductCategory;
+    CategoryDetails: CategoryDetailsResponse;
   }
   const { filters } = useOutletContext<{ filters: { search: string; category: string | null; discountsOnly: boolean } }>();
-  const navigate = useNavigate();
-  const { products, } = CategoryDetails.data;
+  const { products } = CategoryDetails.data;
   
   const filteredProducts = products
     .filter(p => !filters.category || p.product_category.title === filters.category)
