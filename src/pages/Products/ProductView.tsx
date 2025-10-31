@@ -6,29 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from '../../features/cart/cartSlice';
 import type { RootState } from '../../store';
 import { LoginCartModal } from '../../components';
-
-interface ProductCategory {
-  id: number;
-  title: string;
-}
-
-interface Producer {
-  id: number;
-  title: string;
-}
-
-interface Product {
-  id: number;
-  title: string;
-  product_category: ProductCategory;
-  producer: Producer;
-  description: string;
-  price: number;
-  promotion_id: boolean;
-  product_image_url: string;
-  discount_percentage?: number;
-  final_price?: number;
-}
+import type { Product } from './Products';
 
 export const loader =  (queryClient: any, store: any) =>  async ({ params }: any) => {
     const id = params.id;
@@ -93,7 +71,7 @@ const ProductView = () => {
       productID: product.id,
       image: product.product_image_url,
       title: product.title,
-      price: product.final_price || product.price,
+      price: typeof product.final_price === 'string' ? parseFloat(product.final_price) : product.price,
       amount,
       productCategory: product.product_category.title,
       producer: product.producer.title,
