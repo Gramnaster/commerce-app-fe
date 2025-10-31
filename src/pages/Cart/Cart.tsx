@@ -10,7 +10,8 @@ import {
 import CartItemsList from './CartItemsList';
 import CartTotals from './CartTotals';
 import { IconLineDark, IconLineWhite } from '../../assets/images';
-import { useNavigate } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
+import type { SocialProgramResponse } from './Checkout'
 
 export interface Product {
   id: number;
@@ -28,9 +29,39 @@ export interface CartItem {
   updated_at: string;
 }
 
+export const loader = (queryClient: any) => async ({ params }: any) => {
+  const id = params.id;
+
+  const SocialProgramsQuery = {
+    queryKey: ['SocialProgramsDetails', id],
+    queryFn: async () => {
+      const response = await customFetch.get(`/social_programs`);
+      console.log(`Checkout SocialPrograms`, response.data)
+      return response.data;
+    },
+  };
+
+  try {
+    const [SocialPrograms] = await Promise.all([
+      queryClient.ensureQueryData(SocialProgramsQuery)
+    ]);
+    console.log('Checkout SocialPrograms :', SocialPrograms)
+    return { SocialPrograms };
+  } catch (error: any) {
+    console.error('Failed to load Category data:', error);
+    toast.error('Failed to load Category data');
+    return { allSocialPrograms: [] };
+  }
+};
+
 const Cart = () => {
+  const { SocialPrograms } = useLoaderData() as {
+    SocialPrograms: SocialProgramResponse
+  };
+
   const user = useSelector((state: RootState) => state.userState.user);
   const dispatch = useDispatch();
+  const [ socialProgram, setSocialProgram ] = useState<number>(0);
 
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -255,7 +286,7 @@ const Cart = () => {
           />
         )}
         
-        <CartTotals cartItems={cartItems} />
+        <CartTotals cartItems={cartItems} SocialProgramValue={socialProgram} setSocialProgram={setSocialProgram} SocialPrograms={SocialPrograms} />
       </div>
     </div>
   );

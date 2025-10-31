@@ -96,7 +96,7 @@ const FeaturedSocials = () => {
         })}
       </div>
       <div className='align-social text-center pb-[100px]'>
-        <NavLink to="/socials" >
+        <NavLink to="/social_programs" >
           <h3 className="font-secondary text-base-content font-normal text-base underline ">
             and dozens of other social partners here...
           </h3>

@@ -15,3 +15,5 @@ export { default as ProductsPerCategory } from './Products/ProductsPerCategory';
 export { default as ProductView } from './Products/ProductView';
 export { default as Dashboard } from './Dashboard/Dashboard';
 export { default as Wallet } from './Wallet/Wallet';
+export { default as SocialPrograms } from './SocialPrograms/SocialPrograms';
+export { default as SocialProgramView } from './SocialPrograms/SocialProgramView';
