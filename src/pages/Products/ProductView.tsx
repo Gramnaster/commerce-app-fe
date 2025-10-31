@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from '../../features/cart/cartSlice';
 import type { RootState } from '../../store';
+import { LoginCartModal } from '../../components';
 
 interface ProductCategory {
   id: number;
@@ -79,6 +80,13 @@ const ProductView = () => {
   };
 
   const addToCart = async () => {
+    // If user is not logged in, open modal instead
+    if (!user) {
+      const modal = document.getElementById('login_cart_modal') as HTMLDialogElement;
+      modal?.showModal();
+      return;
+    }
+
     // Create cart product object with unique cartID
     const cartProduct = {
       cartID: product.id + product.title,
@@ -162,6 +170,10 @@ const ProductView = () => {
           Add to Cart
         </button>
       </div>
+
+      {/* CART MODAL IF NOT LOGGED IN */}
+      {/* If User !Login, Open Modal */}
+      <LoginCartModal />
     </div>
   );
 };

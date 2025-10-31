@@ -4,7 +4,6 @@ import { customFetch } from '../../utils';
 import Sidebar from '../../components/Sidebar';
 import ProductsBanner from './ProductsBanner';
 import { useState } from 'react';
-
 export interface ProductCategory {
   id: number;
   title: string;
@@ -68,10 +67,10 @@ const Products = () => {
 
   return (
     <div>
-      <div className='mb-20'>
+      <div className='mb-25'>
       <ProductsBanner />
       </div>
-      <div className='align-element grid grid-cols-[0.25fr_1fr] grid-rows-1 gap-0'>
+      <div className='align-element grid grid-cols-[0.25fr_1fr] grid-rows-1 gap-6'>
         <Sidebar categoryData={ProductCategories.data} filters={filters} setFilters={setFilters}  />
         <div>
           <Outlet context={{ filters, setFilters }} />
