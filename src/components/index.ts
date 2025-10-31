@@ -7,4 +7,5 @@ export { default as Loading } from './Loading';
 export { default as Footer } from './Footer';
 export { default as FooterCTA } from './FooterCTA';
 export { default as CartModal } from './CartModal';
+export { default as LoginCartModal } from './NotLoggedInCartModal';
 // export { default as FeaturedProducts } from './FeaturedProducts';

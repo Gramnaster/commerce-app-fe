@@ -5,29 +5,8 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from '../../features/cart/cartSlice';
 import type { RootState } from '../../store';
-
-interface ProductCategory {
-  id: number;
-  title: string;
-}
-
-interface Producer {
-  id: number;
-  title: string;
-}
-
-interface Product {
-  id: number;
-  title: string;
-  product_category: ProductCategory;
-  producer: Producer;
-  description: string;
-  price: number;
-  promotion_id: boolean;
-  product_image_url: string;
-  discount_percentage?: number;
-  final_price?: number;
-}
+import { LoginCartModal } from '../../components';
+import type { Product } from './Products';
 
 export const loader =  (queryClient: any, store: any) =>  async ({ params }: any) => {
     const id = params.id;
@@ -62,30 +41,29 @@ const ProductView = () => {
   const product = ProductDetails.data;
   const [amount, setAmount] = useState(1);
 
-  // Generate amount options for the select dropdown
-  const generateAmountOptions = (number: number) => {
-    return Array.from({ length: number }, (_, index) => {
-      const amount = index + 1;
-      return (
-        <option key={amount} value={amount}>
-          {amount}
-        </option>
-      );
-    });
+  const handleIncrement = () => {
+    setAmount((prev) => prev + 1);
   };
 
-  const handleAmount = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setAmount(parseInt(e.target.value));
+  const handleDecrement = () => {
+    setAmount((prev) => (prev > 1 ? prev - 1 : 1));
   };
 
   const addToCart = async () => {
+    // If user is not logged in, open modal instead
+    if (!user) {
+      const modal = document.getElementById('login_cart_modal') as HTMLDialogElement;
+      modal?.showModal();
+      return;
+    }
+
     // Create cart product object with unique cartID
     const cartProduct = {
       cartID: product.id + product.title,
       productID: product.id,
       image: product.product_image_url,
       title: product.title,
-      price: product.final_price || product.price,
+      price: typeof product.final_price === 'string' ? parseFloat(product.final_price) : product.price,
       amount,
       productCategory: product.product_category.title,
       producer: product.producer.title,
@@ -146,14 +124,25 @@ const ProductView = () => {
             Quantity:
           </h4>
         </label>
-        <select
-          className="select select-secondary select-bordered select-md"
-          id="amount"
-          value={amount}
-          onChange={handleAmount}
-        >
-          {generateAmountOptions(20)}
-        </select>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleDecrement}
+            className="btn btn-square bg-[#4d4d4d] text-white text-2xl hover:bg-[#3d3d3d] h-[22px] w-[22px]"
+          >
+            −
+          </button>
+          <div className="border-2 bg-white border-gray-400 rounded-lg px-6 py-1 text-center min-w-[100px] text-xl font-medium">
+            {amount}x
+          </div>
+          <button
+            type="button"
+            onClick={handleIncrement}
+            className="btn btn-square bg-[#4d4d4d] text-white text-2xl hover:bg-[#3d3d3d]"
+          >
+            +
+          </button>
+        </div>
       </div>
 
       {/* CART BTN */}
@@ -162,6 +151,10 @@ const ProductView = () => {
           Add to Cart
         </button>
       </div>
+
+      {/* CART MODAL IF NOT LOGGED IN */}
+      {/* If User !Login, Open Modal */}
+      <LoginCartModal />
     </div>
   );
 };
