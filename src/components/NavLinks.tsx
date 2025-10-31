@@ -11,9 +11,9 @@ interface LinksType {
 const links: LinksType[] = [
   { id: 0, url: '/products/categories/1', text: "Men's Clothes" },
   { id: 1, url: '/products/categories/2', text: "Women's Clothes" },
-  { id: 3, url: '/products/categories/5', text: "Children's Clothes" },
-  { id: 4, url: '/products/categories/3', text: 'Jewellery' },
-  { id: 5, url: '/products/categories/4', text: 'Electronics' },
+  { id: 3, url: '/products/categories/3', text: "Children's Clothes" },
+  { id: 4, url: '/products/categories/4', text: 'Jewellery' },
+  { id: 5, url: '/products/categories/5', text: 'Electronics' },
   { id: 6, url: '/products/categories/6', text: 'Snacks' },
   { id: 7, url: '/products/categories/7', text: 'Trinkets' },
   { id: 8, url: '/products/categories/8', text: 'Air Strikes' },

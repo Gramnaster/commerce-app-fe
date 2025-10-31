@@ -2,9 +2,13 @@ import { useLocation } from 'react-router-dom';
 import {
   MainCategoryMenClothes,
   MainCategoryWomenClothes,
+  MainCategoryChildrenClothes,
   MainCategoryJewellery,
   MainCategoryElectronics,
-  MainCategorySnacks
+  MainCategorySnacks,
+  MainCategoryTrinkets,
+  MainCategoryAirstrikes,
+  FeaturedProduct05
 } from '../../assets/images';
 import { useEffect, useState } from 'react';
 
@@ -23,11 +27,19 @@ const ProductsBanner = () => {
     } else if (currentPath.pathname === '/products/categories/2') {
       setBanner(MainCategoryWomenClothes)
     } else if (currentPath.pathname === '/products/categories/3') {
-      setBanner(MainCategoryJewellery)
+      setBanner(MainCategoryChildrenClothes)
     } else if (currentPath.pathname === '/products/categories/4') {
+      setBanner(MainCategoryJewellery)
+    } else if (currentPath.pathname === '/products/categories/5') {
       setBanner(MainCategoryElectronics)
-    } else {
+    } else if (currentPath.pathname === '/products/categories/6') {
       setBanner(MainCategorySnacks)
+    } else if (currentPath.pathname === '/products/categories/7') {
+      setBanner(MainCategoryTrinkets)
+    } else if (currentPath.pathname === '/products/categories/8') {
+      setBanner(MainCategoryAirstrikes)
+    }  else {
+      setBanner(FeaturedProduct05)
     }
   }
 

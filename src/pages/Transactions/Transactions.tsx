@@ -32,6 +32,20 @@ interface Transaction {
   order: Order | null
 }
 
+export interface Pagination {
+  current_page: number | null;
+  per_page: number | null;
+  total_entries: number | null;
+  total_pages: number | null;
+  next_page: number | null;
+  previous_page: number | null;
+}
+
+interface TransactionResponse {
+  data: Transaction[];
+  pagination: Pagination;
+}
+
 export const loader = (queryClient: any) => async ({ params }: any) => {
   const storeState = store.getState();
   const user = storeState.userState?.user;
@@ -65,7 +79,7 @@ export const loader = (queryClient: any) => async ({ params }: any) => {
 
 const Transactions = () => {
   const { TransactionReceipts } = useLoaderData() as { 
-    TransactionReceipts: Transaction[]; 
+    TransactionReceipts: TransactionResponse; 
   };
   console.log(`Transactions TransactionReceipts`, TransactionReceipts)
 
@@ -99,17 +113,6 @@ const Transactions = () => {
   };
 
   return (
-    // <div className='align-element text-black'>
-    //   {TransactionReceipts.map((tx: Transaction) => {
-    //     const { id, transaction_type, balance_before, balance_after, description, created_at, user: { email }, order: { id: order_id, cart_status, is_paid, total_cost, items_count, total_quantity } }
-    //     return (
-    //       <div key={id}>
-
-    //       </div>
-    //     )
-    //   })}
-    // </div>
-    
     <div className="min-h-screen bg-base-100 text-base-content p-6 align-element">
       <div className="max-w-7xl mx-auto">
         <div className="bg-transparent rounded-lg border border-gray-700">
@@ -147,8 +150,8 @@ const Transactions = () => {
                 </tr>
               </thead>
               <tbody>
-                {TransactionReceipts.length > 0 ? (
-                  TransactionReceipts.map((transaction: Transaction, index: number) => (
+                {TransactionReceipts && TransactionReceipts.data.length > 0 ? (
+                  TransactionReceipts.data.map((transaction: Transaction, index: number) => (
                     <tr 
                       key={transaction.id} 
                       className={`border-b border-gray-800 hover:bg-transparent transition-colors ${

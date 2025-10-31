@@ -17,7 +17,7 @@ interface FormInputType {
 
 const FormInput = ({ label, name, type = 'text', placeholder = '', as = 'input', options = [], inputRef, onBlur, error, ...rest }: FormInputType) => {
   // Use DaisyUI input-error for error state
-  const inputClass = `input font-secondary h-6 max-w-[375px] [.validated_&:invalid]:border-pink-600 w-full bg-[#001a33] text-white border border-gray-600 ${error ? 'input-error border-error' : ''}`;
+  const inputClass = `input font-secondary h-6 max-w-[375px] w-full bg-[#001a33] text-white border border-gray-600 ${error ? 'input-error border-error [.validated_&:invalid]:!border-pink-600' : ''}`;
   return (
     <fieldset className="fieldset my-1 ">
       <legend className="fieldset-legend text-white">{label}</legend>
