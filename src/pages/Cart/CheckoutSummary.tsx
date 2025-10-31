@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store';
-import { socialPrograms } from '../../assets/data/socialPrograms';
 import { customFetch } from '../../utils';
 import { toast } from 'react-toastify';
 import { clearCart } from '../../features/cart/cartSlice';
 import type { SocialProgramResponse, SocialProgram } from './Checkout';
+import { NavLink } from 'react-router-dom';
 
 interface CheckoutSummaryProps {
   userAddressId: number | null;
@@ -163,13 +163,9 @@ const CheckoutSummary = ({
           )})}
         </select>
         {selectedProgram ? (
-          // <div className="flex justify-between text-sm text-base-content mt-2">
-          //   <span>Donation Amount (8%)</span>
-          //   <span>PHP {donation.toFixed(2)}</span>
-          // </div>
           <div className="flex justify-between text-sm text-base-content mt-2">
             <div>About this program:</div>
-            <div>{programDescription}</div>
+            <div>{programDescription} <NavLink to={`/social_programs/${selectedProgram}`}>More about them here</NavLink></div>
           </div>
         ) : ''}
       </div>

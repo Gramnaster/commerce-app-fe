@@ -2,6 +2,7 @@ import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
 import { NavLink, useLoaderData, useOutletContext } from "react-router-dom";
 import type Products from "./Products";
+import type { Pagination } from "../Cart/Checkout";
 
 export interface ProductCategory {
   id: number;
@@ -26,6 +27,12 @@ export interface Product {
   promotion: boolean | null;
   product_image_url: string;
   updated_at: Date;
+}
+
+
+export interface ProductsResponse {
+  data: Product[];
+  pagination: Pagination;
 }
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
@@ -58,7 +65,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
 const ProductsAll = () => {
   const { allProducts } = useLoaderData() as {
-    allProducts: Product[]
+    allProducts: ProductsResponse
   };
   const { filters } = useOutletContext<{ filters: { search: string; category: string | null; discountsOnly: boolean } }>();
 

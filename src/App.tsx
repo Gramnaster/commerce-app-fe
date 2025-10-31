@@ -19,13 +19,14 @@ import {
   ProfileEdit,
   ProductsAll,
   ProductsPerCategory,
-  Wallet
+  Wallet,
+  SocialPrograms,
+  SocialProgramView
 } from './pages/index.ts';
 import { store } from './store.ts';
 
 // import { loader as dashboardLoader } from './pages/Dashboard/Dashboard.tsx';
 
-import { action as loginAction } from './pages/Login/Login';
 import { action as registerAction } from './pages/Signup/Signup';
 
 import { loader as productsLoader } from './pages/Products/Products.tsx';
@@ -45,6 +46,9 @@ import { loader as transactionViewLoader } from './pages/Transactions/Transactio
 
 import { loader as cartLoader } from './pages/Cart/Cart.tsx';
 import { loader as checkoutLoader } from './pages/Cart/Checkout.tsx';
+
+import { loader as socialProgramLoader } from './pages/SocialPrograms/SocialPrograms.tsx';
+import { loader as socialProgramViewLoader } from './pages/SocialPrograms/SocialProgramView.tsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -89,6 +93,16 @@ const router = createBrowserRouter([
             loader: productViewloader(queryClient, store),
           },
         ],
+      },
+      {
+        path: 'social_programs',
+        element: <SocialPrograms />,
+        loader: socialProgramLoader(queryClient),
+      },
+      {
+        path: 'social_programs/:id',
+        element: <SocialProgramView />,
+        loader: socialProgramViewLoader(queryClient),
       },
       {
         path: 'profile',
@@ -138,12 +152,6 @@ const router = createBrowserRouter([
         loader: checkoutLoader(queryClient)
       },
     ],
-  },
-  {
-    path: '/login',
-    element: <Login />,
-    errorElement: <Error />,
-    action: loginAction(store),
   },
   {
     path: '/signup',

@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import type { CartItem } from './Cart';
 import { socialPrograms } from '../../assets/data/socialPrograms';
-import type { SocialProgramResponse } from './Checkout'
+import type { SocialProgram, SocialProgramResponse } from './Checkout'
 
 interface CartTotalsProps {
   cartItems: CartItem[];
@@ -13,6 +13,7 @@ interface CartTotalsProps {
 
 const CartTotals = ({ cartItems, setSocialProgram, SocialPrograms, SocialProgramValue }: CartTotalsProps) => {
   const navigate = useNavigate();
+  const [programDescription, setProgramDescription] = useState('')
   // const [selectedProgram, setSelectedProgram] = useState<string>('');
 
   // Calculate totals
@@ -72,7 +73,12 @@ const CartTotals = ({ cartItems, setSocialProgram, SocialPrograms, SocialProgram
             <select
               className="select select-bordered select-sm text-base-content"
               value={SocialProgramValue}
-              onChange={(e) => setSocialProgram(e.target.value)}
+              onChange={(e) => {
+                const id = Number(e.target.value);
+                setSocialProgram(id);
+                const selected = SocialPrograms.data.find((p: SocialProgram) => p.id === id);
+                setProgramDescription(selected ? selected.description : '')
+              } }
             >
               <option value="">Select a program</option>
               {SocialPrograms.data.map((program) => (
@@ -82,21 +88,12 @@ const CartTotals = ({ cartItems, setSocialProgram, SocialPrograms, SocialProgram
               ))}
             </select>
           </div>
-          {SocialPrograms && (
-            <div className="form-control mt-2">
-              <label className="label">
-                <span className="label-text text-sm text-base-content">
-                  Donation Amount (8%)
-                </span>
-              </label>
-              <input
-                type="text"
-                className="input input-bordered input-sm text-base-content"
-                value={`PHP ${donation.toFixed(2)}`}
-                readOnly
-              />
-            </div>
-          )}
+        {SocialProgramValue ? (
+          <div className="flex justify-between text-sm text-base-content mt-2">
+            <div>About this program:</div>
+            <div>{programDescription} <NavLink to={`/social_programs/${SocialProgramValue}`}>More about them here</NavLink></div>
+          </div>
+        ) : ''}
 
           <div className="divider my-2"></div>
 
