@@ -25,11 +25,6 @@ const ProductsBanner = () => {
   // useMatch checks if route matches a pattern
   const isProductDetailPage = useMatch('/products/:id');
 
-    // Don't render banner on product detail pages as per Figma design
-  if (isProductDetailPage) {
-    return null;
-  }
-
   const theHulk = () => {
     if (currentPath.pathname === '/products/categories/1') {
       setBanner(MainCategoryMenClothes)
@@ -56,6 +51,11 @@ const ProductsBanner = () => {
     theHulk()
       }
     );
+
+  // Don't render banner on product detail pages as per Figma design
+  if (isProductDetailPage) {
+    return null;
+  }
 
   return (
     <div className="w-full">
