@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useLoaderData, useNavigate } from 'react-router-dom';
+import { useLoaderData, useLocation, useNavigate } from 'react-router-dom';
 import type { RootState } from '../../store';
 import CheckoutAddressForm from './CheckoutAddressForm';
 import CheckoutSummary from './CheckoutSummary';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 
-interface Address {
+export interface Address {
   unit_no: string;
   street_no: string;
   address_line1: string;
@@ -59,9 +59,9 @@ export const loader = (queryClient: any) => async ({ params }: any) => {
     console.log('Checkout SocialPrograms :', SocialPrograms)
     return { SocialPrograms };
   } catch (error: any) {
-    console.error('Failed to load Category data:', error);
-    toast.error('Failed to load Category data');
-    return { allProductCategories: [] };
+    console.error('Failed to load Social Programs data:', error);
+    toast.error('Failed to load Social Programs data');
+    return { allPSocialPrograms: [] };
   }
 };
 
@@ -69,6 +69,10 @@ const Checkout = () => {
   const { SocialPrograms } = useLoaderData() as {
     SocialPrograms: SocialProgramResponse
   };
+  const location = useLocation();
+  const sp_id = location.state?.sp_id
+  console.log(`Checkout sp_id`, sp_id)
+
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.userState.user);
   const { cartItems } = useSelector((state: RootState) => state.cartState);
@@ -157,6 +161,7 @@ const Checkout = () => {
             userAddressId={userAddressId}
             onOrderComplete={handleOrderComplete}
             SocialPrograms={SocialPrograms}
+            selectedSP={sp_id}
           />
         </div>
       </div>

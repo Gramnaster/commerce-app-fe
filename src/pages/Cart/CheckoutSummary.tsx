@@ -11,18 +11,22 @@ interface CheckoutSummaryProps {
   userAddressId: number | null;
   onOrderComplete: () => void;
   SocialPrograms: SocialProgramResponse;
+  selectedSP: number;
 }
 
 const CheckoutSummary = ({
   userAddressId,
   onOrderComplete,
   SocialPrograms,
+  selectedSP
 }: CheckoutSummaryProps) => {
   const dispatch = useDispatch();
   const { cartItems, cartTotal } = useSelector(
     (state: RootState) => state.cartState
   );
-  const [selectedProgram, setSelectedProgram] = useState<string>('');
+  console.log(`CheckoutSummary selectedSP`, selectedSP)
+  const [selectedProgram, setSelectedProgram] = useState<number>( selectedSP || 0);
+  const [programDescription, setProgramDescription] = useState('')
   const [balance, setBalance] = useState<number>(0);
   const [loading, setLoading] = useState(false);
   const [processingPayment, setProcessingPayment] = useState(false);
@@ -68,6 +72,7 @@ const CheckoutSummary = ({
       await customFetch.post('/user_cart_orders', {
         user_cart_order: {
           user_address_id: userAddressId,
+          social_program_id: selectedProgram || null
         },
       });
 
@@ -136,22 +141,37 @@ const CheckoutSummary = ({
         </label>
         <select
           className="select select-bordered select-sm text-base-content"
-          value={selectedProgram}
-          onChange={(e) => setSelectedProgram(e.target.value)}
+          value={selectedProgram || selectedSP }
+          onChange={(e) => {           
+            const id = Number(e.target.value);
+            setSelectedProgram(id);
+            const selected = SocialPrograms.data.find((p: SocialProgram) => p.id === id);
+            setProgramDescription(selected ? selected.description : '');
+          }}
         >
-          <option value="">Select a program (optional)</option>
-          {SocialPrograms.data.map((program: SocialProgram) => (
-            <option key={program.id} value={program.id}>
-              {program.title}
-            </option>
-          ))}
+          {/* SocialPrograms.data.find((program: SocialProgram) => program.id === selectedSP
+          ) */}
+          <option value=''>
+            Select a program (optional)
+          </option>
+          {SocialPrograms.data.map((program: SocialProgram) => {
+            const { id, title } = program;
+            return (
+              <option key={id} value={id} >
+                {title}
+              </option>
+          )})}
         </select>
-        {selectedProgram && (
+        {selectedProgram ? (
+          // <div className="flex justify-between text-sm text-base-content mt-2">
+          //   <span>Donation Amount (8%)</span>
+          //   <span>PHP {donation.toFixed(2)}</span>
+          // </div>
           <div className="flex justify-between text-sm text-base-content mt-2">
-            <span>Donation Amount (8%)</span>
-            <span>PHP {donation.toFixed(2)}</span>
+            <div>About this program:</div>
+            <div>{programDescription}</div>
           </div>
-        )}
+        ) : ''}
       </div>
 
       <div className="divider my-2"></div>

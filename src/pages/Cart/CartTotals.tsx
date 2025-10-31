@@ -2,14 +2,18 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { CartItem } from './Cart';
 import { socialPrograms } from '../../assets/data/socialPrograms';
+import type { SocialProgramResponse } from './Checkout'
 
 interface CartTotalsProps {
   cartItems: CartItem[];
+  setSocialProgram: React.Dispatch<React.SetStateAction<number>>;
+  SocialPrograms: SocialProgramResponse;
+  SocialProgramValue: number;
 }
 
-const CartTotals = ({ cartItems }: CartTotalsProps) => {
+const CartTotals = ({ cartItems, setSocialProgram, SocialPrograms, SocialProgramValue }: CartTotalsProps) => {
   const navigate = useNavigate();
-  const [selectedProgram, setSelectedProgram] = useState<string>('');
+  // const [selectedProgram, setSelectedProgram] = useState<string>('');
 
   // Calculate totals
   const subtotal = cartItems.reduce(
@@ -18,7 +22,7 @@ const CartTotals = ({ cartItems }: CartTotalsProps) => {
   );
   const shipping = 85.11; // PHP shipping cost
   const gst = subtotal * 0.12; // 12% GST
-  const donation = selectedProgram ? subtotal * 0.08 : 0; // 8% donation if program selected
+  const donation = SocialProgramValue !== 0 ? subtotal * 0.08 : 0; // 8% donation if program selected
   const total = subtotal + shipping + gst + donation;
 
   return (
@@ -67,18 +71,18 @@ const CartTotals = ({ cartItems }: CartTotalsProps) => {
             </label>
             <select
               className="select select-bordered select-sm text-base-content"
-              value={selectedProgram}
-              onChange={(e) => setSelectedProgram(e.target.value)}
+              value={SocialProgramValue}
+              onChange={(e) => setSocialProgram(e.target.value)}
             >
               <option value="">Select a program</option>
-              {socialPrograms.map((program) => (
+              {SocialPrograms.data.map((program) => (
                 <option key={program.id} value={program.id}>
                   {program.title}
                 </option>
               ))}
             </select>
           </div>
-          {selectedProgram && (
+          {SocialPrograms && (
             <div className="form-control mt-2">
               <label className="label">
                 <span className="label-text text-sm text-base-content">
@@ -103,10 +107,13 @@ const CartTotals = ({ cartItems }: CartTotalsProps) => {
 
           <button 
             className="btn btn-primary btn-block mt-4"
-            onClick={() => navigate('/checkout')}
+            onClick={() => navigate('/checkout', {
+              state: {sp_id: SocialProgramValue}
+            })}
           >
             Proceed to Checkout
           </button>
+
 
           <button className="btn btn-outline btn-block mt-2">
             <img

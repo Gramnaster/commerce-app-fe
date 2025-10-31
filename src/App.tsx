@@ -43,6 +43,9 @@ import { loader as walletLoader } from './pages/Wallet/Wallet';
 import { loader as transactionLoader } from './pages/Transactions/Transactions.tsx';
 import { loader as transactionViewLoader } from './pages/Transactions/TransactionView.tsx';
 
+import { loader as cartLoader } from './pages/Cart/Cart.tsx';
+import { loader as checkoutLoader } from './pages/Cart/Checkout.tsx';
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -127,10 +130,12 @@ const router = createBrowserRouter([
       {
         path: 'cart',
         element: <Cart />,
+        loader: cartLoader(queryClient)
       },
       {
         path: 'checkout',
         element: <Checkout />,
+        loader: checkoutLoader(queryClient)
       },
     ],
   },
