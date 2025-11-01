@@ -73,7 +73,7 @@ const ProductsPerCategory = () => {
   };
   
   const filteredProducts = products
-    .filter(p => !filters.discountsOnly || p.promotion_id !== null)
+    .filter(p => !filters.discountsOnly || (p.promotion_id && p.discount_percentage > 0))
     .filter(p => p.title.toLowerCase().includes(filters.search.toLowerCase()));
 
   if (loading) {

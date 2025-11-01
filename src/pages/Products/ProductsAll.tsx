@@ -72,7 +72,7 @@ const ProductsAll = () => {
   };
 
   const filteredProducts = productData.data
-    .filter((p: Product) => !filters.discountsOnly || p.promotion_id !== null)
+    .filter((p: Product) => !filters.discountsOnly || (p.promotion_id && p.discount_percentage > 0))
     .filter((p: Product) => p.title.toLowerCase().includes(filters.search.toLowerCase()));
   
   console.log(`ProductsAll productData`, productData);
