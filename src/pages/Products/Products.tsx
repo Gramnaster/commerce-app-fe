@@ -67,10 +67,10 @@ const Products = () => {
 
   return (
     <div>
-      <div className='mb-25'>
+      <div className='mb-10'>
       <ProductsBanner />
       </div>
-      <div className='align-element grid grid-cols-[0.25fr_1fr] grid-rows-1 gap-6'>
+      <div className='align-element grid grid-cols-[0.25fr_1fr] grid-rows-1 gap-6 mb-25'>
         <Sidebar categoryData={ProductCategories.data} filters={filters} setFilters={setFilters}  />
         <div>
           <Outlet context={{ filters, setFilters }} />
