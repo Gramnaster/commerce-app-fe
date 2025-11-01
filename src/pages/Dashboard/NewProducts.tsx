@@ -18,7 +18,7 @@ const NewProducts = () => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['allProducts'],
+    queryKey: ['topNewestProducts'],
     queryFn: fetchProducts,
   });
 
