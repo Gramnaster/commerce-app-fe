@@ -1,7 +1,7 @@
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
 import { useLoaderData, useOutletContext } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Pagination } from "../Cart/Checkout";
 import ProductCard from "./ProductCard";
 import { PaginationControls } from "../../components";
@@ -24,9 +24,8 @@ export const loader = (queryClient: any, _store: any) => async () => {
   };
 
   try {
-    const [allProducts] = await Promise.all([
-      queryClient.ensureQueryData(allProductsQuery)
-    ]);
+    // Use fetchQuery instead of ensureQueryData to always fetch fresh data
+    const allProducts = await queryClient.fetchQuery(allProductsQuery);
 
     console.log('allProducts :', allProducts)
     return { allProducts };
@@ -44,6 +43,11 @@ const ProductsAll = () => {
   const { filters } = useOutletContext<{ filters: ProductFilters }>();
   const [loading, setLoading] = useState(false);
   const [productData, setProductData] = useState(initialProducts);
+
+  // Update productData when loader fetches new data (when navigating to/from All Products)
+  useEffect(() => {
+    setProductData(initialProducts);
+  }, [initialProducts]);
 
   // Add safety check for productData.data
   if (!productData?.data) {
