@@ -1,5 +1,5 @@
 import { toast } from "react-toastify";
-import { customFetch } from "../../utils";
+import { customFetch, sortProducts } from "../../utils";
 import { useLoaderData, useOutletContext } from "react-router-dom";
 import { useState, useEffect } from "react";
 import type { Pagination } from "../Cart/Checkout";
@@ -71,9 +71,14 @@ const ProductsAll = () => {
     }
   };
 
-  const filteredProducts = productData.data
-    .filter((p: Product) => !filters.discountsOnly || (p.promotion_id && p.discount_percentage > 0))
-    .filter((p: Product) => p.title.toLowerCase().includes(filters.search.toLowerCase()));
+  // Filter by discounts and search, then sort using sortProducts() from utils/index.ts
+  // Basic filters: promotion_id + discount_percentage > 0, and title search
+  const filteredProducts = sortProducts(
+    productData.data
+      .filter((p: Product) => !filters.discountsOnly || (p.promotion_id && p.discount_percentage > 0))
+      .filter((p: Product) => p.title.toLowerCase().includes(filters.search.toLowerCase())),
+    filters.sortBy
+  );
   
   console.log(`ProductsAll productData`, productData);
 

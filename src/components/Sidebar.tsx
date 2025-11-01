@@ -1,6 +1,10 @@
 // import { useState } from 'react';
 import { NavLink, useMatch } from 'react-router-dom';
-import type { ProductCategory, ProductFilters } from '../pages/Products/Products';
+import type {
+  ProductCategory,
+  ProductFilters,
+} from '../pages/Products/Products';
+import SidebarDropdown from './SidebarDropdown';
 
 interface SidebarProps {
   categoryData: ProductCategory[];
@@ -25,9 +29,10 @@ const Sidebar = ({ categoryData, filters, setFilters }: SidebarProps) => {
             {!isProductDetailPage && (
               <div className="">
                 <div className="flex-1 relative font-bold flex flex-col justify-end items-end">
-                  <select className="border-2 border-[#B3B3B3] text-[1rem] text-right p-2 m-2 w-full text-black bg-white">
-                    <option>Featured</option>
-                  </select>
+                  <SidebarDropdown 
+                    selectedOption={filters.sortBy}
+                    onOptionChange={(sortBy) => setFilters((prev) => ({ ...prev, sortBy }))}
+                  />
                 </div>
                 <div className="flex-1 relative font-bold flex flex-col justify-end items-end">
                   {/* WIP - PRODUCT FILTERS */}
@@ -41,7 +46,7 @@ const Sidebar = ({ categoryData, filters, setFilters }: SidebarProps) => {
                         search: e.target.value,
                       }))
                     }
-                    className="place bg-white border border-[#B3B3B3] font-normal italic rounded-4xl py-2 pl-10 pr-3 text-center text-black placeholder-[#B3B3B3]"
+                    className="place bg-white border-1 border-[#B3B3B3] font-normal italic rounded-[50px] py-2 pl-10 pr-3 text-center h-[30px] text-black placeholder-[#B3B3B3] w-[220px]"
                   />
                   <svg
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#B3B3B3]"
@@ -73,7 +78,7 @@ const Sidebar = ({ categoryData, filters, setFilters }: SidebarProps) => {
                         }))
                       }
                       data-theme="light"
-                      className="rounded-[5px] border border-[#B3B3B3] w-[20px] h-[20px]"
+                      className="rounded-[10px] border border-[#c6c6c6] w-[20px] h-[20px]"
                     />
                   </div>
                 </div>

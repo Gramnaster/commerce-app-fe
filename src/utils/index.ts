@@ -81,6 +81,31 @@ export const generateCartID = (productId: number | string, productTitle: string)
   return String(productId) + productTitle;
 };
 
+// Sort products based on the selected sort option
+export const sortProducts = <T extends { title: string; price: number; created_at: string }>(
+  products: T[],
+  sortBy: 'a-z' | 'z-a' | 'price-high' | 'price-low' | 'newest' | 'oldest'
+): T[] => {
+  const sorted = [...products];
+  
+  switch (sortBy) {
+    case 'a-z':
+      return sorted.sort((a, b) => a.title.localeCompare(b.title));
+    case 'z-a':
+      return sorted.sort((a, b) => b.title.localeCompare(a.title));
+    case 'price-high':
+      return sorted.sort((a, b) => b.price - a.price);
+    case 'price-low':
+      return sorted.sort((a, b) => a.price - b.price);
+    case 'newest':
+      return sorted.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    case 'oldest':
+      return sorted.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+    default:
+      return sorted;
+  }
+};
+
 // Sync Redux cart state with backend cart items
 export const syncCartWithBackend = async (dispatch: any) => {
   try {

@@ -1,5 +1,5 @@
 import { redirect, useLoaderData, useOutletContext } from "react-router-dom";
-import { customFetch } from "../../utils";
+import { customFetch, sortProducts } from "../../utils";
 import { toast } from "react-toastify";
 import { useState, useEffect } from "react";
 import type { ProductCategory, Product, ProductFilters } from "./Products";
@@ -72,9 +72,14 @@ const ProductsPerCategory = () => {
     }
   };
   
-  const filteredProducts = products
-    .filter(p => !filters.discountsOnly || (p.promotion_id && p.discount_percentage > 0))
-    .filter(p => p.title.toLowerCase().includes(filters.search.toLowerCase()));
+  // Filter by discounts and search, then sort using sortProducts() from utils/index.ts
+  // Basic filters: promotion_id + discount_percentage > 0, and title search
+  const filteredProducts = sortProducts(
+    products
+      .filter(p => !filters.discountsOnly || (p.promotion_id && p.discount_percentage > 0))
+      .filter(p => p.title.toLowerCase().includes(filters.search.toLowerCase())),
+    filters.sortBy
+  );
 
   if (loading) {
     return (

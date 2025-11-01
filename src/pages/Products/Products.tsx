@@ -25,10 +25,19 @@ export interface Producer {
   address: Address;
 }
 
+export type SortOption = 
+  | 'a-z' 
+  | 'z-a' 
+  | 'price-high' 
+  | 'price-low' 
+  | 'newest' 
+  | 'oldest';
+
 export interface ProductFilters {
   search: string;
   category: string | null;
   discountsOnly: boolean;
+  sortBy: SortOption;
 }
 
 export interface Product {
@@ -81,6 +90,7 @@ const Products = () => {
     search: '',
     category: null,
     discountsOnly: false,
+    sortBy: 'newest',
   });
 
   // Check if we're on a product detail page because I'm super picky about styling
