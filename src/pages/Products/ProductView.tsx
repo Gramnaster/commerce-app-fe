@@ -94,11 +94,17 @@ const ProductView = () => {
     <div className='text-base-content'>
       <div>
         <div>Product Name: {product.title}</div>
-        <img
-          src={product.product_image_url}
-          className="w-[100px]"
-          alt={product.title}
-        />
+        {product.product_image_url ? (
+          <img
+            src={product.product_image_url}
+            className="w-[100px]"
+            alt={product.title}
+          />
+        ) : (
+          <div className="w-[100px] h-[100px] flex items-center justify-center bg-gray-200 text-gray-500 text-sm">
+            No Image
+          </div>
+        )}
         <div>Category: {product.product_category.title}</div>
         <div>Producer: {product.producer.title}</div>
         <div>Product Description: {product.description}</div>

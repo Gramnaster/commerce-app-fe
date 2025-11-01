@@ -52,11 +52,17 @@ const ProductsPerCategory = () => {
               <div key={id} className="font-secondary text-center">
                 <NavLink to={`/products/${id}`}>
                   <div className="bg-gray-400 p-2 flex items-center justify-center mb-[20px]">
-                    <img
-                      src={product_image_url}
-                      className="w-[260px] h-[280px] object-contain"
-                      alt={title}
-                    />
+                    {product_image_url ? (
+                      <img
+                        src={product_image_url}
+                        className="w-[260px] h-[280px] object-contain"
+                        alt={title}
+                      />
+                    ) : (
+                      <div className="w-[260px] h-[280px] flex items-center justify-center text-gray-500">
+                        No Image
+                      </div>
+                    )}
                   </div>
                   <div className="uppercase text-base text-black">
                     {title.length > 25 ? title.slice(0, 25) + '. . .' : title}
