@@ -4,7 +4,10 @@ import type { SocialProgramResponse, SocialProgram } from '../Cart/Checkout';
 import { NavLink, useLoaderData } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { PaginationControls } from '../../components';
-import { IconLineDark, IconLineWhite } from '../../assets/images';
+import { IconLineDark, IconLineWhite, Social01, Social02, Social03, Social04 } from '../../assets/images';
+
+// Map social program IDs to their respective images
+const socialImages = [Social01, Social02, Social03, Social04];
 
 export const loader = (queryClient: any) => async () => {
   const SocialProgramsQuery = {
@@ -92,42 +95,62 @@ const SocialPrograms = () => {
             />
           </div>
         </div>
-        {socialProgramsData.data.map((program: SocialProgram) => {
-          const {
-            unit_no,
-            street_no,
-            address_line1,
-            address_line2,
-            city,
-            region,
-            zipcode,
-          } = program.address;
+        <div className="align-social flex-col mb-40">
+          {socialProgramsData.data.map((program: SocialProgram, index: number) => {
+            const { id, title, description } = program;
+            // Use static images in order
+            const img = socialImages[index % socialImages.length];
+            // Truncate description to 280 characters
+            const shortDescription = description.length > 280
+              ? description.slice(0, 280) + '...'
+              : description;
 
-          // Format address as a single line
-          const addressParts = [
-            unit_no,
-            street_no,
-            address_line1,
-            address_line2,
-            city,
-            region,
-            zipcode,
-          ].filter(Boolean); // Remove null/undefined values
-
-          const formattedAddress = addressParts.join(', ');
-
-          return (
-            <section key={program.id}>
-              <h2>{program.title}</h2>
-              <p>{program.description}</p>
-              <p>
-                <strong>Address: </strong>
-                {formattedAddress}
-              </p>
-              <NavLink to={`${program.id}`}>More Info here</NavLink>
-            </section>
-          );
-        })}
+            return (
+              <li
+                key={id}
+                className="li flex flex-row items-end h-[316px] mb-[60px]"
+              >
+                <div className="h-full flex flex-col justify-between max-w-[370px]">
+                  <div>
+                    <h3 className="uppercase font-secondary font-normal text-[32px] pb-4">
+                      {title}
+                    </h3>
+                    <p className="font-secondary font-light ">{shortDescription}</p>
+                  </div>
+                  <div className="flex justify-end underline underline-offset-2 mt-4">
+                    <NavLink to={`${id}`}>Read More... </NavLink>
+                  </div>
+                </div>
+                <img
+                  src={img}
+                  alt={title}
+                  style={{ width: '724px', height: '316px', objectFit: 'cover' }}
+                  className="pl-[20px]"
+                />
+              </li>
+            );
+          })}
+        </div>
+        
+        {/* Scroll to Top Section */}
+        <div className='align-social text-center pb-[100px]'>
+          <button 
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="font-secondary text-base-content font-normal text-base underline cursor-pointer bg-transparent border-none"
+          >
+            Scroll to Top
+          </button>
+          <div className="relative h-[11px] w-[67px] mx-auto mb-[20px]">
+            <img
+              src={IconLineWhite}
+              className="block dark:hidden h-[11px] w-[67px] mx-auto"
+            />
+            <img
+              src={IconLineDark}
+              className="hidden dark:block h-[11px] w-[67px] mx-auto"
+            />
+          </div>
+        </div>
       </section>
 
       <PaginationControls
