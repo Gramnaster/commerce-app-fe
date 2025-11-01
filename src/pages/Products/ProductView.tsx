@@ -8,6 +8,7 @@ import type { RootState } from '../../store';
 import { LoginCartModal } from '../../components';
 import type { Product } from './Products';
 import ProductDetailsSection from './ProductDetails';
+import ProductsRelated from './ProductsRelated';
 
 export const loader =
   (queryClient: any, store: any) =>
@@ -126,7 +127,7 @@ const ProductView = () => {
             alt={product.title}
           />
         ) : (
-          <div className="bg-gray-400 w-[100px] h-[100px] flex items-center justify-center bg-gray-200 text-gray-500 text-sm mr-[20px]">
+          <div className="bg-gray-400 w-[100px] h-[100px] flex items-center justify-center text-gray-500 text-sm mr-[20px]">
             No Image
           </div>
         )}
@@ -200,6 +201,10 @@ const ProductView = () => {
 
       {/* COMPLETE PRODUCT DETAILS */}
       <ProductDetailsSection product={product} />
+      <ProductsRelated 
+        categoryId={product.product_category.id} 
+        currentProductId={product.id} 
+      />
 
       {/* CART MODAL IF NOT LOGGED IN */}
       {/* If User !Login, Open Modal */}
