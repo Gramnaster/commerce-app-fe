@@ -4,6 +4,7 @@ import { useLoaderData, useOutletContext } from "react-router-dom";
 import { useState } from "react";
 import type { Pagination } from "../Cart/Checkout";
 import ProductCard from "./ProductCard";
+import { PaginationControls } from "../../components";
 import type { Product, ProductFilters } from "./Products";
 
 export interface ProductsResponse {
@@ -11,7 +12,7 @@ export interface ProductsResponse {
   pagination: Pagination;
 }
 
-export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
+export const loader = (queryClient: any, _store: any) => async () => {
 
   const allProductsQuery = {
     queryKey: ['allProducts'],
@@ -72,14 +73,6 @@ const ProductsAll = () => {
   
   console.log(`ProductsAll productData`, productData);
 
-  const { current_page, total_pages, next_page, previous_page } = productData.pagination || {
-    current_page: 1,
-    per_page: 10,
-    total_pages: 1,
-    next_page: null,
-    previous_page: null
-  };
-
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center">
@@ -96,42 +89,10 @@ const ProductsAll = () => {
         ))}
       </div>
       
-      {/* Pagination Controls */}
-      {total_pages && total_pages > 1 && (
-        <div className="join mt-6 flex justify-center">
-          <input
-            className="join-item btn btn-square border-black" 
-            type="radio" 
-            name="options" 
-            onClick={() => handlePagination(previous_page)}
-            disabled={!previous_page}
-            aria-label="❮" 
-          />
-          {[...Array(total_pages).keys()].map((_, i) => {
-            const pageNum = i + 1;
-            return (
-              <input 
-                key={i} 
-                className="join-item btn btn-square border-black" 
-                type="radio" 
-                name="options" 
-                checked={current_page === pageNum}
-                onClick={() => handlePagination(pageNum)}
-                aria-label={`${pageNum}`} 
-                readOnly
-              />
-            );
-          })}
-          <input
-            className="join-item btn btn-square border-black" 
-            type="radio" 
-            name="options" 
-            onClick={() => handlePagination(next_page)}
-            disabled={!next_page}
-            aria-label="❯" 
-          />
-        </div>
-      )}
+      <PaginationControls 
+        pagination={productData.pagination} 
+        onPageChange={handlePagination} 
+      />
     </>
   );
 }

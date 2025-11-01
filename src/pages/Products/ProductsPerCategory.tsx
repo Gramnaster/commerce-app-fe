@@ -5,6 +5,7 @@ import { useState } from "react";
 import type { ProductCategory, Product, ProductFilters } from "./Products";
 import type { Pagination } from "../Cart/Checkout";
 import ProductCard from "./ProductCard";
+import { PaginationControls } from "../../components";
 
 // Type for the category details response from the API
 interface CategoryDetailsResponse {
@@ -69,14 +70,6 @@ const ProductsPerCategory = () => {
     .filter(p => !filters.discountsOnly || p.promotion_id !== null)
     .filter(p => p.title.toLowerCase().includes(filters.search.toLowerCase()));
 
-  const { current_page, total_pages, next_page, previous_page } = categoryData.pagination || {
-    current_page: 1,
-    per_page: 10,
-    total_pages: 1,
-    next_page: null,
-    previous_page: null
-  };
-
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center">
@@ -93,42 +86,10 @@ const ProductsPerCategory = () => {
         ))}
       </div>
 
-      {/* Pagination Controls */}
-      {total_pages && total_pages > 1 && (
-        <div className="join mt-6 flex justify-center">
-          <input
-            className="join-item btn btn-square border-black" 
-            type="radio" 
-            name="options" 
-            onClick={() => handlePagination(previous_page)}
-            disabled={!previous_page}
-            aria-label="❮" 
-          />
-          {[...Array(total_pages).keys()].map((_, i) => {
-            const pageNum = i + 1;
-            return (
-              <input 
-                key={i} 
-                className="join-item btn btn-square border-black" 
-                type="radio" 
-                name="options" 
-                checked={current_page === pageNum}
-                onClick={() => handlePagination(pageNum)}
-                aria-label={`${pageNum}`} 
-                readOnly
-              />
-            );
-          })}
-          <input
-            className="join-item btn btn-square border-black" 
-            type="radio" 
-            name="options" 
-            onClick={() => handlePagination(next_page)}
-            disabled={!next_page}
-            aria-label="❯" 
-          />
-        </div>
-      )}
+      <PaginationControls 
+        pagination={categoryData.pagination || { current_page: 1, per_page: 10, total_pages: 1, next_page: null, previous_page: null, total_entries: 0 }} 
+        onPageChange={handlePagination} 
+      />
     </>
   )
 }
