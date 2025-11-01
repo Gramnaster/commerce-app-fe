@@ -140,7 +140,10 @@ const ProductView = () => {
           <h4 className="font-primary text-[16px] mb-[25px]">
             By {product.producer.title}
           </h4>
-          <p className="font-secondary mb-[45px]">{product.description}</p>
+          <p className="font-secondary mb-[45px]">
+            {product.description.split('. ').slice(0, 2).join('. ')}
+            {product.description.split('. ').length > 2 ? '.' : ''}
+          </p>
           <div className="font-secondary text-[32px] mb-[35px] flex justify-end item-end text-right">
             {product.promotion_id && product.discount_percentage > 0 ? (
               <>
