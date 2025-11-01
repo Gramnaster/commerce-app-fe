@@ -1,4 +1,4 @@
-import { Outlet, useLoaderData } from 'react-router-dom';
+import { Outlet, useLoaderData, useMatch } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 import Sidebar from '../../components/Sidebar';
@@ -83,12 +83,16 @@ const Products = () => {
     discountsOnly: false,
   });
 
+  // Check if we're on a product detail page because I'm super picky about styling
+  const isProductDetailPage = useMatch('/products/:id');
+  const maxWidthClass = isProductDetailPage ? 'max-w-5xl' : 'max-w-7xl';
+
   return (
     <div>
       <div className='mb-10'>
       <ProductsBanner />
       </div>
-      <div className='mx-auto max-w-7xl px-8 grid grid-cols-[0.25fr_1fr] grid-rows-1 gap-6 mb-25'>
+      <div className={`mx-auto ${maxWidthClass} px-8 grid grid-cols-[0.25fr_1fr] grid-rows-1 gap-6 mb-25`}>
         <Sidebar categoryData={ProductCategories.data} filters={filters} setFilters={setFilters}  />
         <div>
           <Outlet context={{ filters, setFilters }} />

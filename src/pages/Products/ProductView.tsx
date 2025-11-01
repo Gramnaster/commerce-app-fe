@@ -145,7 +145,7 @@ const ProductView = () => {
             {product.description.split('. ').slice(0, 2).join('. ')}
             {product.description.split('. ').length > 2 ? '.' : ''}
           </p>
-          <div className="font-secondary text-[32px] mb-[35px] flex justify-end item-end text-right">
+          <div className="font-secondary text-[32px] mb-[35px] flex justify-end items-end text-right">
             {product.promotion_id && product.discount_percentage > 0 ? (
               <>
                 <span className="line-through text-gray-500 mr-4 ">
@@ -161,12 +161,10 @@ const ProductView = () => {
           </div>
 
           {/* AMOUNT */}
-          <div className="form-control w-full max-w-xs mt-4 flex flex-row">
-            <label className="label" htmlFor="amount">
-              <p className="font-secondary text-[16px] font-medium tracking-wider capitalize mr-4">
-                Qty:
-              </p>
-            </label>
+          <div className="mt-4 flex flex-row items-center justify-end">
+            <p className="font-secondary text-[16px] font-medium tracking-wider capitalize mr-4">
+              Qty:
+            </p>
             <div className="flex items-center gap-2 mr-5">
               <button
                 type="button"
@@ -187,7 +185,7 @@ const ProductView = () => {
               </button>
             </div>
             {/* CART BTN */}
-            <div className="w-[200px]">
+            <div>
               <button
                 className="btn btn-secondary btn-md w-[110px] h-[40px] min-h-[40px] max-h-[40px] shadow-none"
                 onClick={addToCart}
