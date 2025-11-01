@@ -101,8 +101,8 @@ const SocialPrograms = () => {
             // Use static images in order
             const img = socialImages[index % socialImages.length];
             // Truncate description to 280 characters
-            const shortDescription = description.length > 280
-              ? description.slice(0, 280) + '...'
+            const shortDescription = description.length > 120
+              ? description.slice(0, 120) + '...'
               : description;
 
             return (
