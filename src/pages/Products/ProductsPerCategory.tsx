@@ -1,7 +1,7 @@
 import { redirect, useLoaderData, useOutletContext } from "react-router-dom";
 import { customFetch } from "../../utils";
 import { toast } from "react-toastify";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { ProductCategory, Product, ProductFilters } from "./Products";
 import type { Pagination } from "../Cart/Checkout";
 import ProductCard from "./ProductCard";
@@ -27,7 +27,8 @@ export const loader = (queryClient: any) => async ({ params }: any) => {
   };
 
   try {
-    const CategoryDetails = await queryClient.ensureQueryData(CategoryViewQuery);
+    // Use fetchQuery instead of ensureQueryData to always fetch fresh data
+    const CategoryDetails = await queryClient.fetchQuery(CategoryViewQuery);
     console.log(`ProductsPerCategory CategoryDetails`, CategoryDetails.data)
     return { CategoryDetails };
   } catch (error: any) {
@@ -44,6 +45,11 @@ const ProductsPerCategory = () => {
   const { filters } = useOutletContext<{ filters: ProductFilters }>();
   const [loading, setLoading] = useState(false);
   const [categoryData, setCategoryData] = useState(initialCategoryDetails);
+  
+  // Update categoryData when loader fetches new data (when navigating between categories)
+  useEffect(() => {
+    setCategoryData(initialCategoryDetails);
+  }, [initialCategoryDetails]);
   
   const { products } = categoryData.data;
   const categoryId = categoryData.data.id;
