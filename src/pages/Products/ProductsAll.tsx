@@ -3,7 +3,7 @@ import { customFetch } from "../../utils";
 import { useLoaderData, useOutletContext } from "react-router-dom";
 import type { Pagination } from "../Cart/Checkout";
 import ProductCard from "./ProductCard";
-import type { Product } from "./Products";
+import type { Product, ProductFilters } from "./Products";
 
 export interface ProductsResponse {
   data: Product[];
@@ -39,7 +39,7 @@ const ProductsAll = () => {
   const { allProducts } = useLoaderData() as {
     allProducts: ProductsResponse
   };
-  const { filters } = useOutletContext<{ filters: { search: string; category: string | null; discountsOnly: boolean } }>();
+  const { filters } = useOutletContext<{ filters: ProductFilters }>();
 
   const filteredProducts = allProducts.data
     .filter((p: Product) => !filters.category || p.product_category.title === filters.category)

@@ -1,7 +1,7 @@
 import { redirect, useLoaderData, useOutletContext } from "react-router-dom";
 import { customFetch } from "../../utils";
 import { toast } from "react-toastify";
-import type { ProductCategory, Product } from "./Products";
+import type { ProductCategory, Product, ProductFilters } from "./Products";
 import ProductCard from "./ProductCard";
 
 // Type for the category details response from the API
@@ -37,7 +37,7 @@ const ProductsPerCategory = () => {
   const { CategoryDetails } = useLoaderData() as {
     CategoryDetails: CategoryDetailsResponse;
   }
-  const { filters } = useOutletContext<{ filters: { search: string; category: string | null; discountsOnly: boolean } }>();
+  const { filters } = useOutletContext<{ filters: ProductFilters }>();
   const { products } = CategoryDetails.data;
   
   const filteredProducts = products

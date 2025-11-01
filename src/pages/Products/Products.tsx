@@ -25,6 +25,12 @@ export interface Producer {
   address: Address;
 }
 
+export interface ProductFilters {
+  search: string;
+  category: string | null;
+  discountsOnly: boolean;
+}
+
 export interface Product {
   id: number;
   title: string;
@@ -71,9 +77,9 @@ const Products = () => {
     ProductCategories: { data: ProductCategory[] }
   };
 
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<ProductFilters>({
     search: '',
-    category: null as string | null,
+    category: null,
     discountsOnly: false,
   });
 

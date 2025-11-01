@@ -1,15 +1,11 @@
 // import { useState } from 'react';
 import { useMatch } from 'react-router-dom';
-
-interface ProductCategory {
-  id: number;
-  title: string;
-}
+import type { ProductCategory, ProductFilters } from '../pages/Products/Products';
 
 interface SidebarProps {
   categoryData: ProductCategory[];
-  filters: { search: string; category: string | null; discountsOnly: boolean };
-  setFilters: React.Dispatch<React.SetStateAction<any>>;
+  filters: ProductFilters;
+  setFilters: React.Dispatch<React.SetStateAction<ProductFilters>>;
 }
 
 const Sidebar = ({ categoryData, filters, setFilters }: SidebarProps) => {
