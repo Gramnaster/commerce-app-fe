@@ -2,7 +2,14 @@ import { customFetch } from '../../utils';
 import { toast } from 'react-toastify';
 import { useLoaderData } from 'react-router-dom';
 import type { SocialProgram } from '../Dashboard/FeaturedSocials';
-import { Social01, Social02, Social03, Social04 } from '../../assets/images';
+import {
+  IconLineDark,
+  IconLineWhite,
+  Social01,
+  Social02,
+  Social03,
+  Social04,
+} from '../../assets/images';
 
 // Map social program IDs to their respective images
 const socialImages: { [key: number]: string } = {
@@ -16,28 +23,30 @@ interface SocialProgramViewResponse {
   data: SocialProgram;
 }
 
-export const loader = (queryClient: any) => async ({ params }: any) => {
-  const id = params.id;
+export const loader =
+  (queryClient: any) =>
+  async ({ params }: any) => {
+    const id = params.id;
 
-  const SocialProgramViewQuery = {
-    queryKey: ['SocialProgramView', id],
-    queryFn: async () => {
-      const response = await customFetch.get(`/social_programs/${id}`);
-      return response.data;
-    },
+    const SocialProgramViewQuery = {
+      queryKey: ['SocialProgramView', id],
+      queryFn: async () => {
+        const response = await customFetch.get(`/social_programs/${id}`);
+        return response.data;
+      },
+    };
+
+    try {
+      const SocialProgramViewDetails = await queryClient.ensureQueryData(
+        SocialProgramViewQuery
+      );
+      return { SocialProgramViewDetails };
+    } catch (error: any) {
+      console.error('Failed to load social program details:', error);
+      toast.error('Failed to load social program details');
+      return { SocialProgramViewDetails: null };
+    }
   };
-
-  try {
-    const SocialProgramViewDetails = await queryClient.ensureQueryData(
-      SocialProgramViewQuery
-    );
-    return { SocialProgramViewDetails };
-  } catch (error: any) {
-    console.error('Failed to load social program details:', error);
-    toast.error('Failed to load social program details');
-    return { SocialProgramViewDetails: null };
-  }
-};
 
 const SocialProgramView = () => {
   const { SocialProgramViewDetails } = useLoaderData() as {
@@ -76,6 +85,21 @@ const SocialProgramView = () => {
 
   return (
     <div className="align-element text-black">
+      <div className="flex justify-center align-middle flex-col my-[85px]">
+        <h2 className="font-primary text-base-content text-2xl text-center">
+          SOCIAL PROGRAMS
+        </h2>
+        <div className="relative h-[11px] w-[67px] mx-auto">
+          <img
+            src={IconLineWhite}
+            className="block dark:hidden h-[11px] w-[67px] mx-auto"
+          />
+          <img
+            src={IconLineDark}
+            className="hidden dark:block h-[11px] w-[67px] mx-auto"
+          />
+        </div>
+      </div>
       {/* Header Image */}
       <div className="w-full mb-8">
         <img
@@ -98,6 +122,6 @@ const SocialProgramView = () => {
       </div>
     </div>
   );
-}
+};
 
-export default SocialProgramView
+export default SocialProgramView;

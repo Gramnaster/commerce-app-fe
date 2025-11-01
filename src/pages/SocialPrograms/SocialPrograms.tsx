@@ -79,7 +79,7 @@ const SocialPrograms = () => {
       <section className="align-element text-black">
         <div className="flex justify-center align-middle flex-col my-[85px]">
           <h2 className="font-primary text-base-content text-2xl text-center">
-            POPULAR CATEGORIES
+            SOCIAL PROGRAMS
           </h2>
           <div className="relative h-[11px] w-[67px] mx-auto">
             <img

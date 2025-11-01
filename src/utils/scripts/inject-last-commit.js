@@ -5,10 +5,25 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 
 try {
-  const date = execSync('git log -1 --format=%cd --date=short').toString().trim();
+  const date = execSync('git log -1 --format=%cd --date=short')
+    .toString()
+    .trim();
   // Format: YYYY-MM-DD to 'DD Mon YYYY'
   const [year, month, day] = date.split('-');
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
   const formatted = `${day} ${months[parseInt(month, 10) - 1]} ${year}`;
   const envLine = `VITE_LAST_COMMIT_DATE=${formatted}\n`;
   // Write or update .env.local

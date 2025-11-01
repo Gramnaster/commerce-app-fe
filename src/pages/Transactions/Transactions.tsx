@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { customFetch } from '../../utils';
 import { toast } from 'react-toastify';
 import type { RootState } from '@reduxjs/toolkit/query';
@@ -29,7 +29,7 @@ interface Transaction {
   description: string;
   created_at: string;
   user: User;
-  order: Order | null
+  order: Order | null;
 }
 
 export interface Pagination {
@@ -46,42 +46,44 @@ interface TransactionResponse {
   pagination: Pagination;
 }
 
-export const loader = (queryClient: any) => async ({ params }: any) => {
-  const storeState = store.getState();
-  const user = storeState.userState?.user;
-  const id = params.id;
+export const loader =
+  (queryClient: any) =>
+  async ({ params }: any) => {
+    const storeState = store.getState();
+    const user = storeState.userState?.user;
+    const id = params.id;
 
-  const TransactionsQuery = {
-    queryKey: ['TransactionsQuery', id],
-    queryFn: async () => {
-      const response = await customFetch.get(`/receipts`, {
-        headers: {
-          Authorization: user?.token,
-        },
-      });
-      console.log(`Transactions TransactionsQuery`, response.data)
-      return response.data;
-    },
+    const TransactionsQuery = {
+      queryKey: ['TransactionsQuery', id],
+      queryFn: async () => {
+        const response = await customFetch.get(`/receipts`, {
+          headers: {
+            Authorization: user?.token,
+          },
+        });
+        console.log(`Transactions TransactionsQuery`, response.data);
+        return response.data;
+      },
+    };
+
+    try {
+      const [TransactionReceipts] = await Promise.all([
+        queryClient.ensureQueryData(TransactionsQuery),
+      ]);
+      console.log('Transactions TransactionReceipts :', TransactionReceipts);
+      return { TransactionReceipts };
+    } catch (error: any) {
+      console.error('Failed to load transactions data:', error);
+      toast.error('Failed to load transactions data');
+      return { TransactionsReceipts: [] };
+    }
   };
-
-  try {
-    const [TransactionReceipts] = await Promise.all([
-      queryClient.ensureQueryData(TransactionsQuery)
-    ]);
-    console.log('Transactions TransactionReceipts :', TransactionReceipts)
-    return { TransactionReceipts };
-  } catch (error: any) {
-    console.error('Failed to load transactions data:', error);
-    toast.error('Failed to load transactions data');
-    return { TransactionsReceipts: [] };
-  }
-};
 
 const Transactions = () => {
-  const { TransactionReceipts } = useLoaderData() as { 
-    TransactionReceipts: TransactionResponse; 
+  const { TransactionReceipts } = useLoaderData() as {
+    TransactionReceipts: TransactionResponse;
   };
-  console.log(`Transactions TransactionReceipts`, TransactionReceipts)
+  console.log(`Transactions TransactionReceipts`, TransactionReceipts);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -99,7 +101,7 @@ const Transactions = () => {
     });
   };
 
-    const getTransactionTypeDisplay = (type: string) => {
+  const getTransactionTypeDisplay = (type: string) => {
     switch (type) {
       case 'purchase':
         return 'Purchase';
@@ -127,8 +129,18 @@ const Transactions = () => {
                     placeholder="Search Company Name or Ticker ID"
                     className="bg-transparent border border-gray-600 rounded-lg px-4 py-2 text-base-content placeholder-gray-400 w-100"
                   />
-                  <svg className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  <svg
+                    className="absolute right-3 top-2.5 h-5 w-5 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
                   </svg>
                 </div>
               </div>
@@ -151,25 +163,33 @@ const Transactions = () => {
               </thead>
               <tbody>
                 {TransactionReceipts && TransactionReceipts.data.length > 0 ? (
-                  TransactionReceipts.data.map((transaction: Transaction, index: number) => (
-                    <tr 
-                      key={transaction.id} 
-                      className={`border-b border-gray-800 hover:bg-transparent transition-colors ${
-                        index % 2 === 0 ? 'bg-transparent' : 'bg-transparent'
-                      }`}
-                    >
-                      <td className="p-4">
-                          <span className={`inline-block px-2 py-1 rounded text-sm font-medium ${
-                            transaction.transaction_type === 'purchase' ? 'bg-green-600 text-white' :
-                            transaction.transaction_type === 'withdraw' ? 'bg-red-600 text-white' :
-                            transaction.transaction_type === 'deposit' ? 'bg-blue-600 text-white' :
-                            'bg-purple-600 text-white'
-                          }`}>
-                            {getTransactionTypeDisplay(transaction.transaction_type)}
+                  TransactionReceipts.data.map(
+                    (transaction: Transaction, index: number) => (
+                      <tr
+                        key={transaction.id}
+                        className={`border-b border-gray-800 hover:bg-transparent transition-colors ${
+                          index % 2 === 0 ? 'bg-transparent' : 'bg-transparent'
+                        }`}
+                      >
+                        <td className="p-4">
+                          <span
+                            className={`inline-block px-2 py-1 rounded text-sm font-medium ${
+                              transaction.transaction_type === 'purchase'
+                                ? 'bg-green-600 text-white'
+                                : transaction.transaction_type === 'withdraw'
+                                  ? 'bg-red-600 text-white'
+                                  : transaction.transaction_type === 'deposit'
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-purple-600 text-white'
+                            }`}
+                          >
+                            {getTransactionTypeDisplay(
+                              transaction.transaction_type
+                            )}
                           </span>
-                      </td>
-                      <td className="p-4">
-                        {/* <div className="flex items-center space-x-3">
+                        </td>
+                        <td className="p-4">
+                          {/* <div className="flex items-center space-x-3">
                           {transaction.stock?.logo_url ? (
                             <img 
                               src={transaction.stock.logo_url} 
@@ -190,56 +210,61 @@ const Transactions = () => {
                             {getCompanyDisplay(transaction)}
                           </span>
                         </div> */}
-                        <div className="flex items-center space-x-3">
-                          {transaction.balance_before && transaction.balance_before !== 0
-                            ? transaction.balance_before
-                            : '-'
-                          }
-                        </div>
-                      </td>
-                      <td className="p-4 text-right text-base-content">
-                        {/* {transaction.quantity && transaction.quantity !== '0.0' 
+                          <div className="flex items-center space-x-3">
+                            {transaction.balance_before &&
+                            transaction.balance_before !== 0
+                              ? transaction.balance_before
+                              : '-'}
+                          </div>
+                        </td>
+                        <td className="p-4 text-right text-base-content">
+                          {/* {transaction.quantity && transaction.quantity !== '0.0' 
                           ? parseFloat(transaction.quantity).toLocaleString()
                           : '-'
                         } */}
-                        <div className="flex items-center space-x-3">
-                          {transaction.balance_after && transaction.balance_after !== 0
-                            ? transaction.balance_after
-                            : '-'
-                          }
-                        </div>
-                      </td>
-                      <td className="p-4 text-right text-base-content">
-                        {/* {transaction.price_per_share && transaction.price_per_share !== '0.0'
+                          <div className="flex items-center space-x-3">
+                            {transaction.balance_after &&
+                            transaction.balance_after !== 0
+                              ? transaction.balance_after
+                              : '-'}
+                          </div>
+                        </td>
+                        <td className="p-4 text-right text-base-content">
+                          {/* {transaction.price_per_share && transaction.price_per_share !== '0.0'
                           ? `$${parseFloat(transaction.price_per_share).toFixed(2)}`
                           : '-'
                         } */}
-                        <div className="text-right space-x-3">
-                          {transaction.amount && transaction.amount !== 0
-                            ? transaction.amount
-                            : '-'
-                          }
-                        </div>
-                      </td>
-                      <td className="p-4 text-right text-base-content font-medium">
-                        {/* ${parseFloat(transaction.total_amount).toFixed(2)} */}
-                        {transaction.order?.cart_status ? transaction.order.cart_status : '-' }
-                      </td>
-                      <td className="p-4 text-right text-base-content">
-                        <div className="text-right">
-                          <div>{formatDate(transaction.created_at)}</div>
-                          <div className="text-sm text-base-content">
-                            {formatTime(transaction.created_at)}
+                          <div className="text-right space-x-3">
+                            {transaction.amount && transaction.amount !== 0
+                              ? transaction.amount
+                              : '-'}
                           </div>
-                        </div>
-                      </td>
-                      <td>
-                        <NavLink to={`${transaction.id}`} className={'hover:underline hover:cursor-pointer'}>
-                          View
-                        </NavLink>
-                      </td>
-                    </tr>
-                  ))
+                        </td>
+                        <td className="p-4 text-right text-base-content font-medium">
+                          {/* ${parseFloat(transaction.total_amount).toFixed(2)} */}
+                          {transaction.order?.cart_status
+                            ? transaction.order.cart_status
+                            : '-'}
+                        </td>
+                        <td className="p-4 text-right text-base-content">
+                          <div className="text-right">
+                            <div>{formatDate(transaction.created_at)}</div>
+                            <div className="text-sm text-base-content">
+                              {formatTime(transaction.created_at)}
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <NavLink
+                            to={`${transaction.id}`}
+                            className={'hover:underline hover:cursor-pointer'}
+                          >
+                            View
+                          </NavLink>
+                        </td>
+                      </tr>
+                    )
+                  )
                 ) : (
                   <tr>
                     <td colSpan={6} className="p-8 text-center text-gray-400">
@@ -253,7 +278,7 @@ const Transactions = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Transactions
+export default Transactions;
