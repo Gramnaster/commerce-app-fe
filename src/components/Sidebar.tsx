@@ -29,9 +29,11 @@ const Sidebar = ({ categoryData, filters, setFilters }: SidebarProps) => {
             {!isProductDetailPage && (
               <div className="">
                 <div className="flex-1 relative font-bold flex flex-col justify-end items-end">
-                  <SidebarDropdown 
+                  <SidebarDropdown
                     selectedOption={filters.sortBy}
-                    onOptionChange={(sortBy) => setFilters((prev) => ({ ...prev, sortBy }))}
+                    onOptionChange={(sortBy) =>
+                      setFilters((prev) => ({ ...prev, sortBy }))
+                    }
                   />
                 </div>
                 <div className="flex-1 relative font-bold flex flex-col justify-end items-end">

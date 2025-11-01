@@ -16,17 +16,27 @@ const Error = () => {
           {is404 ? (
             <>
               <span className="text-6xl font-bold text-error mb-2">404</span>
-              <h1 className="card-title text-error text-2xl font-bold mb-2">Page Not Found</h1>
-              <p className="mb-4 text-error ">Sorry, we couldn't find the page you're looking for.</p>
+              <h1 className="card-title text-error text-2xl font-bold mb-2">
+                Page Not Found
+              </h1>
+              <p className="mb-4 text-error ">
+                Sorry, we couldn't find the page you're looking for.
+              </p>
             </>
           ) : (
             <>
-              <h2 className="card-title text-2xl font-bold mb-2 text-error ">Oops! Something went wrong</h2>
-              <p className="mb-4 text-error ">There was an error loading this page.</p>
+              <h2 className="card-title text-2xl font-bold mb-2 text-error ">
+                Oops! Something went wrong
+              </h2>
+              <p className="mb-4 text-error ">
+                There was an error loading this page.
+              </p>
             </>
           )}
           <Link to="/">
-            <button type="button" className="btn btn-primary mt-2">Return Home</button>
+            <button type="button" className="btn btn-primary mt-2">
+              Return Home
+            </button>
           </Link>
         </div>
       </div>

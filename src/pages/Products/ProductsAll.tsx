@@ -38,7 +38,7 @@ export const loader = (queryClient: any, _store: any) => async () => {
 
 const ProductsAll = () => {
   const { allProducts: initialProducts } = useLoaderData() as {
-    allProducts: ProductsResponse
+    allProducts: ProductsResponse;
   };
   const { filters } = useOutletContext<{ filters: ProductFilters }>();
   const [loading, setLoading] = useState(false);
@@ -57,15 +57,20 @@ const ProductsAll = () => {
   const handlePagination = async (page: number | null) => {
     if (!page) return;
     setLoading(true);
-    
+
     try {
-      const response = await customFetch.get(`/products?page=${page}&per_page=${productData.pagination.per_page || 10}`);
+      const response = await customFetch.get(
+        `/products?page=${page}&per_page=${productData.pagination.per_page || 10}`
+      );
       const data = response.data;
       console.log('ProductsAll handlePagination - Response:', data);
       setProductData(data);
       setLoading(false);
     } catch (error: any) {
-      console.error('ProductsAll handlePagination - Failed to load pagination data:', error);
+      console.error(
+        'ProductsAll handlePagination - Failed to load pagination data:',
+        error
+      );
       toast.error('Failed to load pagination data');
       setLoading(false);
     }
@@ -75,17 +80,25 @@ const ProductsAll = () => {
   // Basic filters: promotion_id + discount_percentage > 0, and title search
   const filteredProducts = sortProducts(
     productData.data
-      .filter((p: Product) => !filters.discountsOnly || (p.promotion_id && p.discount_percentage > 0))
-      .filter((p: Product) => p.title.toLowerCase().includes(filters.search.toLowerCase())),
+      .filter(
+        (p: Product) =>
+          !filters.discountsOnly ||
+          (p.promotion_id && p.discount_percentage > 0)
+      )
+      .filter((p: Product) =>
+        p.title.toLowerCase().includes(filters.search.toLowerCase())
+      ),
     filters.sortBy
   );
-  
+
   console.log(`ProductsAll productData`, productData);
 
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center">
-        <span className="loading loading-ring loading-lg text-black">Loading...</span>
+        <span className="loading loading-ring loading-lg text-black">
+          Loading...
+        </span>
       </div>
     );
   }
@@ -97,10 +110,10 @@ const ProductsAll = () => {
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
-      
-      <PaginationControls 
-        pagination={productData.pagination} 
-        onPageChange={handlePagination} 
+
+      <PaginationControls
+        pagination={productData.pagination}
+        onPageChange={handlePagination}
       />
     </>
   );

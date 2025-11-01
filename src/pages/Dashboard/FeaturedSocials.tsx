@@ -1,8 +1,87 @@
 import { NavLink } from 'react-router-dom';
-import { socialPrograms } from '../../assets/data/socialPrograms';
+import { useQuery } from '@tanstack/react-query';
+import { customFetch } from '../../utils';
 import { IconLineDark, IconLineWhite } from '../../assets/images';
+import { Social01, Social02, Social03, Social04 } from '../../assets/images';
+
+export interface Address {
+  id: number;
+  unit_no: string;
+  street_no: string;
+  address_line1: string | null;
+  address_line2: string | null;
+  barangay: string;
+  city: string;
+  region: string | null;
+  zipcode: string;
+  country_id: number;
+  country: string;
+}
+
+export interface SocialProgram {
+  id: number;
+  title: string;
+  description: string;
+  address: Address;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SocialProgramResponse {
+  status: {
+    code: number;
+    message: string;
+  };
+  pagination: {
+    current_page: number;
+    per_page: number;
+    total_entries: number;
+    total_pages: number;
+    next_page: number | null;
+    previous_page: number | null;
+  };
+  data: SocialProgram[];
+}
+
+const fetchSocialPrograms = async () => {
+  const response = await customFetch.get('/social_programs');
+  return response.data;
+};
+
+// Map social program IDs to their respective images
+const socialImages = [Social01, Social02, Social03, Social04];
 
 const FeaturedSocials = () => {
+  const {
+    data: socialProgramsResponse,
+    isLoading,
+    error,
+  } = useQuery<SocialProgramResponse>({
+    queryKey: ['socialPrograms'],
+    queryFn: fetchSocialPrograms,
+  });
+
+  if (isLoading) {
+    return (
+      <section className="align-social text-base-content">
+        <div className="flex justify-center align-middle my-[85px]">
+          <p>Loading social programs...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="align-social text-base-content">
+        <div className="flex justify-center align-middle my-[85px]">
+          <p>Failed to load social programs</p>
+        </div>
+      </section>
+    );
+  }
+
+  const socialPrograms = socialProgramsResponse?.data || [];
   return (
     <section className="align-social text-base-content">
       <div className="flex justify-center align-middle flex-col my-[85px] text-center">
@@ -35,13 +114,15 @@ const FeaturedSocials = () => {
         </div>
       </div>
       <div className="align-social flex-col">
-        {socialPrograms.map((program: socialPrograms) => {
-          const { id, img, title, description } = program;
-          // Truncate description to 250 characters
+        {socialPrograms.map((program: SocialProgram, index: number) => {
+          const { id, title, description } = program;
+          // Use static images in order
+          const img = socialImages[index % socialImages.length];
+          // Truncate description to 280 characters
           const shortDescription = description.length > 280
             ? description.slice(0, 280) + '...'
             : description;
-          if (id % 2 === 0) {
+          if (index % 2 === 0) {
             return (
               <li
                 key={id}
@@ -61,12 +142,12 @@ const FeaturedSocials = () => {
                     <p className="font-secondary font-light ">{shortDescription}</p>
                   </div>
                   <div className="flex justify-end underline underline-offset-2 mt-4">
-                    <NavLink to={`/socials/${id}`}>Read More... </NavLink>
+                    <NavLink to={`/social_programs/${id}`}>Read More... </NavLink>
                   </div>
                 </div>
               </li>
             );
-          } else if (id % 2 === 1) {
+          } else if (index % 2 === 1) {
             return (
               <li
                 key={id}
@@ -80,7 +161,7 @@ const FeaturedSocials = () => {
                     <p className="font-secondary font-light ">{shortDescription}</p>
                   </div>
                   <div className="flex justify-end underline underline-offset-2 mt-4">
-                    <NavLink to={`/socials/${id}`}>Read More... </NavLink>
+                    <NavLink to={`/social_programs/${id}`}>Read More... </NavLink>
                   </div>
                 </div>
                 <img

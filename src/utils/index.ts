@@ -87,7 +87,7 @@ export const sortProducts = <T extends { title: string; price: number; created_a
   sortBy: 'a-z' | 'z-a' | 'price-high' | 'price-low' | 'newest' | 'oldest'
 ): T[] => {
   const sorted = [...products];
-  
+
   switch (sortBy) {
     case 'a-z':
       return sorted.sort((a, b) => a.title.localeCompare(b.title));
@@ -111,16 +111,16 @@ export const syncCartWithBackend = async (dispatch: any) => {
   try {
     const response = await customFetch.get('/shopping_cart_items');
     const items = response.data?.data || [];
-    
+
     // Import actions at top level for better performance
     const { clearCart, syncCart } = await import('../features/cart/cartSlice');
-    
+
     // If no items in backend, clear the cart
     if (!items.length) {
       dispatch(clearCart());
       return { success: true, itemCount: 0 };
     }
-    
+
     // Transform backend items to match Redux CartItem shape
     const cartItems = items.map((item: any) => {
       const product = item.product || {};
@@ -132,10 +132,10 @@ export const syncCartWithBackend = async (dispatch: any) => {
         amount: parseInt(item.qty, 10) || 1,
       };
     });
-    
+
     // Update cart state without toast notifications
     dispatch(syncCart({ items: cartItems }));
-    
+
     return { success: true, itemCount: cartItems.length };
   } catch (error) {
     console.error('Failed to sync cart:', error);

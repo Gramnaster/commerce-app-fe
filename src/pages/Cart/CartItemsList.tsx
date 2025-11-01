@@ -16,7 +16,9 @@ const CartItemsList = ({
     return (
       <div className="text-center py-16">
         <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
-        <p className="text-base-content/70 mb-4">Add some items to get started!</p>
+        <p className="text-base-content/70 mb-4">
+          Add some items to get started!
+        </p>
       </div>
     );
   }

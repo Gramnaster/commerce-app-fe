@@ -80,7 +80,9 @@ export const action =
 
     try {
       const endpoint =
-        action === 'deposit' ? '/user_payment_methods/deposit' : '/user_payment_methods/withdraw';
+        action === 'deposit'
+          ? '/user_payment_methods/deposit'
+          : '/user_payment_methods/withdraw';
 
       await customFetch.post(
         endpoint,
@@ -277,7 +279,7 @@ const Wallet = () => {
           <div className="lg:col-span-1">
             <div className="bg-[#E6E6E6] rounded-lg p-6 border border-[#808080]">
               <h2 className="text-xl font-bold mb-6">Manage Funds</h2>
-              
+
               {/* Tab Buttons */}
               <div className="flex mb-6">
                 <button

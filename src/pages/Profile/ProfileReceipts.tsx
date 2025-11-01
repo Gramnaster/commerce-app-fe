@@ -6,4 +6,4 @@ const ProfileReceipts = () => {
   )
 }
 
-export default ProfileReceipts
+export default ProfileReceipts;

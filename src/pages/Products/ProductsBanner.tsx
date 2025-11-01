@@ -64,11 +64,9 @@ const ProductsBanner = () => {
 
   return (
     <div className="w-full">
-          <div
-            className=" relative w-full"
-          >
-            <img src={banner} className="w-full" alt="Category Banner" />
-          </div>
+      <div className=" relative w-full">
+        <img src={banner} className="w-full" alt="Category Banner" />
+      </div>
     </div>
   );
 };

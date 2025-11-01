@@ -34,10 +34,16 @@ const FeaturedProducts = () => {
           >
             <img src={image.url} className="w-full" />
             <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
-              <a href={`#slide${prevIndex + 1}`} className="btn btn-circle items-center">
+              <a
+                href={`#slide${prevIndex + 1}`}
+                className="btn btn-circle items-center"
+              >
                 ❮
               </a>
-              <a href={`#slide${nextIndex + 1}`} className="btn btn-circle items-center">
+              <a
+                href={`#slide${nextIndex + 1}`}
+                className="btn btn-circle items-center"
+              >
                 ❯
               </a>
             </div>

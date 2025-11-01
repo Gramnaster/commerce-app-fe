@@ -31,7 +31,7 @@ const SidebarDropdown = ({ selectedOption, onOptionChange }: SidebarDropdownProp
   return (
     <>
       {/* Dropdown Button */}
-      <button 
+      <button
         className="border-1 border-[#B3B3B3] font-secondary text-[14px] text-right px-2 mb-2 text-black bg-white h-[32px] w-[220px] rounded-md hover:bg-gray-50 transition-colors flex text-center items-center justify-end gap-2"
         // @ts-ignore - popoverTarget is a valid HTML attribute
         popoverTarget="sort-popover"
@@ -42,7 +42,7 @@ const SidebarDropdown = ({ selectedOption, onOptionChange }: SidebarDropdownProp
       </button>
 
       {/* Dropdown Menu */}
-      <ul 
+      <ul
         className="dropdown menu w-[220px] rounded-box bg-[#ffffff] shadow-lg border border-gray-200"
         // @ts-ignore - popover is a valid HTML attribute
         popover="auto"
@@ -50,7 +50,7 @@ const SidebarDropdown = ({ selectedOption, onOptionChange }: SidebarDropdownProp
         style={{ positionAnchor: '--sort-anchor' } as React.CSSProperties}
       >
         {sortOptions.map((option) => (
-          <li key={option.value} className='font-secondary text-base-content'>
+          <li key={option.value} className="font-secondary text-base-content">
             <a
               onClick={() => handleOptionClick(option.value)}
               className={` flex text-right justify-end ${selectedOption === option.value ? 'active font-bold' : ''}`}

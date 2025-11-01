@@ -34,7 +34,9 @@ const CartItem = ({
 
           {/* Product Details */}
           <div className="flex-1">
-            <h3 className="font-bold text-lg mb-1 text-base-content">{product.title}</h3>
+            <h3 className="font-bold text-lg mb-1 text-base-content">
+              {product.title}
+            </h3>
 
             {/* Price Info */}
             <div className="flex items-center gap-2 mb-2">

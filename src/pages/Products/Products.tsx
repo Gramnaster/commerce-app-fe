@@ -99,17 +99,23 @@ const Products = () => {
 
   return (
     <div>
-      <div className='mb-10'>
-      <ProductsBanner />
+      <div className="mb-10">
+        <ProductsBanner />
       </div>
-      <div className={`mx-auto ${maxWidthClass} px-8 grid grid-cols-[0.25fr_1fr] grid-rows-1 gap-6 mb-25`}>
-        <Sidebar categoryData={ProductCategories.data} filters={filters} setFilters={setFilters}  />
+      <div
+        className={`mx-auto ${maxWidthClass} px-8 grid grid-cols-[0.25fr_1fr] grid-rows-1 gap-6 mb-25`}
+      >
+        <Sidebar
+          categoryData={ProductCategories.data}
+          filters={filters}
+          setFilters={setFilters}
+        />
         <div>
           <Outlet context={{ filters, setFilters }} />
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default Products

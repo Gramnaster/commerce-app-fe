@@ -5,7 +5,7 @@ const FooterCTA = () => {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
   return (
-  <div className="flex flex-col items-center bg-primary h-[155px] justify-center">
+    <div className="flex flex-col items-center bg-primary h-[155px] justify-center">
       <div className="align-element">
         <button
           type="button"
