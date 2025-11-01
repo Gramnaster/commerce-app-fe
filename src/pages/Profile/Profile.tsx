@@ -6,6 +6,7 @@ import { customFetch } from '../../utils';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
 import ProfileSidebar from './ProfileSidebar';
+import { IconLineDark, IconLineWhite } from '../../assets/images';
 
 
 export const loader = (queryClient: any, store: any) => async () => {
@@ -44,12 +45,29 @@ const Profile = () => {
   const user = useSelector((state: RootState) => state.userState.user);
 
   return (
-    <div className=" grid grid-cols-[0.25fr_1fr] gap-0">
-      <ProfileSidebar user={user} />
-      <div>
-        <Outlet />
+    <>
+      <div className="flex justify-center align-middle flex-col my-[85px]">
+        <h2 className="font-primary text-base-content text-2xl text-center">
+          USER PROFILE
+        </h2>
+        <div className="relative h-[11px] w-[67px] mx-auto">
+          <img
+            src={IconLineWhite}
+            className="block dark:hidden h-[11px] w-[67px] mx-auto"
+          />
+          <img
+            src={IconLineDark}
+            className="hidden dark:block h-[11px] w-[67px] mx-auto"
+          />
+        </div>
       </div>
-    </div>
+      <div className="align-headers grid grid-cols-[0.25fr_1fr] gap-0">
+        <ProfileSidebar user={user} />
+        <div>
+          <Outlet />
+        </div>
+      </div>
+    </>
   );
 }
 

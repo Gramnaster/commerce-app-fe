@@ -11,9 +11,9 @@ export interface LinksType {
 
 
 export const getProfileLinks = (user: User | null): LinksType[] => [
-  { id: 0, url: '/profile/wallet', text: "Wallet" },
+  { id: 0, url: '/profile/transactions', text: "Transactions" },
   { id: 1, url: `/profile/view/${user?.id}`, text: "Profile" },
-  { id: 2, url: `/profile/transactions/`, text: "Transactions" },
+  { id: 2, url: `/profile/wallet/`, text: "Wallet" },
   // { id: 0, url: '/profile/view/:id', text: "Men's Clothes" },
   // { id: 1, url: '/profile/edit', text: "Women's Clothes" },
   // { id: 3, url: '/profile/receipts', text: "Children's Clothes" },
@@ -27,17 +27,28 @@ export const getProfileLinks = (user: User | null): LinksType[] => [
 const ProfileSidebar = ({ user }: { user: User }) => {
   const links = getProfileLinks(user);
   return (
-    <div>
-      {links.map((link) => {
-        const { id, url, text } = link;
-        return (
-          <li key={id} className="li font-secondary text-black">
-            <NavLink to={url} className="capitalize">
-              {text}
-            </NavLink>
-          </li>
-        );
-      })}
+    <div className="h-full">
+      <div className="h-[468px] border-r border-[#808080]">
+        <div className="font-bold flex flex-col justify-end items-end mr-4 text-black">
+          <h3 className="font-primary font-light text-[24px] mb-2">Profile</h3>
+          {links.map((link) => {
+            const { id, url, text } = link;
+            return (
+              <NavLink
+                key={id}
+                to={url}
+                className={({ isActive }) =>
+                  `m-1 rounded-2xl hover:cursor-pointer hover:underline capitalize font-secondary text-[16px] ${
+                    isActive ? 'font-bold' : 'font-light'
+                  }`
+                }
+              >
+                {text}
+              </NavLink>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 };

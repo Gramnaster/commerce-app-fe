@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { customFetch } from '../../utils';
 import type { Product } from './Products';
-import ProductCard from './ProductCard';
+import SmallProductCard from './SmallProductCard';
 
 interface ProductsRelatedProps {
   categoryId: number;
@@ -54,9 +54,9 @@ const ProductsRelated = ({ categoryId, currentProductId }: ProductsRelatedProps)
   return (
     <section className="mb-20">
       <h3 className="font-primary text-[24px] font-semibold mb-6">Related Products</h3>
-      <div className="grid grid-cols-[1fr_1fr_1fr] gap-[20px]">
+      <div className="grid grid-cols-[1fr_1fr_1fr] gap-[10px]">
         {relatedProducts.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <SmallProductCard key={product.id} product={product} />
         ))}
       </div>
     </section>

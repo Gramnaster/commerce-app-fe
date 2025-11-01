@@ -8,6 +8,9 @@ import { type Product } from '../Cart/Cart';
 interface User {
   id: number;
   email: string;
+  first_name: string;
+  last_name: string;
+  full_name: string;
 }
 
 interface Item {
@@ -19,6 +22,34 @@ interface Item {
   product: Product;
 }
 
+interface Country {
+  id: number;
+  name: string;
+  code: string;
+}
+
+interface DeliveryAddress {
+  id: number;
+  unit_no: string;
+  street_no: string;
+  address_line1: string;
+  address_line2: string;
+  city: string;
+  region: string;
+  zipcode: string;
+  country: Country;
+}
+
+interface CompanySite {
+  id: number;
+  title: string;
+}
+
+interface DeliveryOrder {
+  company_site: CompanySite;
+  status: 'pending' | 'shipped' | 'delivered' | 'cancelled';
+}
+
 interface Order {
   id: number;
   cart_status: 'pending' | 'approved' | 'rejected';
@@ -27,6 +58,8 @@ interface Order {
   items_count: number;
   total_quantity: string;
   items: Item[];
+  delivery_address: DeliveryAddress;
+  delivery_orders: DeliveryOrder[];
 }
 
 interface Transaction {
@@ -83,21 +116,16 @@ const TransactionView = () => {
   const {
     id,
     transaction_type,
-    balance_before,
-    balance_after,
     description,
     created_at,
-    user: { email },
     order,
   } = TransactionDetails;
   const {
-    id: order_id,
-    cart_status,
     is_paid,
     total_cost,
     items,
-    items_count,
-    total_quantity,
+    delivery_address,
+    delivery_orders,
   } = order ?? {};
   console.log(`TransactionView order`, order);
   console.log(`TransactionView items`, items);
@@ -107,9 +135,9 @@ const TransactionView = () => {
 
   return (
     <div className="min-h-screen bg-base-100 text-2xl text-base-content p-6 align-element">
-      <div className="font-primary text-3xl text-center">ORDER #{id}</div>
+      <div className="font-primary text-3xl text-center mb-6">ORDER #{id}</div>
 
-      <table className="">
+      <table className="w-full mb-8">
         <tbody>
           <tr>
             <th className="text-left">Transaction Type: </th>
@@ -127,11 +155,6 @@ const TransactionView = () => {
           </tr>
 
           <tr>
-            <th className="text-left">Cart Status:</th>
-            <td>{cart_status}</td>
-          </tr>
-
-          <tr>
             <th className="text-left">Paid?</th>
             <td>{is_paid ? 'Yes' : 'Unpaid'}</td>
           </tr>
@@ -139,7 +162,7 @@ const TransactionView = () => {
           {items && items.length > 0
             ? items.map((item) => {
                 const { id, qty, subtotal, product } = item;
-                const { title, price: product_price } = product;
+                const { title } = product;
                 return (
                   <tr key={id}>
                     <th className="text-left">Items:</th>
@@ -150,7 +173,7 @@ const TransactionView = () => {
                   </tr>
                 );
               })
-            : 'huh'}
+            : null}
 
           <tr>
             <th className="text-left">Order total</th>
@@ -158,15 +181,80 @@ const TransactionView = () => {
           </tr>
         </tbody>
       </table>
-      {/* <div>{balance_before}- {balance_after}+</div> */}
-      {/* <div>{formatDate(created_at)}</div> */}
-      {/* <div>{email}</div> */}
-      {/* <div>{order_id}</div> */}
-      {/* <div>{cart_status}</div>
-      <div>{is_paid}</div>
-      <div>{total_cost}</div> */}
-      {/* <div>{items_count}</div>
-      <div>{total_quantity}</div> */}
+
+      {/* Delivery Address Section */}
+      {delivery_address && (
+        <div className="mt-8 mb-8">
+          <h3 className="font-primary text-2xl font-semibold mb-4">Delivery Address</h3>
+          <div className="border border-gray-300 rounded-lg p-6 bg-white">
+            <div className="space-y-2 text-lg">
+              {delivery_address.unit_no && (
+                <p>
+                  <span className="font-semibold">Unit No:</span> {delivery_address.unit_no}
+                </p>
+              )}
+              {delivery_address.street_no && (
+                <p>
+                  <span className="font-semibold">Street No:</span> {delivery_address.street_no}
+                </p>
+              )}
+              <p>
+                <span className="font-semibold">Address:</span> {delivery_address.address_line1}
+              </p>
+              {delivery_address.address_line2 && (
+                <p>{delivery_address.address_line2}</p>
+              )}
+              <p>
+                {delivery_address.city}, {delivery_address.region} {delivery_address.zipcode}
+              </p>
+              <p>
+                <span className="font-semibold">Country:</span> {delivery_address.country.name}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delivery Orders Section */}
+      {delivery_orders && delivery_orders.length > 0 && (
+        <div className="mt-8">
+          <h3 className="font-primary text-2xl font-semibold mb-4">Delivery Orders</h3>
+          <div className="space-y-4">
+            {delivery_orders.map((delivery, index) => (
+              <div
+                key={index}
+                className="border border-gray-300 rounded-lg p-4 bg-white"
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="text-lg font-semibold">
+                      {delivery.company_site.title}
+                    </p>
+                    <p className="text-base text-gray-600">
+                      Warehouse ID: {delivery.company_site.id}
+                    </p>
+                  </div>
+                  <div>
+                    <span
+                      className={`px-4 py-2 rounded-full text-sm font-semibold ${
+                        delivery.status === 'delivered'
+                          ? 'bg-green-100 text-green-800'
+                          : delivery.status === 'shipped'
+                          ? 'bg-blue-100 text-blue-800'
+                          : delivery.status === 'cancelled'
+                          ? 'bg-red-100 text-red-800'
+                          : 'bg-yellow-100 text-yellow-800'
+                      }`}
+                    >
+                      {delivery.status.charAt(0).toUpperCase() + delivery.status.slice(1)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

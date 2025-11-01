@@ -124,8 +124,10 @@ const Wallet = () => {
       return response.data;
     },
     initialData: initialWallet,
-    refetchOnWindowFocus: false,
-    staleTime: 0,
+    // Financial data must be extremely fresh - refetch on every mount and window focus
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0, // Always consider stale, always refetch
   });
 
   // Deposit Mutation

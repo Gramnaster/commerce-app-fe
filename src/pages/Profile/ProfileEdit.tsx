@@ -1,11 +1,11 @@
 import { redirect, useLoaderData, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
-// import type { Trader } from './TradersAdmin';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
+import { IconLineDark, IconLineWhite } from '../../assets/images';
 
 interface Country {
   id: number;
@@ -13,9 +13,69 @@ interface Country {
   code: string;
 }
 
+interface CountriesResponse {
+  pagination: {
+    current_page: number;
+    per_page: number;
+    total_entries: number;
+    total_pages: number;
+    next_page: number | null;
+    previous_page: number | null;
+  };
+  data: Country[];
+}
+
+interface UserDetail {
+  id: number;
+  first_name: string;
+  middle_name: string | null;
+  last_name: string;
+  dob: string;
+}
+
+interface Phone {
+  id: number;
+  phone_number: string;
+  phone_type: 'mobile' | 'home' | 'office';
+  is_default: boolean;
+}
+
+interface Address {
+  id: number;
+  unit_no: string;
+  street_no: string;
+  address_line1: string;
+  address_line2: string;
+  barangay: string;
+  city: string;
+  region: string;
+  zipcode: string;
+  country_id: number;
+}
+
+interface UserAddress {
+  id: number;
+  is_default: boolean;
+  address: Address;
+}
+
+interface UserPaymentMethod {
+  id: number;
+  balance: string;
+  payment_type: string | null;
+}
+
 export interface User {
   id: number;
   email: string;
+  is_verified: boolean;
+  confirmed_at: string;
+  created_at: string;
+  updated_at: string;
+  user_detail: UserDetail;
+  phones: Phone[];
+  user_addresses: UserAddress[];
+  user_payment_methods: UserPaymentMethod[];
 }
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
@@ -40,9 +100,12 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
   const countriesQuery = {
     queryKey: ['countries'],
     queryFn: async () => {
-      const response = await customFetch.get('/countries');
+      // Fetch all countries by setting per_page to a large number
+      const response = await customFetch.get('/countries?per_page=300');
       return response.data;
     },
+    staleTime: 1000 * 60 * 60, // Cache for 1 hour
+    gcTime: 1000 * 60 * 60 * 2, // Keep in cache for 2 hours
   };
 
   try {
@@ -60,14 +123,21 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
 const ProfileEdit = () => {
   const { userDetails, countries } = useLoaderData() as { 
-    userDetails: User; 
-    countries: Country[];
+    userDetails: { data: User }; 
+    countries: CountriesResponse;
   };
-  // console.log(`ProfilEdit userDetails: `, userDetails)
+  console.log(`ProfileEdit countries:`, countries);
+  console.log(`ProfileEdit userDetails:`, userDetails);
+
+  // Extract countries array from response
+  const countriesArray: Country[] = countries?.data || [];
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const user = useSelector((state: RootState) => state.userState.user);
+
+  // Validation errors state
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -80,14 +150,16 @@ const ProfileEdit = () => {
     },
       user_addresses_attributes:
     (userDetails.data.user_addresses?.length
-      ? userDetails.data.user_addresses.map((userAddress: any) => ({
+      ? userDetails.data.user_addresses.map((userAddress: UserAddress) => ({
           id: userAddress.id || '',
           is_default: userAddress.is_default || false,
+          _destroy: false,
           address_attributes: {
             unit_no: userAddress.address?.unit_no || '',
             street_no: userAddress.address?.street_no || '',
             address_line1: userAddress.address?.address_line1 || '',
             address_line2: userAddress.address?.address_line2 || '',
+            barangay: userAddress.address?.barangay || '',
             city: userAddress.address?.city || '',
             region: userAddress.address?.region || '',
             zipcode: userAddress.address?.zipcode || '',
@@ -98,11 +170,13 @@ const ProfileEdit = () => {
           {
             id: '',
             is_default: true,
+            _destroy: false,
             address_attributes: {
               unit_no: '',
               street_no: '',
               address_line1: '',
               address_line2: '',
+              barangay: '',
               city: '',
               region: '',
               zipcode: '',
@@ -112,24 +186,24 @@ const ProfileEdit = () => {
         ]),
       phones_attributes:
         (userDetails.data.phones?.length
-          ? userDetails.data.phones.map((phone_number: any) => ({
+          ? userDetails.data.phones.map((phone_number: Phone) => ({
               id: phone_number.id || '',
-              phone_no: phone_number.phone_no || '',
-              phone_type: phone_number.phone_type || '',
+              phone_no: phone_number.phone_number || '',
+              phone_type: phone_number.phone_type || 'mobile',
             }))
           : [
           // default empty phone entry
           {
             id: '',
             phone_no: '',
-            phone_type: '',
+            phone_type: 'mobile' as const,
           },
         ]),
 });
 
   // Update user mutation
   const updateUserMutation = useMutation({
-    mutationFn: async (userData: any) => {
+    mutationFn: async (userData: typeof formData) => {
       const response = await customFetch.patch(
         `/users/${userDetails.data.id}`,
         {
@@ -146,15 +220,16 @@ const ProfileEdit = () => {
     },
     onSuccess: () => {
       toast.success('User updated successfully');
+      setValidationErrors([]);
       queryClient.invalidateQueries({ queryKey: ['users', user?.id] });
       queryClient.invalidateQueries({ queryKey: ['userDetails', userDetails.data.id.toString()] });
-      navigate(`/view/${userDetails.data.id}`);
+      navigate(`/profile/view/${userDetails.data.id}`);
     },
-    onError: (error: any) => {
+    onError: (error: { response?: { data?: { errors?: string[] } } }) => {
       console.error('Update failed:', error);
-      const errorMessage =
-        error.response?.data?.message || 'Failed to update user';
-      toast.error(errorMessage);
+      const errors = error.response?.data?.errors || ['Failed to update user'];
+      setValidationErrors(errors);
+      toast.error(errors.join(', '));
     },
   });
 
@@ -168,6 +243,7 @@ const NESTED_FIELDS: Record<string, string> = {
   street_no: 'user_addresses_attributes',
   address_line1: 'user_addresses_attributes',
   address_line2: 'user_addresses_attributes',
+  barangay: 'user_addresses_attributes',
   city: 'user_addresses_attributes',
   region: 'user_addresses_attributes',
   zipcode: 'user_addresses_attributes',
@@ -230,8 +306,26 @@ const handleInputChange = (
     });
   };
 
+  // Handle setting default address
+  const handleSetDefaultAddress = (addressIndex: number) => {
+    setFormData((prev) => {
+      const updatedAddresses = prev.user_addresses_attributes.map((addr, idx) => ({
+        ...addr,
+        is_default: idx === addressIndex,
+      }));
+      
+      return {
+        ...prev,
+        user_addresses_attributes: updatedAddresses,
+      };
+    });
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Clear previous errors
+    setValidationErrors([]);
     
     // Create the payload matching the API format
     const payload = {
@@ -239,6 +333,43 @@ const handleInputChange = (
     };
     
     updateUserMutation.mutate(payload);
+  };
+
+  // Helper to check if a field has an error
+  const hasError = (fieldName: string) => {
+    return validationErrors.some(error => 
+      error.toLowerCase().includes(fieldName.toLowerCase())
+    );
+  };
+
+  // Handle deleting an address
+  const handleDeleteAddress = (addressIndex: number) => {
+    setFormData((prev) => {
+      // Count addresses not marked for deletion
+      const activeAddresses = prev.user_addresses_attributes.filter(addr => !addr._destroy);
+      
+      // Prevent deleting the last address
+      if (activeAddresses.length <= 1) {
+        toast.error('You must have at least one address');
+        return prev;
+      }
+      
+      const updatedAddresses = [...prev.user_addresses_attributes];
+      const addressToDelete = updatedAddresses[addressIndex];
+      
+      // If the address has an id (exists in backend), mark for deletion
+      if (addressToDelete.id) {
+        updatedAddresses[addressIndex] = {
+          ...addressToDelete,
+          _destroy: true,
+        };
+      } else {
+        // If it's a new address (no id), just remove it from the array
+        updatedAddresses.splice(addressIndex, 1);
+      }
+      
+      return { ...prev, user_addresses_attributes: updatedAddresses };
+    });
   };
 
   return (
@@ -275,6 +406,18 @@ const handleInputChange = (
 
         {/* Edit Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Validation Errors Display */}
+          {validationErrors.length > 0 && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+              <p className="font-bold">Please fix the following errors:</p>
+              <ul className="list-disc list-inside mt-2">
+                {validationErrors.map((error, index) => (
+                  <li key={index}>{error}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {/* Personal Information */}
           <div className="bg-base-100 rounded-lg p-6 border border-gray-700">
             <h2 className="text-xl font-bold text-black mb-4 pb-2 border-b border-gray-700">
@@ -283,16 +426,16 @@ const handleInputChange = (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-black text-sm font-medium mb-2">
-                  Email Address *
+                  Email Address (Read-only)
                 </label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent"
-                  required
+                  disabled
+                  className="w-full bg-gray-200 border border-gray-400 rounded-lg p-3 text-gray-600 cursor-not-allowed"
                 />
+                <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
               </div>
               <div>
                 <label className="block text-black text-sm font-medium mb-2">
@@ -354,12 +497,45 @@ const handleInputChange = (
             <h2 className="text-xl font-bold text-black mb-4 pb-2 border-b border-gray-700">
               Address Information
             </h2>
-            {formData.user_addresses_attributes.map((userAddress: any, index: number) => { 
+            {formData.user_addresses_attributes.map((userAddress, index: number) => { 
               console.log(`userAddress :`, userAddress)
+              // Skip rendering addresses marked for deletion
+              if (userAddress._destroy) return null;
+              
               return (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6" key={userAddress.id}>
+            <div key={userAddress.id || index} className="mb-8">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold text-black">
+                  Address #{index + 1}
+                  {userAddress.is_default && (
+                    <span className="ml-2 text-sm bg-green-600 text-white px-2 py-1 rounded">
+                      Default
+                    </span>
+                  )}
+                </h3>
+                <div className="flex gap-2">
+                  {!userAddress.is_default && (
+                    <button
+                      type="button"
+                      onClick={() => handleSetDefaultAddress(index)}
+                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded transition-colors"
+                    >
+                      Set as Default
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteAddress(index)}
+                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded transition-colors"
+                  >
+                    Delete Address
+                  </button>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-black text-sm font-medium mb-2">
+                <label className={`block text-sm font-medium mb-2 ${hasError('unit_no') ? 'text-red-600' : 'text-black'}`}>
                   Unit No. 
                 </label>
                 <input
@@ -367,11 +543,11 @@ const handleInputChange = (
                   name="unit_no"
                   value={userAddress.address_attributes.unit_no}
                   onChange={(e) => handleInputChange(e, index)}
-                  className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent"
+                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('unit_no') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
                 />
               </div>
               <div>
-                <label className="block text-black text-sm font-medium mb-2">
+                <label className={`block text-sm font-medium mb-2 ${hasError('street_no') ? 'text-red-600' : 'text-black'}`}>
                   Street No.
                 </label>
                 <input
@@ -379,11 +555,11 @@ const handleInputChange = (
                   name="street_no"
                   value={userAddress.address_attributes.street_no}
                   onChange={(e) => handleInputChange(e, index)}
-                  className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-ffffff focus:border-transparent"
+                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-black focus:ring-2 focus:ring-ffffff focus:border-transparent ${hasError('street_no') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
                 />
               </div>
               <div>
-                <label className="block text-black text-sm font-medium mb-2">
+                <label className={`block text-sm font-medium mb-2 ${hasError('address_line1') ? 'text-red-600' : 'text-black'}`}>
                   Address Line 1
                 </label>
                 <input
@@ -391,11 +567,11 @@ const handleInputChange = (
                   name="address_line1"
                   value={userAddress.address_attributes.address_line1}
                   onChange={(e) => handleInputChange(e, index)}
-                  className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent"
+                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('address_line1') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
                 />
               </div>
               <div>
-                <label className="block text-black text-sm font-medium mb-2">
+                <label className={`block text-sm font-medium mb-2 ${hasError('address_line2') ? 'text-red-600' : 'text-black'}`}>
                   Address Line 2
                 </label>
                 <input
@@ -403,23 +579,50 @@ const handleInputChange = (
                   name="address_line2"
                   value={userAddress.address_attributes.address_line2}
                   onChange={(e) => handleInputChange(e, index)}
-                  className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent"
+                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('address_line2') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
                 />
               </div>
               <div>
-                <label className="block text-black text-sm font-medium mb-2">
-                  City
+                <label className={`block text-sm font-medium mb-2 ${hasError('barangay') ? 'text-red-600' : 'text-black'}`}>
+                  Barangay *
+                </label>
+                <input
+                  type="text"
+                  name="barangay"
+                  value={userAddress.address_attributes.barangay}
+                  onChange={(e) => handleInputChange(e, index)}
+                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('barangay') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
+                  required
+                />
+              </div>
+              <div>
+                <label className={`block text-sm font-medium mb-2 ${hasError('city') ? 'text-red-600' : 'text-black'}`}>
+                  City *
                 </label>
                 <input
                   type="text"
                   name="city"
                   value={userAddress.address_attributes.city}
                   onChange={(e) => handleInputChange(e, index)}
-                  className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent"
+                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('city') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
+                  required
                 />
               </div>
               <div>
-                <label className="block text-black text-sm font-medium mb-2">
+                <label className={`block text-sm font-medium mb-2 ${hasError('region') ? 'text-red-600' : 'text-black'}`}>
+                  Region *
+                </label>
+                <input
+                  type="text"
+                  name="region"
+                  value={userAddress.address_attributes.region}
+                  onChange={(e) => handleInputChange(e, index)}
+                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('region') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
+                  required
+                />
+              </div>
+              <div>
+                <label className={`block text-sm font-medium mb-2 ${hasError('zipcode') ? 'text-red-600' : 'text-black'}`}>
                   ZIP Code *
                 </label>
                 <input
@@ -427,26 +630,26 @@ const handleInputChange = (
                   name="zipcode"
                   value={userAddress.address_attributes.zipcode}
                   onChange={(e) => handleInputChange(e, index)}
-                  className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent"
+                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('zipcode') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
                   required
                 />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-black text-sm font-medium mb-2">
+                <label className={`block text-sm font-medium mb-2 ${hasError('country') ? 'text-red-600' : 'text-black'}`}>
                   Country *
                 </label>
                 <select
                   name="country_id"
                   value={userAddress.address_attributes.country_id}
                   onChange={(e) => handleInputChange(e, index)}
-                  className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent"
+                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('country') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
                   required
                 >
                   <option value="">Select Country...</option>
-                  {countries
+                  {countriesArray
                     .slice()
-                    .sort((a, b) => a.name.localeCompare(b.name))
-                    .map((country) => (
+                    .sort((a: Country, b: Country) => a.name.localeCompare(b.name))
+                    .map((country: Country) => (
                       <option key={country.id} value={country.id}>
                         {country.name} ({country.code})
                       </option>
@@ -454,6 +657,23 @@ const handleInputChange = (
                 </select>
               </div>
             </div>
+            
+            {/* Separator Line between addresses */}
+            {index < formData.user_addresses_attributes.length - 1 && (
+              <div className="flex justify-center my-8">
+                <img 
+                  src={IconLineDark} 
+                  alt="separator" 
+                  className="h-[11px] w-[67px] dark:hidden" 
+                />
+                <img 
+                  src={IconLineWhite} 
+                  alt="separator" 
+                  className="h-[11px] w-[67px] hidden dark:block" 
+                />
+              </div>
+            )}
+          </div>
             )})}
           </div>
 
@@ -462,13 +682,18 @@ const handleInputChange = (
             <h2 className="text-xl font-bold text-black mb-4 pb-2 border-b border-gray-700">
               Phone Numbers
             </h2>
-            {formData.phones_attributes.map((phoneNumber: any, index: number) => { 
+            {formData.phones_attributes.map((phoneNumber, index: number) => { 
               console.log(`phoneNumber :`, phoneNumber)
               return (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6" key={phoneNumber.id}>
+            <div key={phoneNumber.id || index} className="mb-8">
+              <h3 className="text-lg font-semibold text-black mb-4">
+                Phone #{index + 1}
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <div>
-                  <label className="block text-black text-sm font-medium mb-2">
+                  <label className={`block text-sm font-medium mb-2 ${hasError('phone') ? 'text-red-600' : 'text-black'}`}>
                     Phone Number
                   </label>
                   <input
@@ -476,7 +701,7 @@ const handleInputChange = (
                     name="phone_no"
                     value={phoneNumber.phone_no}
                     onChange={(e) => handleInputChange(e, undefined, index)}
-                    className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent"
+                    className={`w-full bg-[#ffffff] rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('phone') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
                   />
                 </div>
               </div>
@@ -485,12 +710,12 @@ const handleInputChange = (
                     Type:
                   </label>
                 <div className='flex items-center justify-between gap-5'>
-                  <label>Work</label>
+                  <label>Office</label>
                   <input
                     type="radio"
                     name="phone_type"
-                    value="work"
-                    checked={phoneNumber.phone_type === 'work'}
+                    value="office"
+                    checked={phoneNumber.phone_type === 'office'}
                     onChange={(e) => handleInputChange(e, undefined, index)}
                     className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent"
                   />
@@ -519,6 +744,23 @@ const handleInputChange = (
                 </div>
               </div>
             </div>
+            
+            {/* Separator Line between phones */}
+            {index < formData.phones_attributes.length - 1 && (
+              <div className="flex justify-center my-8">
+                <img 
+                  src={IconLineDark} 
+                  alt="separator" 
+                  className="h-[11px] w-[67px] dark:hidden" 
+                />
+                <img 
+                  src={IconLineWhite} 
+                  alt="separator" 
+                  className="h-[11px] w-[67px] hidden dark:block" 
+                />
+              </div>
+            )}
+          </div>
             )})}
           </div>
 
