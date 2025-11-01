@@ -54,7 +54,20 @@ import { loader as socialProgramViewLoader } from './pages/SocialPrograms/Social
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
+      // Data stays fresh for 5 minutes (won't refetch during this time)
       staleTime: 1000 * 60 * 5,
+      // Cache data for 10 minutes before garbage collection
+      gcTime: 1000 * 60 * 10,
+      // Disable automatic refetching on window focus (main culprit!)
+      refetchOnWindowFocus: false,
+      // Disable refetch on component mount if data is still fresh
+      refetchOnMount: false,
+      // Disable refetch when network reconnects
+      refetchOnReconnect: false,
+      // Retry failed requests only once instead of 3 times
+      retry: 1,
+      // Delay between retries (1 second)
+      retryDelay: 1000,
     },
   },
 });

@@ -133,7 +133,7 @@ const ProductView = () => {
         )}
 
         {/* PRODUCT MAIN DETAILS */}
-        <div className="flex flex-col">
+        <div className="flex flex-col max-w-[340px]">
           <h2 className="font-primary text-[32px] font-semibold">
             {product.title}
           </h2>
