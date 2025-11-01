@@ -34,25 +34,38 @@ const ProductView = () => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.userState.user);
   
+  console.log('ProductView: Component rendering');
+  console.log('ProductView: User state:', user);
+  
   const { ProductDetails } = useLoaderData() as {
     ProductDetails: { data: Product };
   };
+
+  console.log('ProductView: ProductDetails loaded:', ProductDetails);
+  console.log('ProductView: Product data:', ProductDetails?.data);
 
   const product = ProductDetails.data;
   const [amount, setAmount] = useState(1);
 
   const handleIncrement = () => {
+    console.log('ProductView: Increment clicked, new amount:', amount + 1);
     setAmount((prev) => prev + 1);
   };
 
   const handleDecrement = () => {
+    console.log('ProductView: Decrement clicked, new amount:', Math.max(1, amount - 1));
     setAmount((prev) => (prev > 1 ? prev - 1 : 1));
   };
 
   const addToCart = async () => {
+    console.log('ProductView: Add to cart clicked');
+    console.log('ProductView: User logged in?', !!user);
+    
     // If user is not logged in, open modal instead
     if (!user) {
+      console.log('ProductView: User not logged in, opening modal');
       const modal = document.getElementById('login_cart_modal') as HTMLDialogElement;
+      console.log('ProductView: Modal element found:', !!modal);
       modal?.showModal();
       return;
     }

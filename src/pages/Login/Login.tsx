@@ -17,36 +17,43 @@ import { IconLineWhite } from '../../assets/images';
 export const action =
   (store: { dispatch: AppDispatch }) =>
   async ({ request }: ActionFunctionArgs) => {
-    console.log(store);
-    // const {request} = store;
+    console.log('Login.tsx action: Starting login process');
+    console.log('Login.tsx action: Store:', store);
+    
     const requestFormData = await request.formData();
     const data = Object.fromEntries(requestFormData);
-
-    // Modern React Router + Rails format
-    // const payload = { user: data};
+    console.log('Login.tsx action: Form data:', data);
 
     try {
       // Convert to FormData to avoid preflight
       const formData = new FormData();
       formData.append('user[email]', data.email);
       formData.append('user[password]', data.password);
+      
+      console.log('Login.tsx action: Sending login request to /users/login');
 
       const response = await customFetch.post('/users/login', formData);
-      console.log(response);
+      console.log('Login.tsx action: Login response received:', response);
 
       // Data and Token extraction
       const token = response.headers.authorization; // Keep the full "Bearer <token>" format
       const userData = response.data.data;
+      
+      console.log('Login.tsx action: Token:', token);
+      console.log('Login.tsx action: User data:', userData);
 
       store.dispatch(loginUser({ user: userData, token }));
-      console.log(`login.tsx user: userdata`, userData);
+      console.log('Login.tsx action: User dispatched to store');
+      
       toast.success('logged in successfully');
+      console.log('Login.tsx action: Redirecting to /');
       return redirect('/');
     } catch (error) {
-      console.log('Try-Catch Login Error:', error);
+      console.error('Login.tsx action: Error caught:', error);
       const err = error as AxiosError<{ error: { message: string } }>;
       const errorMessage =
         err.response?.data?.error?.message || 'Invalid credentials';
+      console.error('Login.tsx action: Error message:', errorMessage);
       toast.error(errorMessage);
       return null;
     }
@@ -56,23 +63,36 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  console.log('Login.tsx component: Component rendering');
+  console.log('Login.tsx component: Dispatch available:', !!dispatch);
+  console.log('Login.tsx component: Navigate available:', !!navigate);
+
   const loginAsGuestUser = async () => {
+    console.log('Login.tsx component: Guest login started');
     try {
       const formData = new FormData();
       formData.append('user[email]', 'manuel@test.com');
       formData.append('user[password]', 'test123456');
 
+      console.log('Login.tsx component: Sending guest login request');
       const response = await customFetch.post('/users/login', formData);
+      console.log('Login.tsx component: Guest login response:', response);
 
       // Extract token and user data (same as form submission)
       const token = response.headers.authorization; // Keep the full "Bearer <token>" format
       const userData = response.data.data;
 
+      console.log('Login.tsx component: Guest token:', token);
+      console.log('Login.tsx component: Guest user data:', userData);
+
       dispatch(loginUser({ user: userData, token }));
+      console.log('Login.tsx component: Guest user dispatched to store');
+      
       toast.success('Welcome, guest user');
+      console.log('Login.tsx component: Navigating to /');
       navigate('/');
     } catch (error) {
-      console.log(error);
+      console.error('Login.tsx component: Guest login error:', error);
       toast.error('Please try again');
     }
   };
