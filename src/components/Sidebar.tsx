@@ -98,9 +98,10 @@ const Sidebar = ({ categoryData, filters, setFilters }: SidebarProps) => {
         </div>
         <div className="font-bold flex flex-col justify-end items-end mr-4 text-black">
           <h3 className="font-primary font-light text-[24px]">Categories</h3>
-          {/* All Categories Link */}
+          {/* All Categories Link - Navigates to /products which shows ALL products */}
           <NavLink
             to="/products"
+            end
             className={({ isActive }) =>
               `m-1 rounded-2xl hover:cursor-pointer hover:underline text-[16px] ${
                 isActive ? 'font-bold' : 'font-light'

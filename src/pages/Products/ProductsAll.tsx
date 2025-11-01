@@ -31,7 +31,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
   } catch (error: any) {
     console.error('Failed to load Product data:', error);
     toast.error('Failed to load Product data');
-    return { allStocks: [] };
+    return { allProducts: { data: [], pagination: {} } };
   }
 };
 
@@ -40,6 +40,11 @@ const ProductsAll = () => {
     allProducts: ProductsResponse
   };
   const { filters } = useOutletContext<{ filters: ProductFilters }>();
+
+  // Add safety check for allProducts.data
+  if (!allProducts?.data) {
+    return <div className="text-center py-10">No products available</div>;
+  }
 
   const filteredProducts = allProducts.data
     .filter((p: Product) => !filters.category || p.product_category.title === filters.category)
