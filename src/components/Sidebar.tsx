@@ -30,6 +30,7 @@ const Sidebar = ({ categoryData, filters, setFilters }: SidebarProps) => {
                   </select>
                 </div>
                 <div className="flex-1 relative font-bold flex flex-col justify-end items-end">
+                  {/* WIP - PRODUCT FILTERS */}
                   <input
                     type="text"
                     placeholder="Filter by Products . . ."
@@ -57,6 +58,7 @@ const Sidebar = ({ categoryData, filters, setFilters }: SidebarProps) => {
                   </svg>
                 </div>
                 <div className="flex-1 relative font-bold flex flex-col justify-end items-end mt-2">
+                  {/* WIP - DISCOUNTS ONLY BUTTON */}
                   <div className="flex items-center justify-center gap-1">
                     <span className="text-black">
                       Show only items with discounts
