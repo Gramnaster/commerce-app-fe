@@ -1,5 +1,6 @@
 import React from 'react';
 import type { SortOption } from '../pages/Products/Products';
+import { IconChevron } from '../assets/images';
 
 interface SidebarDropdownProps {
   selectedOption: SortOption;
@@ -31,27 +32,28 @@ const SidebarDropdown = ({ selectedOption, onOptionChange }: SidebarDropdownProp
     <>
       {/* Dropdown Button */}
       <button 
-        className="border-1 border-[#B3B3B3] text-[1rem] text-right p-2 mb-2 text-black bg-white w-[220px] rounded-md hover:bg-gray-50 transition-colors"
+        className="border-1 border-[#B3B3B3] font-secondary text-[14px] text-right px-2 mb-2 text-black bg-white h-[32px] w-[220px] rounded-md hover:bg-gray-50 transition-colors flex text-center items-center justify-end gap-2"
         // @ts-ignore - popoverTarget is a valid HTML attribute
         popoverTarget="sort-popover"
         style={{ anchorName: '--sort-anchor' } as React.CSSProperties}
       >
         {selectedLabel}
+        <img src={IconChevron} alt="" className="w-[24px] h-[24px]" />
       </button>
 
       {/* Dropdown Menu */}
       <ul 
-        className="dropdown menu w-52 rounded-box bg-base-100 shadow-lg border border-gray-200"
+        className="dropdown menu w-[220px] rounded-box bg-[#ffffff] shadow-lg border border-gray-200"
         // @ts-ignore - popover is a valid HTML attribute
         popover="auto"
         id="sort-popover"
         style={{ positionAnchor: '--sort-anchor' } as React.CSSProperties}
       >
         {sortOptions.map((option) => (
-          <li key={option.value}>
+          <li key={option.value} className='font-secondary text-base-content'>
             <a
               onClick={() => handleOptionClick(option.value)}
-              className={`${selectedOption === option.value ? 'active font-bold' : ''}`}
+              className={` flex text-right justify-end ${selectedOption === option.value ? 'active font-bold' : ''}`}
             >
               {option.label}
             </a>
