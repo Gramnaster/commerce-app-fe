@@ -1,62 +1,108 @@
 import { customFetch } from '../../utils';
 import { toast } from 'react-toastify';
-import type { SocialProgramResponse, SocialProgram, Address, Pagination } from '../Cart/Checkout';
+import type { SocialProgramResponse, SocialProgram } from '../Cart/Checkout';
 import { NavLink, useLoaderData } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { PaginationControls } from '../../components';
 
-export const loader = (queryClient: any) => async ({ params }: any) => {
-  const id = params.id;
-
+export const loader = (queryClient: any) => async () => {
   const SocialProgramsQuery = {
-    queryKey: ['SocialProgramsDetails', id],
+    queryKey: ['SocialPrograms'],
     queryFn: async () => {
       const response = await customFetch.get(`/social_programs`);
-      console.log(`SocialPrograms response.data`, response.data)
       return response.data;
     },
   };
 
   try {
-    const [SocialPrograms] = await Promise.all([
-      queryClient.ensureQueryData(SocialProgramsQuery)
-    ]);
-    console.log('Checkout SocialPrograms :', SocialPrograms)
+    const SocialPrograms = await queryClient.fetchQuery(SocialProgramsQuery);
     return { SocialPrograms };
   } catch (error: any) {
-    console.error('Failed to load SocialPrograms data:', error);
-    toast.error('Failed to load SocialPrograms data');
-    return { allSocialPrograms: [] };
+    console.error('Failed to load social programs data:', error);
+    toast.error('Failed to load social programs data');
+    return { SocialPrograms: { data: [], pagination: {} } };
   }
 };
 
 const SocialPrograms = () => {
-  const { SocialPrograms } = useLoaderData() as {
+  const { SocialPrograms: initialSocialPrograms } = useLoaderData() as {
     SocialPrograms: SocialProgramResponse
   };
-  console.log(`SocialPrograms SocialPrograms`, SocialPrograms)
+  const [loading, setLoading] = useState(false);
+  const [socialProgramsData, setSocialProgramsData] = useState(initialSocialPrograms);
+
+  // Update socialProgramsData when loader fetches new data
+  useEffect(() => {
+    setSocialProgramsData(initialSocialPrograms);
+  }, [initialSocialPrograms]);
+
+  // Add safety check for socialProgramsData.data
+  if (!socialProgramsData?.data) {
+    return <div className="text-center py-10">No social programs available</div>;
+  }
+
+  const handlePagination = async (page: number | null) => {
+    if (!page) return;
+    setLoading(true);
+    
+    try {
+      const response = await customFetch.get(`/social_programs?page=${page}&per_page=${socialProgramsData.pagination.per_page || 10}`);
+      const data = response.data;
+      setSocialProgramsData(data);
+      setLoading(false);
+    } catch (error: any) {
+      console.error('Failed to load pagination data:', error);
+      toast.error('Failed to load pagination data');
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <span className="loading loading-ring loading-lg text-black">Loading...</span>
+      </div>
+    );
+  }
 
   return (
-    <div className='align-element text-black'>
-      {SocialPrograms.data.map((program: SocialProgram) => {
-        const { unit_no, street_no, address_line1, address_line2, city, region, zipcode } = program.address
+    <>
+      <section className='align-element text-black'>
+        {socialProgramsData.data.map((program: SocialProgram) => {
+        const { unit_no, street_no, address_line1, address_line2, city, region, zipcode } = program.address;
+        
+        // Format address as a single line
+        const addressParts = [
+          unit_no,
+          street_no,
+          address_line1,
+          address_line2,
+          city,
+          region,
+          zipcode
+        ].filter(Boolean); // Remove null/undefined values
+        
+        const formattedAddress = addressParts.join(', ');
+        
         return (
-          <div key={program.id}>
-            <div>{program.title}</div>
-            <div>{program.description}</div>
-            <div>
-                <div>Address:</div>
-                <div>{unit_no}</div>
-                <div>{street_no}</div>
-                <div>{address_line1}</div>
-                <div>{address_line2}</div>
-                <div>{city}</div>
-                <div>{region}</div>
-                <div>{zipcode}</div>
-            </div>
+          <section key={program.id}>
+            <h2>{program.title}</h2>
+            <p>{program.description}</p>
+            <p>
+              <strong>Address: </strong>
+              {formattedAddress}
+            </p>
             <NavLink to={`${program.id}`}>More Info here</NavLink>
-          </div>
+          </section>
         )
       })}
-    </div>
+      </section>
+      
+      <PaginationControls 
+        pagination={socialProgramsData.pagination} 
+        onPageChange={handlePagination} 
+      />
+    </>
   )
 }
 
