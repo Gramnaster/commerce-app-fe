@@ -1,12 +1,20 @@
 import { NavLink } from 'react-router-dom';
 import type { Product } from './Products';
 
+// Extended type to handle legacy promotion field from ProductsAll
+interface ProductWithBooleanPromotion extends Product {
+  promotion?: boolean | null;
+}
+
 interface ProductCardProps {
-  product: Product;
+  product: Product | ProductWithBooleanPromotion;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
   const { id, title, price, discount_percentage, product_image_url, promotion_id } = product;
+  
+  // Handle both promotion_id (canonical) and promotion (legacy) fields
+  const hasPromotion = promotion_id || (product as ProductWithBooleanPromotion).promotion;
 
   return (
     <div className="font-secondary text-center">
@@ -29,7 +37,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </div>
         <div className="font-secondary text-base font-extralight text-black">
           PHP {price}
-          {promotion_id && discount_percentage && (
+          {hasPromotion && discount_percentage && (
             <span className="ml-2 text-green-600 font-semibold">
               ({discount_percentage}%)
             </span>

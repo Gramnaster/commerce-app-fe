@@ -86,7 +86,7 @@ const router = createBrowserRouter([
           {
             path: 'categories/:id',
             element: <ProductsPerCategory />,
-            loader: productsPerCategoryLoader(queryClient, store)
+            loader: productsPerCategoryLoader(queryClient)
           },
           {
             path: ':id',
