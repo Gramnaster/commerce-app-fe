@@ -1,6 +1,6 @@
 import { customFetch } from '../../utils';
 import { toast } from 'react-toastify';
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData, NavLink } from 'react-router-dom';
 import type { SocialProgram } from '../Dashboard/FeaturedSocials';
 import {
   IconLineDark,
@@ -10,6 +10,7 @@ import {
   Social03,
   Social04,
 } from '../../assets/images';
+import { socialPrograms } from '../../assets/data/socialPrograms';
 
 // Map social program IDs to their respective images
 const socialImages: { [key: number]: string } = {
@@ -18,6 +19,12 @@ const socialImages: { [key: number]: string } = {
   3: Social03,
   4: Social04,
 };
+
+// Create lookup objects from the imported data
+const socialProgramsData = socialPrograms.reduce((acc, program) => {
+  acc[program.id + 1] = program; // API uses 1-4, data uses 0-3
+  return acc;
+}, {} as { [key: number]: typeof socialPrograms[0] });
 
 interface SocialProgramViewResponse {
   data: SocialProgram;
@@ -70,6 +77,11 @@ const SocialProgramView = () => {
   // Get the corresponding image for this social program
   const headerImage = socialImages[id] || Social01; // Fallback to Social01 if ID not found
 
+  // Get the corresponding contact number and website for this social program
+  const programData = socialProgramsData[id];
+  const contactNumber = programData?.contactNumber || '+63 2 8000-0000'; // Fallback contact number
+  const website = programData?.website || 'https://example.com'; // Fallback website
+
   // Format address as a single line
   const addressParts = [
     unit_no,
@@ -84,7 +96,7 @@ const SocialProgramView = () => {
   const formattedAddress = addressParts.join(', ');
 
   return (
-    <div className="align-element text-black">
+    <div className="align-element text-black mb-20">
       <div className="flex justify-center align-middle flex-col my-[85px]">
         <h2 className="font-primary text-base-content text-2xl text-center">
           SOCIAL PROGRAMS
@@ -110,14 +122,65 @@ const SocialProgramView = () => {
       </div>
 
       {/* Content */}
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold mb-4 uppercase">{title}</h1>
-        <p className="text-lg mb-6">{description}</p>
+      <div className="max-w-4xl mx-auto font-secondary ">
+        <h1 className="text-4xl font-bold mb-4 uppercase font-primary">
+          {title}
+        </h1>
+        <p className="text-2xl mb-6">{description}</p>
+        <p className="text-base mb-4">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+          aliquip ex ea commodo consequat. Duis aute irure dolor in
+          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+          culpa qui officia deserunt mollit anim id est laborum.
+        </p>
+        <p className="text-base mb-6">
+          Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+          accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae
+          ab illo inventore veritatis et quasi architecto beatae vitae dicta
+          sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit
+          aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
+          qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui
+          dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.
+        </p>
+        <p className="text-base mb-6">
+          Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+          accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae
+          ab illo inventore veritatis et quasi architecto beatae vitae dicta
+          sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit
+          aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
+          qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui
+          dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.
+        </p>
         <div className="border-t pt-4">
           <p className="text-gray-600">
             <strong>Address: </strong>
             {formattedAddress}
           </p>
+          <p className="text-gray-600">
+            <strong>Contact Number: </strong>
+            {contactNumber}
+          </p>
+          <p className="text-gray-600">
+            <strong>Website: </strong>
+            <a 
+              href={website} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 underline"
+            >
+              {website}
+            </a>
+          </p>
+        </div>
+
+        {/* Back to Social Programs Link */}
+        <div className="mt-8">
+          <NavLink to="/social_programs" className="btn btn-secondary">
+            ← Back to Social Programs
+          </NavLink>
         </div>
       </div>
     </div>
