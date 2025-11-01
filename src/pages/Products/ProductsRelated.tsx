@@ -16,14 +16,16 @@ const ProductsRelated = ({ categoryId, currentProductId }: ProductsRelatedProps)
     const fetchRelatedProducts = async () => {
       try {
         setLoading(true);
-        const response = await customFetch.get(`/product_categories/${categoryId}`);
+        const response = await customFetch.get(
+          `/product_categories/${categoryId}`
+        );
         const products = response.data.data.products || [];
-        
+
         // Filter out the current product and limit to 3 items
         const filtered = products
           .filter((p: Product) => p.id !== currentProductId)
           .slice(0, 3);
-        
+
         setRelatedProducts(filtered);
         setLoading(false);
       } catch (error) {

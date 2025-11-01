@@ -24,7 +24,7 @@ export const getProfileLinks = (user: User | null): LinksType[] => [
   // { id: 8, url: '/categories/airstrikes', text: 'Air Strikes' },
 ];
 
-const ProfileSidebar = ({user}: {user: User}) => {
+const ProfileSidebar = ({ user }: { user: User }) => {
   const links = getProfileLinks(user);
   return (
     <div>

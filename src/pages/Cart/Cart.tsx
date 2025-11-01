@@ -43,9 +43,9 @@ export const loader = (queryClient: any) => async ({ params }: any) => {
 
   try {
     const [SocialPrograms] = await Promise.all([
-      queryClient.ensureQueryData(SocialProgramsQuery)
+      queryClient.ensureQueryData(SocialProgramsQuery),
     ]);
-    console.log('Checkout SocialPrograms :', SocialPrograms)
+    console.log('Checkout SocialPrograms :', SocialPrograms);
     return { SocialPrograms };
   } catch (error: any) {
     console.error('Failed to load Category data:', error);

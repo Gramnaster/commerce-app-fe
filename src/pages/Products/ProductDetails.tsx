@@ -36,9 +36,9 @@ const ProductDetails = ({ product }: ProductDetailsProps) => {
             Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque
             faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi
             pretium tellus duis convallis. Tempus leo eu aenean sed diam urna
-            tempor. Pulvinar vivamus fringilla lacus nec metus bibendum
-            egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere.
-            Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora
+            tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas.
+            Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut
+            hendrerit semper vel class aptent taciti sociosqu. Ad litora
             torquent per conubia nostra inceptos himenaeos.
           </p>
 
@@ -64,7 +64,8 @@ const ProductDetails = ({ product }: ProductDetailsProps) => {
             <p className="font-light">
               {product.producer.address.unit_no}{' '}
               {product.producer.address.street_no},{' '}
-              {product.producer.address.barangay}, {product.producer.address.city},{' '}
+              {product.producer.address.barangay},{' '}
+              {product.producer.address.city},{' '}
               {product.producer.address.zipcode},{' '}
               {product.producer.address.country}
             </p>
@@ -81,9 +82,9 @@ const ProductDetails = ({ product }: ProductDetailsProps) => {
             Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque
             faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi
             pretium tellus duis convallis. Tempus leo eu aenean sed diam urna
-            tempor. Pulvinar vivamus fringilla lacus nec metus bibendum
-            egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere.
-            Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora
+            tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas.
+            Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut
+            hendrerit semper vel class aptent taciti sociosqu. Ad litora
             torquent per conubia nostra inceptos himenaeos.
           </p>
 

@@ -13,7 +13,7 @@ interface CartTotalsProps {
 
 const CartTotals = ({ cartItems, setSocialProgram, SocialPrograms, SocialProgramValue }: CartTotalsProps) => {
   const navigate = useNavigate();
-  const [programDescription, setProgramDescription] = useState('')
+  const [programDescription, setProgramDescription] = useState('');
   // const [selectedProgram, setSelectedProgram] = useState<string>('');
 
   // Calculate totals
@@ -30,11 +30,16 @@ const CartTotals = ({ cartItems, setSocialProgram, SocialPrograms, SocialProgram
     <div className="lg:col-span-1">
       <div className="card bg-base-100 shadow-md sticky top-4">
         <div className="card-body">
-          <h2 className="card-title text-xl mb-4 text-base-content">Order Summary:</h2>
+          <h2 className="card-title text-xl mb-4 text-base-content">
+            Order Summary:
+          </h2>
 
           <div className="space-y-2 mb-4">
             {cartItems.map((item) => (
-              <div key={item.id} className="flex justify-between text-sm text-base-content">
+              <div
+                key={item.id}
+                className="flex justify-between text-sm text-base-content"
+              >
                 <span>
                   - {item.product.title.substring(0, 20)}
                   {item.product.title.length > 20 ? '...' : ''} ({item.qty}x)
@@ -76,9 +81,11 @@ const CartTotals = ({ cartItems, setSocialProgram, SocialPrograms, SocialProgram
               onChange={(e) => {
                 const id = Number(e.target.value);
                 setSocialProgram(id);
-                const selected = SocialPrograms.data.find((p: SocialProgram) => p.id === id);
-                setProgramDescription(selected ? selected.description : '')
-              } }
+                const selected = SocialPrograms.data.find(
+                  (p: SocialProgram) => p.id === id
+                );
+                setProgramDescription(selected ? selected.description : '');
+              }}
             >
               <option value="">Select a program</option>
               {SocialPrograms.data.map((program) => (
@@ -88,12 +95,19 @@ const CartTotals = ({ cartItems, setSocialProgram, SocialPrograms, SocialProgram
               ))}
             </select>
           </div>
-        {SocialProgramValue ? (
-          <div className="flex justify-between text-sm text-base-content mt-2">
-            <div>About this program:</div>
-            <div>{programDescription} <NavLink to={`/social_programs/${SocialProgramValue}`}>More about them here</NavLink></div>
-          </div>
-        ) : ''}
+          {SocialProgramValue ? (
+            <div className="flex justify-between text-sm text-base-content mt-2">
+              <div>About this program:</div>
+              <div>
+                {programDescription}{' '}
+                <NavLink to={`/social_programs/${SocialProgramValue}`}>
+                  More about them here
+                </NavLink>
+              </div>
+            </div>
+          ) : (
+            ''
+          )}
 
           <div className="divider my-2"></div>
 
@@ -102,15 +116,16 @@ const CartTotals = ({ cartItems, setSocialProgram, SocialPrograms, SocialProgram
             <span className="text-primary">PHP {total.toFixed(2)}</span>
           </div>
 
-          <button 
+          <button
             className="btn btn-primary btn-block mt-4"
-            onClick={() => navigate('/checkout', {
-              state: {sp_id: SocialProgramValue}
-            })}
+            onClick={() =>
+              navigate('/checkout', {
+                state: { sp_id: SocialProgramValue },
+              })
+            }
           >
             Proceed to Checkout
           </button>
-
 
           <button className="btn btn-outline btn-block mt-2">
             <img

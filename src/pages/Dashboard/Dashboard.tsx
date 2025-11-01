@@ -19,6 +19,6 @@ const Dashboard = () => {
       {/* If logged in, this CTA does not appear anymore */}
       {!user && <FooterCTA />}
     </section>
-  )
+  );
 }
 export default Dashboard

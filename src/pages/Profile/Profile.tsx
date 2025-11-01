@@ -44,13 +44,13 @@ const Profile = () => {
   const user = useSelector((state: RootState) => state.userState.user);
 
   return (
-    <div className=' grid grid-cols-[0.25fr_1fr] gap-0'>
+    <div className=" grid grid-cols-[0.25fr_1fr] gap-0">
       <ProfileSidebar user={user} />
       <div>
         <Outlet />
       </div>
     </div>
-  )
+  );
 }
 
 export default Profile

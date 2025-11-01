@@ -4,6 +4,7 @@ import type { SocialProgramResponse, SocialProgram } from '../Cart/Checkout';
 import { NavLink, useLoaderData } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { PaginationControls } from '../../components';
+import { IconLineDark, IconLineWhite } from '../../assets/images';
 
 export const loader = (queryClient: any) => async () => {
   const SocialProgramsQuery = {
@@ -26,10 +27,12 @@ export const loader = (queryClient: any) => async () => {
 
 const SocialPrograms = () => {
   const { SocialPrograms: initialSocialPrograms } = useLoaderData() as {
-    SocialPrograms: SocialProgramResponse
+    SocialPrograms: SocialProgramResponse;
   };
   const [loading, setLoading] = useState(false);
-  const [socialProgramsData, setSocialProgramsData] = useState(initialSocialPrograms);
+  const [socialProgramsData, setSocialProgramsData] = useState(
+    initialSocialPrograms
+  );
 
   // Update socialProgramsData when loader fetches new data
   useEffect(() => {
@@ -38,15 +41,19 @@ const SocialPrograms = () => {
 
   // Add safety check for socialProgramsData.data
   if (!socialProgramsData?.data) {
-    return <div className="text-center py-10">No social programs available</div>;
+    return (
+      <div className="text-center py-10">No social programs available</div>
+    );
   }
 
   const handlePagination = async (page: number | null) => {
     if (!page) return;
     setLoading(true);
-    
+
     try {
-      const response = await customFetch.get(`/social_programs?page=${page}&per_page=${socialProgramsData.pagination.per_page || 10}`);
+      const response = await customFetch.get(
+        `/social_programs?page=${page}&per_page=${socialProgramsData.pagination.per_page || 10}`
+      );
       const data = response.data;
       setSocialProgramsData(data);
       setLoading(false);
@@ -60,50 +67,75 @@ const SocialPrograms = () => {
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center">
-        <span className="loading loading-ring loading-lg text-black">Loading...</span>
+        <span className="loading loading-ring loading-lg text-black">
+          Loading...
+        </span>
       </div>
     );
   }
 
   return (
     <>
-      <section className='align-element text-black'>
+      <section className="align-element text-black">
+        <div className="flex justify-center align-middle flex-col my-[85px]">
+          <h2 className="font-primary text-base-content text-2xl text-center">
+            POPULAR CATEGORIES
+          </h2>
+          <div className="relative h-[11px] w-[67px] mx-auto">
+            <img
+              src={IconLineWhite}
+              className="block dark:hidden h-[11px] w-[67px] mx-auto"
+            />
+            <img
+              src={IconLineDark}
+              className="hidden dark:block h-[11px] w-[67px] mx-auto"
+            />
+          </div>
+        </div>
         {socialProgramsData.data.map((program: SocialProgram) => {
-        const { unit_no, street_no, address_line1, address_line2, city, region, zipcode } = program.address;
-        
-        // Format address as a single line
-        const addressParts = [
-          unit_no,
-          street_no,
-          address_line1,
-          address_line2,
-          city,
-          region,
-          zipcode
-        ].filter(Boolean); // Remove null/undefined values
-        
-        const formattedAddress = addressParts.join(', ');
-        
-        return (
-          <section key={program.id}>
-            <h2>{program.title}</h2>
-            <p>{program.description}</p>
-            <p>
-              <strong>Address: </strong>
-              {formattedAddress}
-            </p>
-            <NavLink to={`${program.id}`}>More Info here</NavLink>
-          </section>
-        )
-      })}
+          const {
+            unit_no,
+            street_no,
+            address_line1,
+            address_line2,
+            city,
+            region,
+            zipcode,
+          } = program.address;
+
+          // Format address as a single line
+          const addressParts = [
+            unit_no,
+            street_no,
+            address_line1,
+            address_line2,
+            city,
+            region,
+            zipcode,
+          ].filter(Boolean); // Remove null/undefined values
+
+          const formattedAddress = addressParts.join(', ');
+
+          return (
+            <section key={program.id}>
+              <h2>{program.title}</h2>
+              <p>{program.description}</p>
+              <p>
+                <strong>Address: </strong>
+                {formattedAddress}
+              </p>
+              <NavLink to={`${program.id}`}>More Info here</NavLink>
+            </section>
+          );
+        })}
       </section>
-      
-      <PaginationControls 
-        pagination={socialProgramsData.pagination} 
-        onPageChange={handlePagination} 
+
+      <PaginationControls
+        pagination={socialProgramsData.pagination}
+        onPageChange={handlePagination}
       />
     </>
-  )
-}
+  );
+};
 
-export default SocialPrograms
+export default SocialPrograms;

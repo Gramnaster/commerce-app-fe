@@ -82,11 +82,15 @@ const CheckoutAddressForm = ({ onAddressSaved, userEmail, userId }: CheckoutAddr
       <form onSubmit={handleSubmit}>
         {/* Customer Email */}
         <div className="mb-4">
-          <label className="text-sm font-semibold text-base-content">Customer</label>
+          <label className="text-sm font-semibold text-base-content">
+            Customer
+          </label>
           <p className="text-primary mt-1">{userEmail}</p>
         </div>
 
-        <h3 className="text-lg font-bold mb-4 text-base-content">Shipping Address</h3>
+        <h3 className="text-lg font-bold mb-4 text-base-content">
+          Shipping Address
+        </h3>
 
         {/* Unit No & Street No */}
         <div className="grid grid-cols-2 gap-4 mb-4">
@@ -138,7 +142,9 @@ const CheckoutAddressForm = ({ onAddressSaved, userEmail, userId }: CheckoutAddr
         {/* Address Line 2 */}
         <div className="form-control mb-4">
           <label className="label">
-            <span className="label-text text-base-content">Apartment/Suite/Building (Optional)</span>
+            <span className="label-text text-base-content">
+              Apartment/Suite/Building (Optional)
+            </span>
           </label>
           <input
             type="text"
@@ -170,7 +176,9 @@ const CheckoutAddressForm = ({ onAddressSaved, userEmail, userId }: CheckoutAddr
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div className="form-control">
             <label className="label">
-              <span className="label-text text-base-content">State/Province (Optional)</span>
+              <span className="label-text text-base-content">
+                State/Province (Optional)
+              </span>
             </label>
             <input
               type="text"
@@ -193,11 +201,9 @@ const CheckoutAddressForm = ({ onAddressSaved, userEmail, userId }: CheckoutAddr
                 placeholder="e.g. Barangay Uno Dos Tres"
               />
             </div>
-        </div>
+          </div>
 
-
-          
-        {/* Zipcode */}
+          {/* Zipcode */}
           <div className="form-control">
             <label className="label">
               <span className="label-text text-base-content">Postal Code</span>
