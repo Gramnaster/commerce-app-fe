@@ -59,9 +59,6 @@ const FeaturedSocials = () => {
   } = useQuery<SocialProgramResponse>({
     queryKey: ['socialPrograms'],
     queryFn: fetchSocialPrograms,
-    // Cache for 10 minutes, stay fresh for 5 minutes
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 10,
   });
 
   if (isLoading) {

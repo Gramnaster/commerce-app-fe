@@ -66,8 +66,8 @@ const queryClient = new QueryClient({
       refetchOnReconnect: false,
       // Retry failed requests only once instead of 3 times
       retry: 1,
-      // Delay between retries (1 second)
-      retryDelay: 1000,
+      // Delay between retries (3 seconds)
+      retryDelay: 3000,
     },
   },
 });
