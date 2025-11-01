@@ -127,7 +127,7 @@ const ProductView = () => {
             alt={product.title}
           />
         ) : (
-          <div className="bg-gray-400 w-[100px] h-[100px] flex items-center justify-center text-gray-500 text-sm mr-[20px]">
+          <div className="bg-gray-400 w-[400px] h-[540px] flex items-center justify-center text-gray-500 text-sm mr-[20px]">
             No Image
           </div>
         )}
