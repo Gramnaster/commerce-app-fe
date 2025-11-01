@@ -105,11 +105,11 @@ const ProfileView = () => {
   const officePhone = phones.find(p => p.phone_type === 'office');
 
   return (
-    <div className="min-h-screen bg-base-100 p-8 text-black">
-      <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-sm">
+    <div className="min-h-screen bg-base-100 text-black mb-20">
+      <div className="max-w-4xl mx-auto font-secondary">
         
         {/* Header */}
-        <h1 className="text-3xl font-primary font-bold mb-8">USER PROFILE</h1>
+        <h2 className="text-xl font-semibold mb-8">USER PROFILE</h2>
 
         {/* User Info */}
         <div className="grid grid-cols-2 gap-x-8 gap-y-4 mb-8">
@@ -140,7 +140,7 @@ const ProfileView = () => {
         </div>
 
         {/* Phone Numbers */}
-        <div className="grid grid-cols-3 gap-x-8 gap-y-4 mb-8">
+        <div className="grid grid-cols-3 gap-x-8 gap-y-4 mb-15">
           <div>
             <p className="font-semibold">Mobile Number (Default):</p>
             <p className="text-red-600">{defaultPhone?.phone_number || 'Nil'}</p>
@@ -160,7 +160,7 @@ const ProfileView = () => {
           const { address, is_default } = userAddr;
           return (
             <div key={userAddr.id} className="mb-8 pb-8 border-b border-gray-200 last:border-b-0">
-              <h2 className="text-xl font-primary font-semibold mb-4">
+              <h2 className="text-xl font-semibold mb-4">
                 ADDRESS DETAILS #{index + 1}
                 {is_default && <span className="text-red-600"> (Default)</span>}
               </h2>
@@ -192,7 +192,7 @@ const ProfileView = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-x-8 gap-y-4">
+              <div className="grid grid-cols-3 gap-x-8 gap-y-4 mb-10">
                 <div>
                   <p className="font-semibold">Zipcode:</p>
                   <p>{address.zipcode}</p>
@@ -209,7 +209,7 @@ const ProfileView = () => {
         {/* Action Buttons */}
         <div className="flex justify-end gap-4 mt-8">
           <NavLink 
-            to={`/profile/edit/${user?.id}`}
+            to={`/profile/edit/${userData.id}`}
             className="px-6 py-3 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
           >
             Edit Profile

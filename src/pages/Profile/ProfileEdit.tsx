@@ -13,9 +13,69 @@ interface Country {
   code: string;
 }
 
+interface CountriesResponse {
+  pagination: {
+    current_page: number;
+    per_page: number;
+    total_entries: number;
+    total_pages: number;
+    next_page: number | null;
+    previous_page: number | null;
+  };
+  data: Country[];
+}
+
+interface UserDetail {
+  id: number;
+  first_name: string;
+  middle_name: string | null;
+  last_name: string;
+  dob: string;
+}
+
+interface Phone {
+  id: number;
+  phone_number: string;
+  phone_type: 'mobile' | 'home' | 'office';
+  is_default: boolean;
+}
+
+interface Address {
+  id: number;
+  unit_no: string;
+  street_no: string;
+  address_line1: string;
+  address_line2: string;
+  barangay: string;
+  city: string;
+  region: string;
+  zipcode: string;
+  country_id: number;
+}
+
+interface UserAddress {
+  id: number;
+  is_default: boolean;
+  address: Address;
+}
+
+interface UserPaymentMethod {
+  id: number;
+  balance: string;
+  payment_type: string | null;
+}
+
 export interface User {
   id: number;
   email: string;
+  is_verified: boolean;
+  confirmed_at: string;
+  created_at: string;
+  updated_at: string;
+  user_detail: UserDetail;
+  phones: Phone[];
+  user_addresses: UserAddress[];
+  user_payment_methods: UserPaymentMethod[];
 }
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
@@ -40,9 +100,12 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
   const countriesQuery = {
     queryKey: ['countries'],
     queryFn: async () => {
-      const response = await customFetch.get('/countries');
+      // Fetch all countries by setting per_page to a large number
+      const response = await customFetch.get('/countries?per_page=300');
       return response.data;
     },
+    staleTime: 1000 * 60 * 60, // Cache for 1 hour
+    gcTime: 1000 * 60 * 60 * 2, // Keep in cache for 2 hours
   };
 
   try {
@@ -60,10 +123,14 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
 const ProfileEdit = () => {
   const { userDetails, countries } = useLoaderData() as { 
-    userDetails: User; 
-    countries: Country[];
+    userDetails: { data: User }; 
+    countries: CountriesResponse;
   };
-  // console.log(`ProfilEdit userDetails: `, userDetails)
+  console.log(`ProfileEdit countries:`, countries);
+  console.log(`ProfileEdit userDetails:`, userDetails);
+
+  // Extract countries array from response
+  const countriesArray: Country[] = countries?.data || [];
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -80,7 +147,7 @@ const ProfileEdit = () => {
     },
       user_addresses_attributes:
     (userDetails.data.user_addresses?.length
-      ? userDetails.data.user_addresses.map((userAddress: any) => ({
+      ? userDetails.data.user_addresses.map((userAddress: UserAddress) => ({
           id: userAddress.id || '',
           is_default: userAddress.is_default || false,
           address_attributes: {
@@ -112,24 +179,24 @@ const ProfileEdit = () => {
         ]),
       phones_attributes:
         (userDetails.data.phones?.length
-          ? userDetails.data.phones.map((phone_number: any) => ({
+          ? userDetails.data.phones.map((phone_number: Phone) => ({
               id: phone_number.id || '',
-              phone_no: phone_number.phone_no || '',
-              phone_type: phone_number.phone_type || '',
+              phone_no: phone_number.phone_number || '',
+              phone_type: phone_number.phone_type || 'mobile',
             }))
           : [
           // default empty phone entry
           {
             id: '',
             phone_no: '',
-            phone_type: '',
+            phone_type: 'mobile' as const,
           },
         ]),
 });
 
   // Update user mutation
   const updateUserMutation = useMutation({
-    mutationFn: async (userData: any) => {
+    mutationFn: async (userData: typeof formData) => {
       const response = await customFetch.patch(
         `/users/${userDetails.data.id}`,
         {
@@ -443,10 +510,10 @@ const handleInputChange = (
                   required
                 >
                   <option value="">Select Country...</option>
-                  {countries
+                  {countriesArray
                     .slice()
-                    .sort((a, b) => a.name.localeCompare(b.name))
-                    .map((country) => (
+                    .sort((a: Country, b: Country) => a.name.localeCompare(b.name))
+                    .map((country: Country) => (
                       <option key={country.id} value={country.id}>
                         {country.name} ({country.code})
                       </option>
