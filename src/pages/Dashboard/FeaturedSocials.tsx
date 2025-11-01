@@ -4,7 +4,7 @@ import { customFetch } from '../../utils';
 import { IconLineDark, IconLineWhite } from '../../assets/images';
 import { Social01, Social02, Social03, Social04 } from '../../assets/images';
 
-interface Address {
+export interface Address {
   id: number;
   unit_no: string;
   street_no: string;
@@ -18,7 +18,7 @@ interface Address {
   country: string;
 }
 
-interface SocialProgram {
+export interface SocialProgram {
   id: number;
   title: string;
   description: string;
@@ -27,7 +27,7 @@ interface SocialProgram {
   updated_at: string;
 }
 
-interface SocialProgramResponse {
+export interface SocialProgramResponse {
   status: {
     code: number;
     message: string;
@@ -142,7 +142,7 @@ const FeaturedSocials = () => {
                     <p className="font-secondary font-light ">{shortDescription}</p>
                   </div>
                   <div className="flex justify-end underline underline-offset-2 mt-4">
-                    <NavLink to={`/socials/${id}`}>Read More... </NavLink>
+                    <NavLink to={`/social_programs/${id}`}>Read More... </NavLink>
                   </div>
                 </div>
               </li>
@@ -161,7 +161,7 @@ const FeaturedSocials = () => {
                     <p className="font-secondary font-light ">{shortDescription}</p>
                   </div>
                   <div className="flex justify-end underline underline-offset-2 mt-4">
-                    <NavLink to={`/socials/${id}`}>Read More... </NavLink>
+                    <NavLink to={`/social_programs/${id}`}>Read More... </NavLink>
                   </div>
                 </div>
                 <img

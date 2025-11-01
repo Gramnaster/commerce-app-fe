@@ -1,11 +1,10 @@
-import React from 'react'
 import { customFetch } from '../../utils';
 import { toast } from 'react-toastify';
 import { useLoaderData } from 'react-router-dom';
-import type { SocialProgram, SocialProgramResponse } from '../Cart/Checkout';
+import type { SocialProgram } from '../Dashboard/FeaturedSocials';
 
 interface SocialProgramViewResponse {
-  data: SocialProgram
+  data: SocialProgram;
 }
 
 export const loader = (queryClient: any) => async ({ params }: any) => {
@@ -15,21 +14,19 @@ export const loader = (queryClient: any) => async ({ params }: any) => {
     queryKey: ['SocialProgramView', id],
     queryFn: async () => {
       const response = await customFetch.get(`/social_programs/${id}`);
-      console.log(`Checkout SocialPrograms`, response.data)
       return response.data;
     },
   };
 
   try {
-    const [SocialProgramViewDetails] = await Promise.all([
-      queryClient.ensureQueryData(SocialProgramViewQuery)
-    ]);
-    console.log('SocialProgramView SocialProgramViewDetails :', SocialProgramViewDetails)
+    const SocialProgramViewDetails = await queryClient.ensureQueryData(
+      SocialProgramViewQuery
+    );
     return { SocialProgramViewDetails };
   } catch (error: any) {
-    console.error('Failed to load SocialProgramViewDetails data:', error);
-    toast.error('Failed to load SocialProgramViewDetails data');
-    return { SocialProgramViewDetails: [] };
+    console.error('Failed to load social program details:', error);
+    toast.error('Failed to load social program details');
+    return { SocialProgramViewDetails: null };
   }
 };
 
