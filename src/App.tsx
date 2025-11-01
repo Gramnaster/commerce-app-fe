@@ -28,6 +28,7 @@ import { store } from './store.ts';
 // import { loader as dashboardLoader } from './pages/Dashboard/Dashboard.tsx';
 
 import { action as registerAction } from './pages/Signup/Signup';
+import { action as loginAction } from './pages/Login/Login';
 
 import { loader as productsLoader } from './pages/Products/Products.tsx';
 import { loader as productsAllLoader } from './pages/Products/ProductsAll.tsx';
@@ -85,7 +86,7 @@ const router = createBrowserRouter([
           {
             path: 'categories/:id',
             element: <ProductsPerCategory />,
-            loader: productsPerCategoryLoader(queryClient, store)
+            loader: productsPerCategoryLoader(queryClient)
           },
           {
             path: ':id',
@@ -152,6 +153,12 @@ const router = createBrowserRouter([
         loader: checkoutLoader(queryClient)
       },
     ],
+  },
+  {
+    path: '/login',
+    element: <Login />,
+    errorElement: <Error />,
+    action: loginAction(store),
   },
   {
     path: '/signup',

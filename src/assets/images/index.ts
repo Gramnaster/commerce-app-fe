@@ -32,6 +32,7 @@ export { default as FeaturedProduct04 } from './featured-product-04.png';
 export { default as FeaturedProduct05 } from './featured-product-05.png';
 
 export { default as IconCart } from './icon-cart-01.png';
+export { default as IconChevron } from './icon-chevrondown-01.png';
 export { default as IconHamburger } from './icon-hamburger.png';
 export { default as IconLineDark } from './icon-line-dark.png';
 export { default as IconLineWhite } from './icon-line-light.png';

@@ -1,4 +1,4 @@
-import { Outlet, useLoaderData } from 'react-router-dom';
+import { Outlet, useLoaderData, useMatch } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 import Sidebar from '../../components/Sidebar';
@@ -9,9 +9,35 @@ export interface ProductCategory {
   title: string;
 }
 
+export interface Address {
+  id: number;
+  unit_no: string;
+  street_no: string;
+  barangay: string;
+  city: string;
+  zipcode: string;
+  country: string;
+}
+
 export interface Producer {
   id: number;
   title: string;
+  address: Address;
+}
+
+export type SortOption = 
+  | 'a-z' 
+  | 'z-a' 
+  | 'price-high' 
+  | 'price-low' 
+  | 'newest' 
+  | 'oldest';
+
+export interface ProductFilters {
+  search: string;
+  category: string | null;
+  discountsOnly: boolean;
+  sortBy: SortOption;
 }
 
 export interface Product {
@@ -26,6 +52,7 @@ export interface Product {
   discount_amount_dollars: string;
   promotion_id: boolean;
   product_image_url: string;
+  created_at: string;
   updated_at: Date;
 }
 
@@ -59,18 +86,23 @@ const Products = () => {
     ProductCategories: { data: ProductCategory[] }
   };
 
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<ProductFilters>({
     search: '',
-    category: null as string | null,
+    category: null,
     discountsOnly: false,
+    sortBy: 'newest',
   });
+
+  // Check if we're on a product detail page because I'm super picky about styling
+  const isProductDetailPage = useMatch('/products/:id');
+  const maxWidthClass = isProductDetailPage ? 'max-w-5xl' : 'max-w-7xl';
 
   return (
     <div>
-      <div className='mb-25'>
+      <div className='mb-10'>
       <ProductsBanner />
       </div>
-      <div className='align-element grid grid-cols-[0.25fr_1fr] grid-rows-1 gap-6'>
+      <div className={`mx-auto ${maxWidthClass} px-8 grid grid-cols-[0.25fr_1fr] grid-rows-1 gap-6 mb-25`}>
         <Sidebar categoryData={ProductCategories.data} filters={filters} setFilters={setFilters}  />
         <div>
           <Outlet context={{ filters, setFilters }} />

@@ -57,12 +57,17 @@ const ProductsBanner = () => {
     return null;
   }
 
+  // Don't render if banner is not set yet
+  if (!banner) {
+    return null;
+  }
+
   return (
     <div className="w-full">
           <div
             className=" relative w-full"
           >
-            <img src={banner} className="w-full" />
+            <img src={banner} className="w-full" alt="Category Banner" />
           </div>
     </div>
   );

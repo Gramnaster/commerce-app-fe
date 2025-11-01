@@ -1,15 +1,15 @@
 // import { useState } from 'react';
-import { useMatch } from 'react-router-dom';
-
-interface ProductCategory {
-  id: number;
-  title: string;
-}
+import { NavLink, useMatch } from 'react-router-dom';
+import type {
+  ProductCategory,
+  ProductFilters,
+} from '../pages/Products/Products';
+import SidebarDropdown from './SidebarDropdown';
 
 interface SidebarProps {
   categoryData: ProductCategory[];
-  filters: { search: string; category: string | null; discountsOnly: boolean };
-  setFilters: React.Dispatch<React.SetStateAction<any>>;
+  filters: ProductFilters;
+  setFilters: React.Dispatch<React.SetStateAction<ProductFilters>>;
 }
 
 const Sidebar = ({ categoryData, filters, setFilters }: SidebarProps) => {
@@ -29,11 +29,13 @@ const Sidebar = ({ categoryData, filters, setFilters }: SidebarProps) => {
             {!isProductDetailPage && (
               <div className="">
                 <div className="flex-1 relative font-bold flex flex-col justify-end items-end">
-                  <select className="border-2 border-[#B3B3B3] text-[1rem] text-right p-2 m-2 w-full text-black bg-white">
-                    <option>Featured</option>
-                  </select>
+                  <SidebarDropdown 
+                    selectedOption={filters.sortBy}
+                    onOptionChange={(sortBy) => setFilters((prev) => ({ ...prev, sortBy }))}
+                  />
                 </div>
                 <div className="flex-1 relative font-bold flex flex-col justify-end items-end">
+                  {/* WIP - PRODUCT FILTERS */}
                   <input
                     type="text"
                     placeholder="Filter by Products . . ."
@@ -44,7 +46,7 @@ const Sidebar = ({ categoryData, filters, setFilters }: SidebarProps) => {
                         search: e.target.value,
                       }))
                     }
-                    className="place bg-white border border-[#B3B3B3] font-normal italic rounded-4xl py-2 pl-10 pr-3 text-center text-black placeholder-[#B3B3B3]"
+                    className="place bg-white border-1 border-[#B3B3B3] font-normal italic rounded-[50px] py-2 pl-10 pr-3 text-center h-[30px] text-black placeholder-[#B3B3B3] w-[220px]"
                   />
                   <svg
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#B3B3B3]"
@@ -61,6 +63,7 @@ const Sidebar = ({ categoryData, filters, setFilters }: SidebarProps) => {
                   </svg>
                 </div>
                 <div className="flex-1 relative font-bold flex flex-col justify-end items-end mt-2">
+                  {/* WIP - DISCOUNTS ONLY BUTTON */}
                   <div className="flex items-center justify-center gap-1">
                     <span className="text-black">
                       Show only items with discounts
@@ -75,7 +78,7 @@ const Sidebar = ({ categoryData, filters, setFilters }: SidebarProps) => {
                         }))
                       }
                       data-theme="light"
-                      className="rounded-[5px] border border-[#B3B3B3] w-[20px] h-[20px]"
+                      className="rounded-[10px] border border-[#c6c6c6] w-[20px] h-[20px]"
                     />
                   </div>
                 </div>
@@ -100,24 +103,33 @@ const Sidebar = ({ categoryData, filters, setFilters }: SidebarProps) => {
         </div>
         <div className="font-bold flex flex-col justify-end items-end mr-4 text-black">
           <h3 className="font-primary font-light text-[24px]">Categories</h3>
-          <button
-            onClick={() => setFilters((prev) => ({ ...prev, category: null }))}
-            className="m-1 rounded-2xl hover:cursor-pointer font-bold hover:underline text-[16px]"
+          {/* All Categories Link - Navigates to /products which shows ALL products */}
+          <NavLink
+            to="/products"
+            end
+            className={({ isActive }) =>
+              `m-1 rounded-2xl hover:cursor-pointer hover:underline text-[16px] ${
+                isActive ? 'font-bold' : 'font-light'
+              }`
+            }
           >
             All
-          </button>
+          </NavLink>
+          {/* Individual Category Links */}
           {categoryData.map((category: ProductCategory) => {
             const { id, title } = category;
             return (
-              <button
-                onClick={() =>
-                  setFilters((prev) => ({ ...prev, category: title }))
+              <NavLink
+                to={`/products/categories/${id}`}
+                className={({ isActive }) =>
+                  `m-1 rounded-2xl hover:cursor-pointer hover:underline capitalize font-secondary text-[16px] ${
+                    isActive ? 'font-bold' : 'font-light'
+                  }`
                 }
-                className="m-1 rounded-2xl hover:cursor-pointer hover:underline capitalize font-secondary font-light text-[16px]"
                 key={id}
               >
                 {title}
-              </button>
+              </NavLink>
             );
           })}
         </div>

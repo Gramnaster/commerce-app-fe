@@ -1,13 +1,18 @@
-import { NavLink, redirect, useLoaderData, useOutletContext } from "react-router-dom";
-import { customFetch } from "../../utils";
+import { redirect, useLoaderData, useOutletContext } from "react-router-dom";
+import { customFetch, sortProducts } from "../../utils";
 import { toast } from "react-toastify";
-import type { ProductCategory, Product } from "./Products";
+import { useState, useEffect } from "react";
+import type { ProductCategory, Product, ProductFilters } from "./Products";
+import type { Pagination } from "../Cart/Checkout";
+import ProductCard from "./ProductCard";
+import { PaginationControls } from "../../components";
 
 // Type for the category details response from the API
 interface CategoryDetailsResponse {
   data: ProductCategory & {
     products: Product[];
   };
+  pagination?: Pagination;
 }
 
 export const loader = (queryClient: any) => async ({ params }: any) => {
@@ -22,7 +27,8 @@ export const loader = (queryClient: any) => async ({ params }: any) => {
   };
 
   try {
-    const CategoryDetails = await queryClient.ensureQueryData(CategoryViewQuery);
+    // Use fetchQuery instead of ensureQueryData to always fetch fresh data
+    const CategoryDetails = await queryClient.fetchQuery(CategoryViewQuery);
     console.log(`ProductsPerCategory CategoryDetails`, CategoryDetails.data)
     return { CategoryDetails };
   } catch (error: any) {
@@ -33,48 +39,69 @@ export const loader = (queryClient: any) => async ({ params }: any) => {
 };
 
 const ProductsPerCategory = () => {
-  const { CategoryDetails } = useLoaderData() as {
+  const { CategoryDetails: initialCategoryDetails } = useLoaderData() as {
     CategoryDetails: CategoryDetailsResponse;
   }
-  const { filters } = useOutletContext<{ filters: { search: string; category: string | null; discountsOnly: boolean } }>();
-  const { products } = CategoryDetails.data;
+  const { filters } = useOutletContext<{ filters: ProductFilters }>();
+  const [loading, setLoading] = useState(false);
+  const [categoryData, setCategoryData] = useState(initialCategoryDetails);
   
-  const filteredProducts = products
-    .filter(p => !filters.category || p.product_category.title === filters.category)
-    .filter(p => !filters.discountsOnly || p.promotion_id !== null)
-    .filter(p => p.title.toLowerCase().includes(filters.search.toLowerCase()));
+  // Update categoryData when loader fetches new data (when navigating between categories)
+  useEffect(() => {
+    setCategoryData(initialCategoryDetails);
+  }, [initialCategoryDetails]);
+  
+  const { products } = categoryData.data;
+  const categoryId = categoryData.data.id;
+
+  const handlePagination = async (page: number | null) => {
+    if (!page) return;
+    setLoading(true);
+    
+    try {
+      const perPage = categoryData.pagination?.per_page || 10;
+      const response = await customFetch.get(`/product_categories/${categoryId}?page=${page}&per_page=${perPage}`);
+      const data = response.data;
+      console.log('ProductsPerCategory handlePagination - Response:', data);
+      setCategoryData(data);
+      setLoading(false);
+    } catch (error: any) {
+      console.error('ProductsPerCategory handlePagination - Failed to load pagination data:', error);
+      toast.error('Failed to load pagination data');
+      setLoading(false);
+    }
+  };
+  
+  // Filter by discounts and search, then sort using sortProducts() from utils/index.ts
+  // Basic filters: promotion_id + discount_percentage > 0, and title search
+  const filteredProducts = sortProducts(
+    products
+      .filter(p => !filters.discountsOnly || (p.promotion_id && p.discount_percentage > 0))
+      .filter(p => p.title.toLowerCase().includes(filters.search.toLowerCase())),
+    filters.sortBy
+  );
+
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <span className="loading loading-ring loading-lg text-black">Loading...</span>
+      </div>
+    );
+  }
 
   return (
-    <div className="grid grid-cols-[1fr_1fr_1fr] gap-[20px] h-full grid-flow-row-dense align-element mb-3">
-        {filteredProducts.map((product: Product) => {
-        const {id, title, price, discount_percentage, product_image_url, promotion_id} = product
-          return (
-              <div key={id} className="font-secondary text-center">
-                <NavLink to={`/products/${id}`}>
-                  <div className="bg-gray-400 p-2 flex items-center justify-center mb-[20px]">
-                    <img
-                      src={product_image_url}
-                      className="w-[260px] h-[280px] object-contain"
-                      alt={title}
-                    />
-                  </div>
-                  <div className="uppercase text-base text-black">
-                    {title.length > 25 ? title.slice(0, 25) + '. . .' : title}
-                  </div>
-                  <div className="font-secondary text-base font-extralight text-black">
-                    PHP {price}
-                    {promotion_id && discount_percentage && (
-                      <span className="ml-2 text-green-600 font-semibold">
-                        ({discount_percentage}%)
-                      </span>
-                    )}
-                  </div>
-                  {/* <div>{!promotion_id ? 'No active promotions' : ''}</div> */}
-                </NavLink>
-              </div>
-          )
-        })}
+    <>
+      <div className="grid grid-cols-[1fr_1fr_1fr] gap-[20px] h-full grid-flow-row-dense align-element mb-3">
+        {filteredProducts.map((product: Product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
       </div>
+
+      <PaginationControls 
+        pagination={categoryData.pagination || { current_page: 1, per_page: 10, total_pages: 1, next_page: null, previous_page: null, total_entries: 0 }} 
+        onPageChange={handlePagination} 
+      />
+    </>
   )
 }
 

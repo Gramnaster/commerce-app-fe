@@ -2,7 +2,10 @@ import { Link, useRouteError } from 'react-router-dom';
 
 const Error = () => {
   const error: any = useRouteError();
-  console.log(error);
+  console.log('Error.tsx: Error caught:', error);
+  console.log('Error.tsx: Error status:', error?.status);
+  console.log('Error.tsx: Error message:', error?.message);
+  console.log('Error.tsx: Error stack:', error?.stack);
 
   const is404 = error && error.status === 404;
 

@@ -1,6 +1,23 @@
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const NotLoggedInCartModal = () => {
+  const navigate = useNavigate();
+
+  console.log('NotLoggedInCartModal: Component rendering');
+
+  const handleNavigate = (path: string) => {
+    console.log('NotLoggedInCartModal: handleNavigate called with path:', path);
+    const modal = document.getElementById('login_cart_modal') as HTMLDialogElement;
+    console.log('NotLoggedInCartModal: Modal element found:', !!modal);
+    modal?.close();
+    console.log('NotLoggedInCartModal: Modal closed, navigating to:', path);
+    // Use setTimeout to ensure modal closes before navigation
+    setTimeout(() => {
+      console.log('NotLoggedInCartModal: Executing navigation to:', path);
+      navigate(path);
+    }, 0);
+  };
+
   return (
     <dialog id="login_cart_modal" className="modal">
       <div className="modal-box w-10/12 max-w-2xl">
@@ -24,29 +41,19 @@ const NotLoggedInCartModal = () => {
             </button>
           </form>
 
-          <Link
-            to="/login"
+          <button
+            onClick={() => handleNavigate('/login')}
             className="btn btn-error text-white w-[150px]"
-            onClick={() => {
-              // Close modal when navigating
-              const modal = document.getElementById('login_cart_modal') as HTMLDialogElement;
-              modal?.close();
-            }}
           >
             Login
-          </Link>
+          </button>
 
-          <Link
-            to="/signup"
+          <button
+            onClick={() => handleNavigate('/signup')}
             className="btn btn-error text-white w-[150px]"
-            onClick={() => {
-              // Close modal when navigating
-              const modal = document.getElementById('login_cart_modal') as HTMLDialogElement;
-              modal?.close();
-            }}
           >
             Sign Up
-          </Link>
+          </button>
         </div>
       </div>
 

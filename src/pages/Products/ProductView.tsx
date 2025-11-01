@@ -7,8 +7,12 @@ import { addItem } from '../../features/cart/cartSlice';
 import type { RootState } from '../../store';
 import { LoginCartModal } from '../../components';
 import type { Product } from './Products';
+import ProductDetailsSection from './ProductDetails';
+import ProductsRelated from './ProductsRelated';
 
-export const loader =  (queryClient: any, store: any) =>  async ({ params }: any) => {
+export const loader =
+  (queryClient: any, store: any) =>
+  async ({ params }: any) => {
     const id = params.id;
 
     const ProductDetailsQuery = {
@@ -28,31 +32,49 @@ export const loader =  (queryClient: any, store: any) =>  async ({ params }: any
       toast.error('Failed to load product details');
       return redirect('/products');
     }
-};
+  };
 
 const ProductView = () => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.userState.user);
-  
+
+  console.log('ProductView: Component rendering');
+  console.log('ProductView: User state:', user);
+
   const { ProductDetails } = useLoaderData() as {
     ProductDetails: { data: Product };
   };
+
+  console.log('ProductView: ProductDetails loaded:', ProductDetails);
+  console.log('ProductView: Product data:', ProductDetails?.data);
 
   const product = ProductDetails.data;
   const [amount, setAmount] = useState(1);
 
   const handleIncrement = () => {
+    console.log('ProductView: Increment clicked, new amount:', amount + 1);
     setAmount((prev) => prev + 1);
   };
 
   const handleDecrement = () => {
+    console.log(
+      'ProductView: Decrement clicked, new amount:',
+      Math.max(1, amount - 1)
+    );
     setAmount((prev) => (prev > 1 ? prev - 1 : 1));
   };
 
   const addToCart = async () => {
+    console.log('ProductView: Add to cart clicked');
+    console.log('ProductView: User logged in?', !!user);
+
     // If user is not logged in, open modal instead
     if (!user) {
-      const modal = document.getElementById('login_cart_modal') as HTMLDialogElement;
+      console.log('ProductView: User not logged in, opening modal');
+      const modal = document.getElementById(
+        'login_cart_modal'
+      ) as HTMLDialogElement;
+      console.log('ProductView: Modal element found:', !!modal);
       modal?.showModal();
       return;
     }
@@ -63,7 +85,10 @@ const ProductView = () => {
       productID: product.id,
       image: product.product_image_url,
       title: product.title,
-      price: typeof product.final_price === 'string' ? parseFloat(product.final_price) : product.price,
+      price:
+        typeof product.final_price === 'string'
+          ? parseFloat(product.final_price)
+          : product.price,
       amount,
       productCategory: product.product_category.title,
       producer: product.producer.title,
@@ -91,66 +116,93 @@ const ProductView = () => {
 
   console.log(`ProductView ProductDetails`, ProductDetails);
   return (
-    <div className='text-base-content'>
-      <div>
-        <div>Product Name: {product.title}</div>
-        <img
-          src={product.product_image_url}
-          className="w-[100px]"
-          alt={product.title}
-        />
-        <div>Category: {product.product_category.title}</div>
-        <div>Producer: {product.producer.title}</div>
-        <div>Product Description: {product.description}</div>
-        <div>
-          Price: ${product.final_price || product.price}
-          {product.discount_percentage && product.discount_percentage > 0 && (
-            <span className="ml-2 text-error">
-              ({product.discount_percentage}% off)
-            </span>
-          )}
-        </div>
-        <div>
-          {!product.promotion_id
-            ? 'No active promotions'
-            : 'Special Promotion!'}
-        </div>
-      </div>
-
-      {/* AMOUNT */}
-      <div className="form-control w-full max-w-xs mt-4">
-        <label className="label" htmlFor="amount">
-          <h4 className="text-md font-medium tracking-wider capitalize">
-            Quantity:
-          </h4>
-        </label>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={handleDecrement}
-            className="btn btn-square bg-[#4d4d4d] text-white text-2xl hover:bg-[#3d3d3d] h-[22px] w-[22px]"
-          >
-            −
-          </button>
-          <div className="border-2 bg-white border-gray-400 rounded-lg px-6 py-1 text-center min-w-[100px] text-xl font-medium">
-            {amount}x
+    <div className="text-base-content">
+      {/* MAIN PRODUCT INFO CONTAINER */}
+      <section className="flex flex-row mb-20">
+        {/* PRODUCT IMAGE */}
+        {product.product_image_url ? (
+          <img
+            src={product.product_image_url}
+            className="bg-gray-400  w-[400px] outline-1 p-5 mr-[20px]"
+            alt={product.title}
+          />
+        ) : (
+          <div className="bg-gray-400 w-[100px] h-[100px] flex items-center justify-center text-gray-500 text-sm mr-[20px]">
+            No Image
           </div>
-          <button
-            type="button"
-            onClick={handleIncrement}
-            className="btn btn-square bg-[#4d4d4d] text-white text-2xl hover:bg-[#3d3d3d]"
-          >
-            +
-          </button>
-        </div>
-      </div>
+        )}
 
-      {/* CART BTN */}
-      <div className="mt-10">
-        <button className="btn btn-secondary btn-md" onClick={addToCart}>
-          Add to Cart
-        </button>
-      </div>
+        {/* PRODUCT MAIN DETAILS */}
+        <div className="flex flex-col">
+          <h2 className="font-primary text-[32px] font-semibold">
+            {product.title}
+          </h2>
+          {/* <div>Category: {product.product_category.title}</div> */}
+          <h4 className="font-primary text-[16px] mb-[25px]">
+            By {product.producer.title}
+          </h4>
+          <p className="font-secondary mb-[45px]">
+            {product.description.split('. ').slice(0, 2).join('. ')}
+            {product.description.split('. ').length > 2 ? '.' : ''}
+          </p>
+          <div className="font-secondary text-[32px] mb-[35px] flex justify-end items-end text-right">
+            {product.promotion_id && product.discount_percentage > 0 ? (
+              <>
+                <span className="line-through text-gray-500 mr-4 ">
+                  ${product.price}
+                </span>
+                <span className="text-error font-bold">
+                  ${product.final_price}
+                </span>
+              </>
+            ) : (
+              <span>${product.price}</span>
+            )}
+          </div>
+
+          {/* AMOUNT */}
+          <div className="mt-4 flex flex-row items-center justify-end">
+            <p className="font-secondary text-[16px] font-medium tracking-wider capitalize mr-4">
+              Qty:
+            </p>
+            <div className="flex items-center gap-2 mr-5">
+              <button
+                type="button"
+                onClick={handleDecrement}
+                className="btn btn-square bg-[#4d4d4d] text-white text-2xl hover:bg-[#3d3d3d] h-[30px] w-[30px]"
+              >
+                −
+              </button>
+              <div className="border-2 font-secondary text-[16px] items-center bg-white border-gray-400 rounded-lg px-6 py-2 text-center min-w-[70px] text-xl font-medium h-[40px]">
+                {amount}x
+              </div>
+              <button
+                type="button"
+                onClick={handleIncrement}
+                className="btn btn-square bg-[#4d4d4d] text-white text-2xl hover:bg-[#3d3d3d] h-[30px] w-[30px]"
+              >
+                +
+              </button>
+            </div>
+            {/* CART BTN */}
+            <div>
+              <button
+                className="btn btn-secondary btn-md w-[110px] h-[40px] min-h-[40px] max-h-[40px] shadow-none"
+                onClick={addToCart}
+              >
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* COMPLETE PRODUCT DETAILS */}
+      <ProductDetailsSection product={product} />
+      <ProductsRelated 
+        categoryId={product.product_category.id} 
+        currentProductId={product.id} 
+      />
 
       {/* CART MODAL IF NOT LOGGED IN */}
       {/* If User !Login, Open Modal */}

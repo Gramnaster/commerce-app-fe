@@ -8,4 +8,6 @@ export { default as Footer } from './Footer';
 export { default as FooterCTA } from './FooterCTA';
 export { default as CartModal } from './CartModal';
 export { default as LoginCartModal } from './NotLoggedInCartModal';
+export { default as PaginationControls } from './PaginationControls';
+export { default as SidebarDropdown } from './SidebarDropdown';
 // export { default as FeaturedProducts } from './FeaturedProducts';

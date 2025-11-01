@@ -1,44 +1,18 @@
 import { toast } from "react-toastify";
-import { customFetch } from "../../utils";
-import { NavLink, useLoaderData, useOutletContext } from "react-router-dom";
-import type Products from "./Products";
+import { customFetch, sortProducts } from "../../utils";
+import { useLoaderData, useOutletContext } from "react-router-dom";
+import { useState, useEffect } from "react";
 import type { Pagination } from "../Cart/Checkout";
-
-export interface ProductCategory {
-  id: number;
-  title: string;
-}
-
-export interface Producer {
-  id: number;
-  title: string;
-}
-
-export interface Product {
-  id: number;
-  title: string;
-  product_category: ProductCategory;
-  producer: Producer;
-  description: string;
-  price: number;
-  final_price: string;
-  discount_percentage: number;
-  discount_amount_dollars: string;
-  promotion: boolean | null;
-  product_image_url: string;
-  updated_at: Date;
-}
-
+import ProductCard from "./ProductCard";
+import { PaginationControls } from "../../components";
+import type { Product, ProductFilters } from "./Products";
 
 export interface ProductsResponse {
   data: Product[];
   pagination: Pagination;
 }
 
-export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
-  const storeState = store.getState();
-  const user = storeState.userState?.user;
-  const id = params.id
+export const loader = (queryClient: any, _store: any) => async () => {
 
   const allProductsQuery = {
     queryKey: ['allProducts'],
@@ -50,63 +24,86 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
   };
 
   try {
-    const [allProducts] = await Promise.all([
-      queryClient.ensureQueryData(allProductsQuery)
-    ]);
+    // Use fetchQuery instead of ensureQueryData to always fetch fresh data
+    const allProducts = await queryClient.fetchQuery(allProductsQuery);
 
     console.log('allProducts :', allProducts)
     return { allProducts };
   } catch (error: any) {
     console.error('Failed to load Product data:', error);
     toast.error('Failed to load Product data');
-    return { allStocks: [] };
+    return { allProducts: { data: [], pagination: {} } };
   }
 };
 
 const ProductsAll = () => {
-  const { allProducts } = useLoaderData() as {
+  const { allProducts: initialProducts } = useLoaderData() as {
     allProducts: ProductsResponse
   };
-  const { filters } = useOutletContext<{ filters: { search: string; category: string | null; discountsOnly: boolean } }>();
+  const { filters } = useOutletContext<{ filters: ProductFilters }>();
+  const [loading, setLoading] = useState(false);
+  const [productData, setProductData] = useState(initialProducts);
 
-  const filteredProducts = allProducts.data
-    .filter((p: Product) => !filters.category || p.product_category.title === filters.category)
-    .filter((p: Product) => !filters.discountsOnly || p.promotion !== null)
-    .filter((p: Product) => p.title.toLowerCase().includes(filters.search.toLowerCase()));
+  // Update productData when loader fetches new data (when navigating to/from All Products)
+  useEffect(() => {
+    setProductData(initialProducts);
+  }, [initialProducts]);
+
+  // Add safety check for productData.data
+  if (!productData?.data) {
+    return <div className="text-center py-10">No products available</div>;
+  }
+
+  const handlePagination = async (page: number | null) => {
+    if (!page) return;
+    setLoading(true);
+    
+    try {
+      const response = await customFetch.get(`/products?page=${page}&per_page=${productData.pagination.per_page || 10}`);
+      const data = response.data;
+      console.log('ProductsAll handlePagination - Response:', data);
+      setProductData(data);
+      setLoading(false);
+    } catch (error: any) {
+      console.error('ProductsAll handlePagination - Failed to load pagination data:', error);
+      toast.error('Failed to load pagination data');
+      setLoading(false);
+    }
+  };
+
+  // Filter by discounts and search, then sort using sortProducts() from utils/index.ts
+  // Basic filters: promotion_id + discount_percentage > 0, and title search
+  const filteredProducts = sortProducts(
+    productData.data
+      .filter((p: Product) => !filters.discountsOnly || (p.promotion_id && p.discount_percentage > 0))
+      .filter((p: Product) => p.title.toLowerCase().includes(filters.search.toLowerCase())),
+    filters.sortBy
+  );
   
-  console.log(`ProductsAll allProducts`, allProducts)
+  console.log(`ProductsAll productData`, productData);
+
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <span className="loading loading-ring loading-lg text-black">Loading...</span>
+      </div>
+    );
+  }
 
   return (
-    <div className="grid grid-cols-[1fr_1fr_1fr] gap-[20px] h-full grid-flow-row-dense align-element">
-      {filteredProducts.map((product: Product) => {
-        const {id, title, price, discount_percentage, product_image_url, product_category: { title: category_title }, promotion} = product
-        return (
-          <div key={id} className="font-secondary text-center ">
-            <NavLink to={`/products/${id}`}>
-              <div className="bg-gray-400 p-2 flex items-center justify-center mb-[20px]">
-                <img
-                  src={product_image_url}
-                  className="w-[260px] h-[280px] object-contain"
-                  alt={title}
-                />
-              </div>
-              <div className="uppercase text-base text-black">
-                {title.length > 25 ? title.slice(0, 25) + '. . .' : title}
-              </div>
-              <div className="font-secondary text-base font-extralight text-black">
-                PHP {price}
-                {promotion && discount_percentage && (
-                  <span className="ml-2 text-green-600 font-semibold">
-                    ({discount_percentage}%)
-                  </span>
-                )}
-              </div>
-            </NavLink>
-          </div>
-        )
-      })}
-    </div>
-  )
+    <>
+      <div className="grid grid-cols-[1fr_1fr_1fr] gap-[20px] h-full grid-flow-row-dense align-element">
+        {filteredProducts.map((product: Product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
+      
+      <PaginationControls 
+        pagination={productData.pagination} 
+        onPageChange={handlePagination} 
+      />
+    </>
+  );
 }
 
 export default ProductsAll
