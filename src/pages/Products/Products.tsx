@@ -9,9 +9,20 @@ export interface ProductCategory {
   title: string;
 }
 
+export interface Address {
+  id: number;
+  unit_no: string;
+  street_no: string;
+  barangay: string;
+  city: string;
+  zipcode: string;
+  country: string;
+}
+
 export interface Producer {
   id: number;
   title: string;
+  address: Address;
 }
 
 export interface Product {
@@ -26,6 +37,7 @@ export interface Product {
   discount_amount_dollars: string;
   promotion_id: boolean;
   product_image_url: string;
+  created_at: string;
   updated_at: Date;
 }
 
