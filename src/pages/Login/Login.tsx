@@ -71,8 +71,8 @@ const Login = () => {
     console.log('Login.tsx component: Guest login started');
     try {
       const formData = new FormData();
-      formData.append('user[email]', 'manuel@test.com');
-      formData.append('user[password]', 'test123456');
+      formData.append('user[email]', 'test1@test.com');
+      formData.append('user[password]', 'bienbien');
 
       console.log('Login.tsx component: Sending guest login request');
       const response = await customFetch.post('/users/login', formData);
