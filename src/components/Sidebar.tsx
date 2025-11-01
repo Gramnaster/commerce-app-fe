@@ -1,5 +1,5 @@
 // import { useState } from 'react';
-import { useMatch } from 'react-router-dom';
+import { NavLink, useMatch } from 'react-router-dom';
 import type { ProductCategory, ProductFilters } from '../pages/Products/Products';
 
 interface SidebarProps {
@@ -98,24 +98,32 @@ const Sidebar = ({ categoryData, filters, setFilters }: SidebarProps) => {
         </div>
         <div className="font-bold flex flex-col justify-end items-end mr-4 text-black">
           <h3 className="font-primary font-light text-[24px]">Categories</h3>
-          <button
-            onClick={() => setFilters((prev) => ({ ...prev, category: null }))}
-            className="m-1 rounded-2xl hover:cursor-pointer font-bold hover:underline text-[16px]"
+          {/* All Categories Link */}
+          <NavLink
+            to="/products"
+            className={({ isActive }) =>
+              `m-1 rounded-2xl hover:cursor-pointer hover:underline text-[16px] ${
+                isActive ? 'font-bold' : 'font-light'
+              }`
+            }
           >
             All
-          </button>
+          </NavLink>
+          {/* Individual Category Links */}
           {categoryData.map((category: ProductCategory) => {
             const { id, title } = category;
             return (
-              <button
-                onClick={() =>
-                  setFilters((prev) => ({ ...prev, category: title }))
+              <NavLink
+                to={`/products/categories/${id}`}
+                className={({ isActive }) =>
+                  `m-1 rounded-2xl hover:cursor-pointer hover:underline capitalize font-secondary text-[16px] ${
+                    isActive ? 'font-bold' : 'font-light'
+                  }`
                 }
-                className="m-1 rounded-2xl hover:cursor-pointer hover:underline capitalize font-secondary font-light text-[16px]"
                 key={id}
               >
                 {title}
-              </button>
+              </NavLink>
             );
           })}
         </div>
