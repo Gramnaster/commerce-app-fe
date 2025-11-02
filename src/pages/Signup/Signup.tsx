@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FormInput, SubmitBtn } from '../../components/index';
 import {
   Form,
   Link,
   redirect,
+  useActionData,
   type ActionFunctionArgs,
 } from 'react-router-dom';
 import { customFetch } from '../../utils';
@@ -48,10 +49,47 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     toast.success('account created successfully');
     return redirect('/login');
   } catch (error) {
-    const err = error as AxiosError<{ error: { message: string } }>;
-    const errorMessage =
-      err.response?.data?.error?.message || 'Double check thy credentials';
-    toast.error(errorMessage);
+    const err = error as AxiosError<{ 
+      status: { 
+        message: string; 
+        errors?: string[]; 
+        code?: string; 
+        field?: string;
+      } 
+    }>;
+    
+    const errorResponse = err.response?.data?.status;
+    
+    // Handle structured error responses
+    if (errorResponse) {
+      // Show user-friendly message based on error code
+      if (errorResponse.code === 'email_already_exists') {
+        toast.error('This email is already registered. Try logging in?');
+      } else if (errorResponse.code === 'invalid_password') {
+        toast.error('Password is too weak. Please use a stronger password.');
+      } else if (errorResponse.code === 'password_mismatch') {
+        toast.error('Password and confirmation do not match.');
+      } else if (errorResponse.errors && errorResponse.errors.length > 0) {
+        // Show all validation errors
+        errorResponse.errors.forEach((error: string) => {
+          toast.error(error);
+        });
+      } else {
+        // Fallback to generic message
+        toast.error(errorResponse.message || 'Registration failed. Please try again.');
+      }
+      
+      // Return error details for frontend to handle field highlighting if needed
+      return { 
+        error: true, 
+        field: errorResponse.field,
+        code: errorResponse.code,
+        errors: errorResponse.errors 
+      };
+    }
+    
+    // Fallback for unexpected error format
+    toast.error('An unexpected error occurred. Please try again.');
     return null;
   }
 };
@@ -68,6 +106,8 @@ const requiredFields = [
 ];
 
 const Signup = () => {
+  const actionData = useActionData() as { error?: boolean; field?: string; code?: string; errors?: string[] } | undefined;
+  
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
   const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
 
@@ -120,6 +160,11 @@ const Signup = () => {
   const isAnyFieldEmpty = requiredFields.some(
     (field) => !inputRefs.current[field] || !inputRefs.current[field]?.value
   );
+  
+  // Helper to check if a field has a backend error
+  const hasBackendError = (fieldName: string) => {
+    return actionData?.error && actionData?.field === fieldName;
+  };
 
   return (
     <section className="h-screen bg-primary grid place-items-center">
@@ -146,7 +191,7 @@ const Signup = () => {
             placeholder="user@email.com"
             inputRef={inputElement => (inputRefs.current.email = inputElement)}
             onBlur={handleBlur}
-            error={!!errors.email && touched.email}
+            error={!!(errors.email && touched.email) || hasBackendError('email')}
           />
           <FormInput
             type="password"
@@ -155,7 +200,7 @@ const Signup = () => {
             placeholder="user123456"
             inputRef={inputElement => (inputRefs.current.password = inputElement)}
             onBlur={handleBlur}
-            error={!!errors.password && touched.password}
+            error={!!(errors.password && touched.password) || hasBackendError('password')}
           />
           <FormInput
             type="password"
@@ -164,7 +209,7 @@ const Signup = () => {
             placeholder="user123456"
             inputRef={inputElement => (inputRefs.current.password_confirmation = inputElement)}
             onBlur={handleBlur}
-            error={!!errors.password_confirmation && touched.password_confirmation}
+            error={!!(errors.password_confirmation && touched.password_confirmation) || hasBackendError('password_confirmation')}
           />
           <FormInput
             type="text"
