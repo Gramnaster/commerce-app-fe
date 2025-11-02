@@ -1,11 +1,11 @@
 import { redirect, useLoaderData } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { customFetch, formatPrice } from '../../utils';
+import { customFetch } from '../../utils';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from '../../features/cart/cartSlice';
 import type { RootState } from '../../store';
-import { LoginCartModal } from '../../components';
+import { LoginCartModal, ProductPrice } from '../../components';
 import type { Product } from './Products';
 import ProductDetailsSection from './ProductDetails';
 import ProductsRelated from './ProductsRelated';
@@ -121,11 +121,13 @@ const ProductView = () => {
       <section className="flex flex-row mb-20">
         {/* PRODUCT IMAGE */}
         {product.product_image_url ? (
-          <img
-            src={product.product_image_url}
-            className="bg-gray-400  w-[400px] outline-1 p-5 mr-[20px]"
-            alt={product.title}
-          />
+          <div className="bg-gray-400 w-[400px] h-[540px] flex items-center justify-center p-5 mr-[20px]">
+            <img
+              src={product.product_image_url}
+              className="max-w-full max-h-full object-contain"
+              alt={product.title}
+            />
+          </div>
         ) : (
           <div className="bg-gray-400 w-[400px] h-[540px] flex items-center justify-center text-gray-500 text-sm mr-[20px]">
             No Image
@@ -145,19 +147,14 @@ const ProductView = () => {
             {product.description.split('. ').slice(0, 2).join('. ')}
             {product.description.split('. ').length > 2 ? '.' : ''}
           </p>
-          <div className="font-secondary text-[32px] mb-[35px] flex justify-end items-end text-right">
-            {product.promotion_id && product.discount_percentage > 0 ? (
-              <>
-                <span className="line-through text-gray-500 mr-4 ">
-                  PHP{formatPrice(product.price)}
-                </span>
-                <span className="text-error font-bold">
-                  PHP{formatPrice(parseFloat(product.final_price))}
-                </span>
-              </>
-            ) : (
-              <span>PHP{formatPrice(product.price)}</span>
-            )}
+          <div className="mb-[35px] flex justify-end items-end text-right">
+            <ProductPrice
+              price={product.price}
+              finalPrice={product.final_price}
+              discountPercentage={product.discount_percentage}
+              priceSize="text-[32px] font-bold"
+              discountSize="text-[28px]"
+            />
           </div>
 
           {/* AMOUNT */}
