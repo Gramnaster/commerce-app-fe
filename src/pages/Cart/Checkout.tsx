@@ -163,7 +163,7 @@ const Checkout = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const userAddresses = userDetails?.data?.user_addresses || [];
-  const defaultPhone = userDetails?.data?.phones?.find(p => p.is_default)?.phone_number || 'N/A';
+  const defaultPhone = userDetails?.data?.phones?.find(p => p.is_default)?.phone_number || 'Not Available';
   const userName = userDetails?.data?.user_detail 
     ? `${userDetails.data.user_detail.first_name} ${userDetails.data.user_detail.last_name}`
     : 'User';
@@ -267,7 +267,7 @@ const Checkout = () => {
             <CheckoutAddressForm
               onAddressSaved={handleAddressSaved}
               onCancel={() => setShowNewAddressForm(false)}
-              userEmail={user?.email || 'N/A'}
+              userEmail={user?.email || 'Not Available'}
               userId={user?.id || 0}
             />
           )}
