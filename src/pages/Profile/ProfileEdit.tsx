@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
 import { IconLineDark, IconLineWhite } from '../../assets/images';
+import { PhilippineAddressFields } from '../../components';
 
 interface Country {
   id: number;
@@ -36,7 +37,7 @@ interface UserDetail {
 interface Phone {
   id: number;
   phone_number: string;
-  phone_type: 'mobile' | 'home' | 'office';
+  phone_type: 'mobile' | 'home' | 'work';
   is_default: boolean;
 }
 
@@ -129,9 +130,6 @@ const ProfileEdit = () => {
   console.log(`ProfileEdit countries:`, countries);
   console.log(`ProfileEdit userDetails:`, userDetails);
 
-  // Extract countries array from response
-  const countriesArray: Country[] = countries?.data || [];
-
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const user = useSelector((state: RootState) => state.userState.user);
@@ -163,7 +161,7 @@ const ProfileEdit = () => {
             city: userAddress.address?.city || '',
             region: userAddress.address?.region || '',
             zipcode: userAddress.address?.zipcode || '',
-            country_id: userAddress.address?.country_id || '',
+            country_id: userAddress.address?.country_id || 102,
           },
         }))
       : [
@@ -180,7 +178,7 @@ const ProfileEdit = () => {
               city: '',
               region: '',
               zipcode: '',
-              country_id: '',
+              country_id: 102,
             },
           },
         ]),
@@ -190,6 +188,7 @@ const ProfileEdit = () => {
               id: phone_number.id || '',
               phone_no: phone_number.phone_number || '',
               phone_type: phone_number.phone_type || 'mobile',
+              _destroy: false,
             }))
           : [
           // default empty phone entry
@@ -197,6 +196,7 @@ const ProfileEdit = () => {
             id: '',
             phone_no: '',
             phone_type: 'mobile' as const,
+            _destroy: false,
           },
         ]),
 });
@@ -222,11 +222,16 @@ const ProfileEdit = () => {
       toast.success('User updated successfully');
       setValidationErrors([]);
       
-      // Invalidate and await refetch before navigating
-      await queryClient.invalidateQueries({ queryKey: ['users', user?.id] });
+      // Invalidate queries for both ProfileEdit and ProfileView
       await queryClient.invalidateQueries({ queryKey: ['userDetails', userDetails.data.id.toString()] });
       
-      // Navigate after cache is invalidated
+      // Refetch the specific user details to ensure ProfileView has fresh data
+      await queryClient.refetchQueries({ 
+        queryKey: ['userDetails', userDetails.data.id.toString()],
+        exact: true 
+      });
+      
+      // Navigate after cache is refreshed
       navigate(`/profile/view/${userDetails.data.id}`);
     },
     onError: (error: { response?: { data?: { errors?: string[] } } }) => {
@@ -263,6 +268,22 @@ const handleInputChange = (
   phoneIndex?: number
 ) => {
   const { name, value } = e.target;
+  
+  // Handle phone_type_X fields (radio buttons for phone type)
+  const phoneTypeMatch = name.match(/^phone_type_(\d+)$/);
+  if (phoneTypeMatch && phoneIndex !== undefined) {
+    const updatedPhones = [...formData.phones_attributes];
+    updatedPhones[phoneIndex] = {
+      ...updatedPhones[phoneIndex],
+      phone_type: value as 'mobile' | 'home' | 'work',
+    };
+    setFormData((prev) => ({
+      ...prev,
+      phones_attributes: updatedPhones,
+    }));
+    return;
+  }
+  
   const parentKey = NESTED_FIELDS[name];
 
   setFormData((prev) => {
@@ -325,6 +346,27 @@ const handleInputChange = (
     });
   };
 
+  // Handle Philippine address field changes (from PhilippineAddressFields component)
+  const handleAddressFieldChange = (addressIndex: number, field: string, value: string) => {
+    setFormData((prev) => {
+      const updatedAddresses = [...prev.user_addresses_attributes];
+      const currentAddress = updatedAddresses[addressIndex];
+
+      updatedAddresses[addressIndex] = {
+        ...currentAddress,
+        address_attributes: {
+          ...currentAddress.address_attributes,
+          [field]: value,
+        },
+      };
+
+      return {
+        ...prev,
+        user_addresses_attributes: updatedAddresses,
+      };
+    });
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -373,6 +415,52 @@ const handleInputChange = (
       }
       
       return { ...prev, user_addresses_attributes: updatedAddresses };
+    });
+  };
+
+  // Handle adding a new phone
+  const handleAddPhone = () => {
+    setFormData((prev) => ({
+      ...prev,
+      phones_attributes: [
+        ...prev.phones_attributes,
+        {
+          id: '',
+          phone_no: '',
+          phone_type: 'mobile' as const,
+          _destroy: false,
+        },
+      ],
+    }));
+  };
+
+  // Handle deleting a phone
+  const handleDeletePhone = (phoneIndex: number) => {
+    setFormData((prev) => {
+      // Count active phones (not marked for deletion)
+      const activePhones = prev.phones_attributes.filter((p: any) => !p._destroy);
+      
+      // Prevent deleting the last phone
+      if (activePhones.length <= 1) {
+        toast.error('You must have at least one phone number');
+        return prev;
+      }
+      
+      const updatedPhones = [...prev.phones_attributes];
+      const phoneToDelete = updatedPhones[phoneIndex];
+      
+      // If the phone has an id (exists in backend), mark for deletion
+      if (phoneToDelete.id) {
+        updatedPhones[phoneIndex] = {
+          ...phoneToDelete,
+          _destroy: true,
+        };
+      } else {
+        // If it's a new phone (no id), just remove it from the array
+        updatedPhones.splice(phoneIndex, 1);
+      }
+      
+      return { ...prev, phones_attributes: updatedPhones };
     });
   };
 
@@ -586,45 +674,18 @@ const handleInputChange = (
                   className={`w-full bg-[#ffffff] rounded-lg p-3 text-base-content focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('address_line2') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
                 />
               </div>
-              <div>
-                <label className={`block text-sm font-medium mb-2 ${hasError('barangay') ? 'text-red-600' : 'text-black'}`}>
-                  Barangay *
-                </label>
-                <input
-                  type="text"
-                  name="barangay"
-                  value={userAddress.address_attributes.barangay}
-                  onChange={(e) => handleInputChange(e, index)}
-                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-base-content focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('barangay') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
-                  required
+              
+              {/* Philippine Address Fields (Region, Province/City, Barangay) */}
+              <div className="md:col-span-2">
+                <PhilippineAddressFields
+                  initialRegion={userAddress.address_attributes.region}
+                  initialCity={userAddress.address_attributes.city}
+                  initialBarangay={userAddress.address_attributes.barangay}
+                  onAddressChange={(field, value) => handleAddressFieldChange(index, field, value)}
+                  inputClassName="bg-[#ffffff]"
                 />
               </div>
-              <div>
-                <label className={`block text-sm font-medium mb-2 ${hasError('city') ? 'text-red-600' : 'text-black'}`}>
-                  City *
-                </label>
-                <input
-                  type="text"
-                  name="city"
-                  value={userAddress.address_attributes.city}
-                  onChange={(e) => handleInputChange(e, index)}
-                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-base-content focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('city') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
-                  required
-                />
-              </div>
-              <div>
-                <label className={`block text-sm font-medium mb-2 ${hasError('region') ? 'text-red-600' : 'text-black'}`}>
-                  Region *
-                </label>
-                <input
-                  type="text"
-                  name="region"
-                  value={userAddress.address_attributes.region}
-                  onChange={(e) => handleInputChange(e, index)}
-                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-base-content focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('region') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
-                  required
-                />
-              </div>
+              
               <div>
                 <label className={`block text-sm font-medium mb-2 ${hasError('zipcode') ? 'text-red-600' : 'text-black'}`}>
                   ZIP Code *
@@ -644,20 +705,14 @@ const handleInputChange = (
                 </label>
                 <select
                   name="country_id"
-                  value={userAddress.address_attributes.country_id}
-                  onChange={(e) => handleInputChange(e, index)}
-                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-base-content focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('country') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
+                  value={102}
+                  disabled
+                  className={`w-full bg-[#bdbdbd] rounded-lg p-3 text-base-content cursor-not-allowed ${hasError('country') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
                   required
                 >
-                  <option value="">Select Country...</option>
-                  {countriesArray
-                    .slice()
-                    .sort((a: Country, b: Country) => a.name.localeCompare(b.name))
-                    .map((country: Country) => (
-                      <option key={country.id} value={country.id}>
-                        {country.name} ({country.code})
-                      </option>
-                    ))}
+                  <option value={102}>
+                    Philippines (PH)
+                  </option>
                 </select>
               </div>
             </div>
@@ -683,16 +738,37 @@ const handleInputChange = (
 
           {/* Phones */}
           <div className="bg-base-100 rounded-lg p-6 border border-gray-700">
-            <h2 className="text-xl font-bold text-black mb-4 pb-2 border-b border-gray-700">
-              Phone Numbers
-            </h2>
+            <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-700">
+              <h2 className="text-xl font-bold text-black">
+                Phone Numbers
+              </h2>
+              <button
+                type="button"
+                onClick={handleAddPhone}
+                className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm rounded transition-colors"
+              >
+                + Add Phone
+              </button>
+            </div>
             {formData.phones_attributes.map((phoneNumber, index: number) => { 
               console.log(`phoneNumber :`, phoneNumber)
+              // Skip rendering phones marked for deletion
+              if (phoneNumber._destroy) return null;
+              
               return (
             <div key={phoneNumber.id || index} className="mb-8">
-              <h3 className="text-lg font-semibold text-black mb-4">
-                Phone #{index + 1}
-              </h3>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold text-black">
+                  Phone #{index + 1}
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => handleDeletePhone(index)}
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded transition-colors"
+                >
+                  Delete Phone
+                </button>
+              </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -714,12 +790,12 @@ const handleInputChange = (
                     Type:
                   </label>
                 <div className='flex items-center justify-between gap-5'>
-                  <label>Office</label>
+                  <label>Work</label>
                   <input
                     type="radio"
-                    name="phone_type"
-                    value="office"
-                    checked={phoneNumber.phone_type === 'office'}
+                    name={`phone_type_${index}`}
+                    value="work"
+                    checked={phoneNumber.phone_type === 'work'}
                     onChange={(e) => handleInputChange(e, undefined, index)}
                     className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-base-content focus:ring-2 focus:ring-secondary focus:border-transparent"
                   />
@@ -728,7 +804,7 @@ const handleInputChange = (
                   <label>Home</label>
                   <input
                     type="radio"
-                    name="phone_type"
+                    name={`phone_type_${index}`}
                     value="home"
                     checked={phoneNumber.phone_type === 'home'}
                     onChange={(e) => handleInputChange(e, undefined, index)}
@@ -739,7 +815,7 @@ const handleInputChange = (
                   <div>Mobile</div>
                   <input
                     type="radio"
-                    name="phone_type"
+                    name={`phone_type_${index}`}
                     value="mobile"
                     checked={phoneNumber.phone_type === 'mobile'}
                     onChange={(e) => handleInputChange(e, undefined, index)}
@@ -791,4 +867,4 @@ const handleInputChange = (
   )
 }
 
-export default ProfileEdit
+export default ProfileEdit;

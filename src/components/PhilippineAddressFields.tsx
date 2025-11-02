@@ -16,6 +16,9 @@ interface PhilippineAddressFieldsProps {
     city?: string;
     barangay?: string;
   };
+  
+  // Optional custom input className (for background color, etc.)
+  inputClassName?: string;
 }
 
 const PhilippineAddressFields = ({
@@ -25,6 +28,7 @@ const PhilippineAddressFields = ({
   initialBarangay = '',
   onAddressChange,
   errors = {},
+  inputClassName = '',
 }: PhilippineAddressFieldsProps) => {
   const {
     regions,
@@ -70,7 +74,7 @@ const PhilippineAddressFields = ({
           name="region"
           value={selectedRegion}
           onChange={(e) => handleRegionChange(e.target.value)}
-          className={`select select-bordered w-full text-base-content ${
+          className={`select select-bordered w-full text-base-content ${inputClassName} ${
             errors.region ? 'select-error' : ''
           }`}
           required
@@ -102,7 +106,7 @@ const PhilippineAddressFields = ({
           name="province"
           value={selectedProvince}
           onChange={(e) => handleProvinceChange(e.target.value)}
-          className="select select-bordered w-full text-base-content"
+          className={`select select-bordered w-full text-base-content ${inputClassName}`}
           disabled={!selectedRegion || filteredProvinces.length === 0}
           required
         >
@@ -132,7 +136,7 @@ const PhilippineAddressFields = ({
           name="city"
           value={selectedCity}
           onChange={(e) => handleCityChange(e.target.value)}
-          className={`select select-bordered w-full text-base-content ${
+          className={`select select-bordered w-full text-base-content ${inputClassName} ${
             errors.city ? 'select-error' : ''
           }`}
           disabled={!selectedProvince || filteredCities.length === 0}
@@ -169,7 +173,7 @@ const PhilippineAddressFields = ({
           name="barangay"
           value={selectedBarangay}
           onChange={(e) => handleBarangayChange(e.target.value)}
-          className={`select select-bordered w-full text-base-content ${
+          className={`select select-bordered w-full text-base-content ${inputClassName} ${
             errors.barangay ? 'select-error' : ''
           }`}
           disabled={!selectedCity || filteredBarangays.length === 0}
