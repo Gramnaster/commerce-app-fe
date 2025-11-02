@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
+import { PhilippineAddressFields } from '../../components';
 import type { AddressFormData } from './Checkout';
 
 interface CheckoutAddressFormProps {
@@ -29,6 +30,14 @@ const CheckoutAddressForm = ({ onAddressSaved, onCancel, userEmail, userId }: Ch
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
+    });
+  };
+
+  // Handler for Philippine address fields
+  const handleAddressFieldChange = (field: string, value: string) => {
+    setFormData({
+      ...formData,
+      [field]: value,
     });
   };
 
@@ -160,86 +169,25 @@ const CheckoutAddressForm = ({ onAddressSaved, onCancel, userEmail, userId }: Ch
           />
         </div>
 
-        {/* City */}
+        {/* Philippine Address Fields (Region, Province, City, Barangay) */}
+        <PhilippineAddressFields
+          onAddressChange={handleAddressFieldChange}
+        />
+
+        {/* Zipcode */}
         <div className="form-control mb-4">
           <label className="label">
-            <span className="label-text text-base-content">City</span>
+            <span className="label-text text-base-content">Postal Code</span>
           </label>
           <input
             type="text"
-            name="city"
-            value={formData.city}
+            name="zipcode"
+            value={formData.zipcode}
             onChange={handleChange}
             className="input input-bordered w-full text-base-content"
-            placeholder="Manila"
+            placeholder="1000"
             required
           />
-        </div>
-
-        {/* Region */}
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text text-base-content">
-                State/Province (Optional)
-              </span>
-            </label>
-            <input
-              type="text"
-              name="region"
-              value={formData.region}
-              onChange={handleChange}
-              className="input input-bordered w-full text-base-content"
-              placeholder="Metro Manila"
-            />
-            <div className="form-control mt-4">
-              <label className="label">
-                <span className="label-text text-base-content">Barangay</span>
-              </label>
-              <input
-                type="text"
-                name="barangay"
-                value={formData.barangay}
-                onChange={handleChange}
-                className="input input-bordered w-full text-base-content"
-                placeholder="e.g. Barangay Uno Dos Tres"
-              />
-            </div>
-          </div>
-
-          {/* Zipcode */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text text-base-content">Postal Code</span>
-            </label>
-            <input
-              type="text"
-              name="zipcode"
-              value={formData.zipcode}
-              onChange={handleChange}
-              className="input input-bordered w-full text-base-content"
-              placeholder="1000"
-              required
-            />
-          </div>
-        </div>
-
-        {/* Country */}
-        <div className="form-control mb-6">
-          <label className="label">
-            <span className="label-text text-base-content">Country</span>
-          </label>
-          <select
-            name="country_id"
-            value={formData.country_id}
-            onChange={handleChange}
-            className="select select-bordered w-full text-base-content"
-            required
-          >
-            <option value="1">Philippines</option>
-            <option value="2">United States</option>
-            <option value="3">United Kingdom</option>
-          </select>
         </div>
 
         {/* Save Address Checkbox */}
