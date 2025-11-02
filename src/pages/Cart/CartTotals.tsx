@@ -21,7 +21,7 @@ const CartTotals = ({ cartItems, setSocialProgram, SocialPrograms, SocialProgram
     (sum, item) => sum + parseFloat(item.subtotal),
     0
   );
-  const shipping = 85.11; // PHP shipping cost
+  const shipping = subtotal >= 1000 ? 0 : 85.11; // Free shipping over 1000 PHP
   const gst = subtotal * 0.12; // 12% GST
   const donation = SocialProgramValue !== 0 ? subtotal * 0.08 : 0; // 8% donation if program selected
   const total = subtotal + shipping + gst + donation;
@@ -58,8 +58,19 @@ const CartTotals = ({ cartItems, setSocialProgram, SocialPrograms, SocialProgram
             </div>
             <div className="flex justify-between text-sm text-base-content">
               <span>Shipping</span>
-              <span>PHP {shipping.toFixed(2)}</span>
+              <span>
+                {shipping === 0 ? (
+                  <span className="text-success font-semibold">FREE</span>
+                ) : (
+                  `PHP ${shipping.toFixed(2)}`
+                )}
+              </span>
             </div>
+            {subtotal < 1000 && subtotal > 0 && (
+              <div className="text-xs text-base-content/70 italic">
+                Add PHP {(1000 - subtotal).toFixed(2)} more for free shipping
+              </div>
+            )}
             <div className="flex justify-between text-sm text-base-content">
               <span>GST (12%)</span>
               <span>PHP {gst.toFixed(2)}</span>

@@ -31,7 +31,7 @@ const CheckoutSummary = ({
   const [loading, setLoading] = useState(false);
   const [processingPayment, setProcessingPayment] = useState(false);
 
-  const shipping = 85.11;
+  const shipping = cartTotal >= 1000 ? 0 : 85.11; // Free shipping over 1000 PHP
   const gst = cartTotal * 0.12;
   const donation = selectedProgram ? cartTotal * 0.08 : 0;
   const total = cartTotal + shipping + gst + donation;
@@ -122,8 +122,19 @@ const CheckoutSummary = ({
       <div className="space-y-2 mb-4">
         <div className="flex justify-between text-sm text-base-content">
           <span>Shipping</span>
-          <span>PHP {shipping.toFixed(2)}</span>
+          <span>
+            {shipping === 0 ? (
+              <span className="text-success font-semibold">FREE</span>
+            ) : (
+              `PHP ${shipping.toFixed(2)}`
+            )}
+          </span>
         </div>
+        {cartTotal < 1000 && cartTotal > 0 && (
+          <div className="text-xs text-base-content/70 italic">
+            Add PHP {(1000 - cartTotal).toFixed(2)} more for free shipping
+          </div>
+        )}
         <div className="flex justify-between text-sm text-base-content">
           <span>GST (12%)</span>
           <span>PHP {gst.toFixed(2)}</span>

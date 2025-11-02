@@ -22,7 +22,7 @@ const defaultState: CartState = {
   cartItems: [],
   numItemsInCart: 0,
   cartTotal: 0,
-  shipping: 500,
+  shipping: 85.11, // Default shipping, will be recalculated based on cart total
   tax: 0,
   orderTotal: 0,
 };
@@ -35,6 +35,7 @@ const cartSlice = createSlice({
       return defaultState;
     },
     calculateTotals: (state) => {
+      state.shipping = state.cartTotal >= 1000 ? 0 : 85.11; // Free shipping over 1000 PHP
       state.tax = 0.12 * state.cartTotal;
       state.orderTotal = state.cartTotal + state.shipping + state.tax;
     },
