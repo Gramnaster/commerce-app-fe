@@ -41,6 +41,7 @@ interface CompanySite {
 interface DeliveryOrder {
   company_site: CompanySite;
   status: 'storage' | 'progress' | 'delivered';
+  delivered_at: string;
 }
 
 // Extended Order interface with additional fields for TransactionView
@@ -111,6 +112,16 @@ const TransactionView = () => {
       day: '2-digit',
     });
   };
+
+  const formatDateTime = (dateString: string) => {
+    return new Date(dateString).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
   
   const {
     id,
@@ -161,8 +172,11 @@ const TransactionView = () => {
                     <p className="text-lg font-semibold mb-2">
                       {delivery.company_site.title}
                     </p>
-                    <p className="text-base text-gray-600 mb-6">
+                    <p className="text-base text-gray-600 mb-2">
                       Warehouse ID: {delivery.company_site.id}
+                    </p>
+                    <p className="text-sm text-gray-500 mb-6">
+                      Last Updated: {formatDateTime(delivery.delivered_at)}
                     </p>
                   </div>
 
@@ -309,51 +323,52 @@ const TransactionView = () => {
         </div>
       )}
 
-      <table className="w-full mb-8 font-secondary">
-        <tbody>
-          {/* We don't need transaction type and paid - they're obsolete */}
-          {/* <tr>
-            <th className="text-left">Transaction Type: </th>
-            <td className='capitalize font-light'>{transaction_type}</td>
-          </tr> */}
+      {/* Transaction Details Section */}
+      <div className="mb-8 font-secondary">
+        <h3 className="font-primary text-2xl font-semibold mb-4">Transaction Details</h3>
+        
+        {/* Type and Date */}
+        <div className="grid grid-cols-2 gap-x-8 gap-y-4 mb-6">
+          <div>
+            <p className="font-semibold">Type:</p>
+            <p className="capitalize">{description}</p>
+          </div>
+          <div>
+            <p className="font-semibold">Date:</p>
+            <p>{formatDate(created_at)}</p>
+          </div>
+        </div>
 
-          <tr>
-            <th className="text-left">Type: </th>
-            <td className='capitalize font-light'>{description}</td>
-          </tr>
-
-          <tr>
-            <th className="text-left">Date:</th>
-            <td className='capitalize font-light'>{formatDate(created_at)}</td>
-          </tr>
-
-          {/* <tr>
-            <th className="text-left">Paid?</th>
-            <td className='capitalize font-light'>{is_paid ? 'Yes' : 'Unpaid'}</td>
-          </tr> */}
-
-          {items && items.length > 0
-            ? items.map((item) => {
+        {/* Items Section */}
+        {items && items.length > 0 && (
+          <div className="mb-6">
+            <p className="font-semibold mb-3">Items:</p>
+            <div className="space-y-3">
+              {items.map((item) => {
                 const { id, qty, subtotal, product } = item;
                 const { title } = product;
                 return (
-                  <tr key={id}>
-                    <th className="text-left">Items:</th>
-                    <td>{title} </td>
-                    <td>
-                      Quantity: {qty} Subtotal: {subtotal}
-                    </td>
-                  </tr>
+                  <div key={id} className="flex justify-between items-center border-b border-gray-200 pb-2">
+                    <div className="flex-1">
+                      <p>{title}</p>
+                      <p className="text-sm text-gray-600">Quantity: {qty}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold">{subtotal}</p>
+                    </div>
+                  </div>
                 );
-              })
-            : null}
+              })}
+            </div>
+          </div>
+        )}
 
-          <tr>
-            <th className="text-left">Order total</th>
-            <td>{total_cost}</td>
-          </tr>
-        </tbody>
-      </table>
+        {/* Order Total */}
+        <div className="flex justify-between items-center pt-4 border-t-2 border-gray-300">
+          <p className="font-semibold text-lg">Order Total:</p>
+          <p className="font-bold text-xl text-red-600">{total_cost}</p>
+        </div>
+      </div>
 
       {/* Delivery Address Section */}
       {delivery_address && (
