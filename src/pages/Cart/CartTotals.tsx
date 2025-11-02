@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import type { CartItem } from './Cart';
-import { socialPrograms } from '../../assets/data/socialPrograms';
+// import { socialPrograms } from '../../assets/data/socialPrograms';
 import type { SocialProgram, SocialProgramResponse } from './Checkout';
 import { cardVisa, cardMastercard, cardAmex } from '../../assets/images';
 

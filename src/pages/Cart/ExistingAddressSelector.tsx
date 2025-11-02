@@ -117,7 +117,7 @@ const ExistingAddressSelector = ({
 
                 {/* Edit Button */}
                 <button
-                  className="btn btn-ghost btn-sm text-primary text-base-content"
+                  className="btn btn-ghost btn-sm font-primary text-base-content"
                   onClick={(e) => {
                     e.stopPropagation();
                     onEditAddress(userAddress);

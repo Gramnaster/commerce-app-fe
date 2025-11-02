@@ -67,35 +67,35 @@ const Login = () => {
   console.log('Login.tsx component: Dispatch available:', !!dispatch);
   console.log('Login.tsx component: Navigate available:', !!navigate);
 
-  const loginAsGuestUser = async () => {
-    console.log('Login.tsx component: Guest login started');
-    try {
-      const formData = new FormData();
-      formData.append('user[email]', 'test1@test.com');
-      formData.append('user[password]', 'bienbien');
+  // const loginAsGuestUser = async () => {
+  //   console.log('Login.tsx component: Guest login started');
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append('user[email]', 'test1@test.com');
+  //     formData.append('user[password]', 'bienbien');
 
-      console.log('Login.tsx component: Sending guest login request');
-      const response = await customFetch.post('/users/login', formData);
-      console.log('Login.tsx component: Guest login response:', response);
+  //     console.log('Login.tsx component: Sending guest login request');
+  //     const response = await customFetch.post('/users/login', formData);
+  //     console.log('Login.tsx component: Guest login response:', response);
 
-      // Extract token and user data (same as form submission)
-      const token = response.headers.authorization; // Keep the full "Bearer <token>" format
-      const userData = response.data.data;
+  //     // Extract token and user data (same as form submission)
+  //     const token = response.headers.authorization; // Keep the full "Bearer <token>" format
+  //     const userData = response.data.data;
 
-      console.log('Login.tsx component: Guest token:', token);
-      console.log('Login.tsx component: Guest user data:', userData);
+  //     console.log('Login.tsx component: Guest token:', token);
+  //     console.log('Login.tsx component: Guest user data:', userData);
 
-      dispatch(loginUser({ user: userData, token }));
-      console.log('Login.tsx component: Guest user dispatched to store');
+  //     dispatch(loginUser({ user: userData, token }));
+  //     console.log('Login.tsx component: Guest user dispatched to store');
       
-      toast.success('Welcome, guest user');
-      console.log('Login.tsx component: Navigating to /');
-      navigate('/');
-    } catch (error) {
-      console.error('Login.tsx component: Guest login error:', error);
-      toast.error('Please try again');
-    }
-  };
+  //     toast.success('Welcome, guest user');
+  //     console.log('Login.tsx component: Navigating to /');
+  //     navigate('/');
+  //   } catch (error) {
+  //     console.error('Login.tsx component: Guest login error:', error);
+  //     toast.error('Please try again');
+  //   }
+  // };
 
   return (
     <section className="h-screen bg-primary grid place-items-center">

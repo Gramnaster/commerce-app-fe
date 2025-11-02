@@ -104,7 +104,7 @@ const Sidebar = ({ categoryData, filters, setFilters }: SidebarProps) => {
             </button> */}
           </div>
         </div>
-        <div className="font-bold flex flex-col justify-end items-end mr-4 text-black">
+        <div className="font-bold flex flex-col justify-end items-end mr-4 text-base-content">
           <h3 className="font-primary font-light text-[24px]">Categories</h3>
           {/* All Categories Link - Navigates to /products which shows ALL products */}
           <NavLink

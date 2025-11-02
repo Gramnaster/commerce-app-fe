@@ -94,13 +94,13 @@ const TransactionView = () => {
   };
   const {
     id,
-    transaction_type,
+    // transaction_type,
     description,
     created_at,
     order,
   } = TransactionDetails;
   const {
-    is_paid,
+    // is_paid,
     total_cost,
     items,
     delivery_address,

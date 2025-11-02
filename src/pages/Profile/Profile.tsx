@@ -1,8 +1,8 @@
-import { toast } from 'react-toastify';
-import { Navbar } from '../../components'
-import Sidebar from '../../components/Sidebar'
+// import { toast } from 'react-toastify';
+// import { Navbar } from '../../components'
+// import Sidebar from '../../components/Sidebar'
 import { NavLink, Outlet, redirect, useNavigation } from 'react-router-dom';
-import { customFetch } from '../../utils';
+// import { customFetch } from '../../utils';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
 import ProfileSidebar from './ProfileSidebar';

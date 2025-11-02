@@ -32,7 +32,7 @@ const SidebarDropdown = ({ selectedOption, onOptionChange }: SidebarDropdownProp
     <>
       {/* Dropdown Button */}
       <button
-        className="border-1 border-[#B3B3B3] font-secondary text-[14px] text-right px-2 mb-2 text-black bg-white h-[32px] w-[220px] rounded-md hover:bg-gray-50 transition-colors flex text-center items-center justify-end gap-2"
+        className="border-1 border-[#B3B3B3] font-secondary text-[14px] px-2 mb-2 text-black bg-white h-[32px] w-[220px] rounded-md hover:bg-gray-50 transition-colors flex text-center items-center justify-end gap-2"
         // @ts-ignore - popoverTarget is a valid HTML attribute
         popoverTarget="sort-popover"
         style={{ anchorName: '--sort-anchor' } as React.CSSProperties}
