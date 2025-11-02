@@ -202,7 +202,10 @@ const TransactionView = () => {
           <div className="space-y-4">
             {delivery_orders.map((delivery, index) => {
               const statuses = ['pending', 'shipped', 'delivered'];
-              const currentStatusIndex = statuses.indexOf(delivery.status);
+              const currentStatusIndex = statuses.indexOf(delivery.status.toLowerCase());
+              
+              // Debug log
+              console.log('Delivery status:', delivery.status, 'Index:', currentStatusIndex);
               
               return (
                 <div key={index} className="border border-gray-300 rounded-lg p-6 bg-[#f3f3f3]">
@@ -213,13 +216,13 @@ const TransactionView = () => {
                     Warehouse ID: {delivery.company_site.id}
                   </p>
                   
-                  {/* Timeline - Right aligned container */}
+                  {/* Timeline - Centered */}
                   <div className="flex justify-center">
                     <ul className="timeline">
                       {/* Pending */}
                       <li>
                         <div className="timeline-start timeline-box">
-                          <span className={currentStatusIndex >= 0 ? 'font-semibold' : ''}>
+                          <span className={currentStatusIndex >= 0 ? 'font-semibold text-primary' : ''}>
                             Pending
                           </span>
                         </div>
@@ -229,7 +232,7 @@ const TransactionView = () => {
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 20 20"
                               fill="currentColor"
-                              className="h-5 w-5 text-success"
+                              className="h-5 w-5 text-primary"
                             >
                               <path
                                 fillRule="evenodd"
@@ -248,14 +251,14 @@ const TransactionView = () => {
                             </svg>
                           )}
                         </div>
-                        <hr className={currentStatusIndex >= 1 ? 'bg-success' : ''} />
+                        <hr className={currentStatusIndex >= 1 ? 'bg-primary' : ''} />
                       </li>
 
                       {/* Shipped */}
                       <li>
-                        <hr className={currentStatusIndex >= 1 ? 'bg-success' : ''} />
+                        <hr className={currentStatusIndex >= 1 ? 'bg-primary' : ''} />
                         <div className="timeline-start timeline-box">
-                          <span className={currentStatusIndex >= 1 ? 'font-semibold' : ''}>
+                          <span className={currentStatusIndex >= 1 ? 'font-semibold text-primary' : ''}>
                             Shipped
                           </span>
                         </div>
@@ -265,7 +268,7 @@ const TransactionView = () => {
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 20 20"
                               fill="currentColor"
-                              className="h-5 w-5 text-success"
+                              className="h-5 w-5 text-primary"
                             >
                               <path
                                 fillRule="evenodd"
@@ -284,14 +287,14 @@ const TransactionView = () => {
                             </svg>
                           )}
                         </div>
-                        <hr className={currentStatusIndex >= 2 ? 'bg-success' : ''} />
+                        <hr className={currentStatusIndex >= 2 ? 'bg-primary' : ''} />
                       </li>
 
                       {/* Delivered */}
                       <li>
-                        <hr className={currentStatusIndex >= 2 ? 'bg-success' : ''} />
+                        <hr className={currentStatusIndex >= 2 ? 'bg-primary' : ''} />
                         <div className="timeline-start timeline-box">
-                          <span className={currentStatusIndex >= 2 ? 'font-semibold' : ''}>
+                          <span className={currentStatusIndex >= 2 ? 'font-semibold text-primary' : ''}>
                             Delivered
                           </span>
                         </div>
@@ -301,7 +304,7 @@ const TransactionView = () => {
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 20 20"
                               fill="currentColor"
-                              className="h-5 w-5 text-success"
+                              className="h-5 w-5 text-primary"
                             >
                               <path
                                 fillRule="evenodd"
