@@ -17,8 +17,8 @@ interface UserDetail {
 
 interface Phone {
   id: number;
-  phone_number: string;
-  phone_type: 'mobile' | 'home' | 'office';
+  phone_no: string;
+  phone_type: 'mobile' | 'home' | 'work';
   is_default: boolean;
 }
 
@@ -102,7 +102,7 @@ const ProfileView = () => {
   // Find default phone or first phone
   const defaultPhone = phones.find(p => p.is_default) || phones[0];
   const homePhone = phones.find(p => p.phone_type === 'home');
-  const officePhone = phones.find(p => p.phone_type === 'office');
+  const workPhone = phones.find(p => p.phone_type === 'work');
 
   return (
     <div className="min-h-screen bg-base-100 text-base-content mb-20">
@@ -143,15 +143,15 @@ const ProfileView = () => {
         <div className="grid grid-cols-3 gap-x-8 gap-y-4 mb-15">
           <div>
             <p className="font-semibold">Mobile Number (Default):</p>
-            <p className="text-red-600">{defaultPhone?.phone_number || 'Nil'}</p>
+            <p className="text-red-600">{defaultPhone?.phone_no || 'Nil'}</p>
           </div>
           <div>
             <p className="font-semibold">Home Number:</p>
-            <p>{homePhone?.phone_number || 'Nil'}</p>
+            <p>{homePhone?.phone_no || 'Nil'}</p>
           </div>
           <div>
-            <p className="font-semibold">Office Number:</p>
-            <p>{officePhone?.phone_number || 'Nil'}</p>
+            <p className="font-semibold">Work Number:</p>
+            <p>{workPhone?.phone_no || 'Nil'}</p>
           </div>
         </div>
 
@@ -199,7 +199,7 @@ const ProfileView = () => {
                 </div>
                 <div>
                   <p className="font-semibold">Country:</p>
-                  <p>{address.country_id === 1 ? 'Philippines' : `Country ID: ${address.country_id}`}</p>
+                  <p>{address.country_id === 102 ? 'Philippines' : `Country ID: ${address.country_id}`}</p>
                 </div>
               </div>
             </div>
