@@ -165,10 +165,10 @@ const Transactions = () => {
 
   return (
     <div className="min-h-screen bg-base-100 text-base-content px-6">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto mb-20">
         <div className="bg-transparent ">
           {/* Header */}
-          <div className="px-6 pb-4 border-b border-gray-700 w-200">
+          <div className="px-6 pb-4 border-b border-gray-700 w-250">
             <div className="flex justify-between items-center">
               <h2 className="font-secondary text-xl font-semibold">TRANSACTIONS</h2>
               {/* <div className="flex items-center space-x-4">
@@ -197,8 +197,8 @@ const Transactions = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto mb-20">
-            <table className="w-200">
+          <div className="overflow-x-auto">
+            <table className="w-250">
               <thead>
                 <tr className="border-b text-base-content border-gray-700">
                   <th className="text-left pl-5 font-medium">Transaction Type</th>
