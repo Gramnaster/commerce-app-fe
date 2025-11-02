@@ -22,7 +22,7 @@ const CartItem = ({
   const quantity = parseInt(qty);
 
   return (
-    <div className="card bg-base-100 shadow-md">
+    <div className="card bg-[#f3f3f3]">
       <div className="card-body p-4">
         <div className="flex gap-4">
           {/* Product Image */}
