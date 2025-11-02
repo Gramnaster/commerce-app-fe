@@ -16,6 +16,8 @@ const SmallProductCard = ({ product }: SmallProductCardProps) => {
   
   // Handle both promotion_id (canonical) and promotion (legacy) fields
   const hasPromotion = promotion_id || (product as ProductWithBooleanPromotion).promotion;
+  
+  const truncatedTitle = title.length > 20 ? title.slice(0, 20) + '...' : title;
 
   return (
     <div className="font-secondary text-center">
@@ -33,11 +35,16 @@ const SmallProductCard = ({ product }: SmallProductCardProps) => {
             </div>
           )}
         </div>
-                <div className="uppercase text-base text-base-content">
-          {title}
+        <div className="uppercase text-base text-base-content">
+          {truncatedTitle}
         </div>
         <div className="font-secondary text-base font-extralight text-base-content">
-          {formatPrice(price)}
+          ₱{formatPrice(price)}
+          {hasPromotion && discount_percentage && (
+            <span className="ml-2 text-green-600 font-semibold">
+              ({discount_percentage}%)
+            </span>
+          )}
         </div>
       </NavLink>
     </div>
