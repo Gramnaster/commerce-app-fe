@@ -40,7 +40,8 @@ interface CompanySite {
 
 interface DeliveryOrder {
   company_site: CompanySite;
-  status: 'pending' | 'shipped' | 'delivered' | 'cancelled';
+  status: 'storage' | 'progress' | 'delivered';
+  delivered_at: string;
 }
 
 // Extended Order interface with additional fields for TransactionView
@@ -69,10 +70,21 @@ export const loader =
       },
     };
 
+    const ReceiptsListQuery = {
+      queryKey: ['ReceiptsList'],
+      queryFn: async () => {
+        const response = await customFetch.get(`/receipts?per_page=1`);
+        return response.data;
+      },
+    };
+
     try {
-      const TransactionDetails =
-        await queryClient.ensureQueryData(TransactionQuery);
-      return { TransactionDetails };
+      const [TransactionDetails, ReceiptsList] = await Promise.all([
+        queryClient.ensureQueryData(TransactionQuery),
+        queryClient.ensureQueryData(ReceiptsListQuery),
+      ]);
+      
+      return { TransactionDetails, ReceiptsList };
     } catch (error: any) {
       console.error('Failed to load transaction:', error);
       toast.error('Failed to load transaction details');
@@ -81,10 +93,18 @@ export const loader =
   };
 
 const TransactionView = () => {
-  const { TransactionDetails } = useLoaderData() as {
+  const { TransactionDetails, ReceiptsList } = useLoaderData() as {
     TransactionDetails: TransactionViewDetails;
+    ReceiptsList: {
+      pagination: {
+        total_entries: number;
+      };
+      data: any[];
+    };
   };
   console.log(`TransactionView TransactionDetails`, TransactionDetails);
+  console.log(`TransactionView ReceiptsList`, ReceiptsList);
+  
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -92,8 +112,18 @@ const TransactionView = () => {
       day: '2-digit',
     });
   };
+
+  const formatDateTime = (dateString: string) => {
+    return new Date(dateString).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+  
   const {
-    id,
     // transaction_type,
     description,
     created_at,
@@ -106,6 +136,10 @@ const TransactionView = () => {
     delivery_address,
     delivery_orders,
   } = order ?? {};
+  
+  // Calculate order number based on total receipts
+  const orderNumber = ReceiptsList.pagination.total_entries;
+  
   console.log(`TransactionView order`, order);
   console.log(`TransactionView items`, items);
 
@@ -114,53 +148,226 @@ const TransactionView = () => {
 
   return (
     <div className="min-h-screen bg-base-100 text-2xl text-base-content p-6 align-element">
-      <div className="font-primary text-3xl text-center mb-6">ORDER #{id}</div>
+      <div className="font-primary text-3xl text-center mb-6">ORDER #{orderNumber}</div>
 
-      <table className="w-full mb-8 font-secondary">
-        <tbody>
-          {/* We don't need transaction type and paid - they're obsolete */}
-          {/* <tr>
-            <th className="text-left">Transaction Type: </th>
-            <td className='capitalize font-light'>{transaction_type}</td>
-          </tr> */}
+      {/* Delivery Orders Section */}
+      {delivery_orders && delivery_orders.length > 0 && (
+        <div className="mb-8">
+          <h3 className="font-primary text-2xl font-semibold mb-4">Delivery Status</h3>
+          <div>
+            {delivery_orders.map((delivery, index) => {
+              const statuses = ['storage', 'progress', 'delivered'];
+              const currentStatusIndex = statuses.indexOf(delivery.status.toLowerCase());
+              
+              // Debug log
+              console.log('Delivery status:', delivery.status, 'Index:', currentStatusIndex);
+              
+              return (
+                <div
+                  key={index}
+                  className="flex flex-row border border-gray-300 rounded-lg px-6 pt-6 bg-[#f3f3f3]"
+                >
+                  <div className='flex flex-col'>
+                    <p className="text-lg font-semibold mb-2">
+                      {delivery.company_site.title}
+                    </p>
+                    <p className="text-base text-gray-600 mb-2">
+                      Warehouse ID: {delivery.company_site.id}
+                    </p>
+                    <p className="text-sm text-gray-500 mb-6">
+                      Last Updated: {formatDateTime(delivery.delivered_at)}
+                    </p>
+                  </div>
 
-          <tr>
-            <th className="text-left">Type: </th>
-            <td className='capitalize font-light'>{description}</td>
-          </tr>
+                  {/* Timeline - Centered with custom spacing */}
+                  <div className="flex justify-center">
+                    <ul className="timeline">
+                      {/* Storage */}
+                      <li className="w-60">
+                        <div className="timeline-start timeline-box">
+                          <span
+                            className={
+                              currentStatusIndex >= 0
+                                ? 'font-semibold text-primary'
+                                : ''
+                            }
+                          >
+                            Storage
+                          </span>
+                        </div>
+                        <div className="timeline-middle">
+                          {currentStatusIndex >= 0 ? (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              className="h-5 w-5 text-primary"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          ) : (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              className="h-5 w-5 text-gray-300"
+                            >
+                              <circle cx="10" cy="10" r="8" />
+                            </svg>
+                          )}
+                        </div>
+                        <hr
+                          className={`${currentStatusIndex >= 1 ? 'bg-primary' : ''}`}
+                        />
+                      </li>
 
-          <tr>
-            <th className="text-left">Date:</th>
-            <td className='capitalize font-light'>{formatDate(created_at)}</td>
-          </tr>
+                      {/* Progress (In Transit) */}
+                      <li className="w-60">
+                        <hr
+                          className={`${currentStatusIndex >= 1 ? 'bg-primary' : ''}`}
+                        />
+                        <div className="timeline-start timeline-box">
+                          <span
+                            className={
+                              currentStatusIndex >= 1
+                                ? 'font-semibold text-primary'
+                                : ''
+                            }
+                          >
+                            In Transit
+                          </span>
+                        </div>
+                        <div className="timeline-middle">
+                          {currentStatusIndex >= 1 ? (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              className="h-5 w-5 text-primary"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          ) : (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              className="h-5 w-5 text-gray-300"
+                            >
+                              <circle cx="10" cy="10" r="8" />
+                            </svg>
+                          )}
+                        </div>
+                        <hr
+                          className={`${currentStatusIndex >= 2 ? 'bg-primary' : ''}`}
+                        />
+                      </li>
 
-          {/* <tr>
-            <th className="text-left">Paid?</th>
-            <td className='capitalize font-light'>{is_paid ? 'Yes' : 'Unpaid'}</td>
-          </tr> */}
+                      {/* Delivered */}
+                      <li className="w-60">
+                        <hr
+                          className={`${currentStatusIndex >= 2 ? 'bg-primary' : ''}`}
+                        />
+                        <div className="timeline-start timeline-box">
+                          <span
+                            className={
+                              currentStatusIndex >= 2
+                                ? 'font-semibold text-primary'
+                                : ''
+                            }
+                          >
+                            Delivered
+                          </span>
+                        </div>
+                        <div className="timeline-middle">
+                          {currentStatusIndex >= 2 ? (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              className="h-5 w-5 text-primary"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          ) : (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              className="h-5 w-5 text-gray-300"
+                            >
+                              <circle cx="10" cy="10" r="8" />
+                            </svg>
+                          )}
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
-          {items && items.length > 0
-            ? items.map((item) => {
+      {/* Transaction Details Section */}
+      <div className="mb-8 font-secondary">
+        <h3 className="font-primary text-2xl font-semibold mb-4">Transaction Details</h3>
+        
+        {/* Type and Date */}
+        <div className="grid grid-cols-2 gap-x-8 gap-y-4 mb-6">
+          <div>
+            <p className="font-semibold">Type:</p>
+            <p className="capitalize">{description}</p>
+          </div>
+          <div>
+            <p className="font-semibold">Date:</p>
+            <p>{formatDate(created_at)}</p>
+          </div>
+        </div>
+
+        {/* Items Section */}
+        {items && items.length > 0 && (
+          <div className="mb-6">
+            <p className="font-semibold mb-3">Items:</p>
+            <div className="space-y-3">
+              {items.map((item) => {
                 const { id, qty, subtotal, product } = item;
                 const { title } = product;
                 return (
-                  <tr key={id}>
-                    <th className="text-left">Items:</th>
-                    <td>{title} </td>
-                    <td>
-                      Quantity: {qty} Subtotal: {subtotal}
-                    </td>
-                  </tr>
+                  <div key={id} className="flex justify-between items-center border-b border-gray-200 pb-2">
+                    <div className="flex-1">
+                      <p>{title}</p>
+                      <p className="text-sm text-gray-600">Quantity: {qty}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold">{subtotal}</p>
+                    </div>
+                  </div>
                 );
-              })
-            : null}
+              })}
+            </div>
+          </div>
+        )}
 
-          <tr>
-            <th className="text-left">Order total</th>
-            <td>{total_cost}</td>
-          </tr>
-        </tbody>
-      </table>
+        {/* Order Total */}
+        <div className="flex justify-between items-center pt-4 border-t-2 border-gray-300">
+          <p className="font-semibold text-lg">Order Total:</p>
+          <p className="font-bold text-xl text-red-600">{total_cost}</p>
+        </div>
+      </div>
 
       {/* Delivery Address Section */}
       {delivery_address && (
@@ -191,150 +398,6 @@ const TransactionView = () => {
                 <span className="font-semibold">Country:</span> {delivery_address.country.name}
               </p>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Delivery Orders Section */}
-      {delivery_orders && delivery_orders.length > 0 && (
-        <div className="mt-8">
-          <h3 className="font-primary text-2xl font-semibold mb-4">Delivery Status</h3>
-          <div className="space-y-4">
-            {delivery_orders.map((delivery, index) => {
-              const statuses = ['pending', 'shipped', 'delivered'];
-              const currentStatusIndex = statuses.indexOf(delivery.status);
-              
-              return (
-                <div key={index} className="border border-gray-300 rounded-lg p-6 bg-[#f3f3f3]">
-                  <p className="text-lg font-semibold mb-2">
-                    {delivery.company_site.title}
-                  </p>
-                  <p className="text-base text-gray-600 mb-6">
-                    Warehouse ID: {delivery.company_site.id}
-                  </p>
-                  
-                  {/* Timeline - Right aligned container */}
-                  <div className="flex justify-center">
-                    <ul className="timeline">
-                      {/* Pending */}
-                      <li>
-                        <div className="timeline-start timeline-box">
-                          <span className={currentStatusIndex >= 0 ? 'font-semibold' : ''}>
-                            Pending
-                          </span>
-                        </div>
-                        <div className="timeline-middle">
-                          {currentStatusIndex >= 0 ? (
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                              className="h-5 w-5 text-success"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          ) : (
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                              className="h-5 w-5 text-gray-300"
-                            >
-                              <circle cx="10" cy="10" r="8" />
-                            </svg>
-                          )}
-                        </div>
-                        <hr className={currentStatusIndex >= 1 ? 'bg-success' : ''} />
-                      </li>
-
-                      {/* Shipped */}
-                      <li>
-                        <hr className={currentStatusIndex >= 1 ? 'bg-success' : ''} />
-                        <div className="timeline-start timeline-box">
-                          <span className={currentStatusIndex >= 1 ? 'font-semibold' : ''}>
-                            Shipped
-                          </span>
-                        </div>
-                        <div className="timeline-middle">
-                          {currentStatusIndex >= 1 ? (
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                              className="h-5 w-5 text-success"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          ) : (
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                              className="h-5 w-5 text-gray-300"
-                            >
-                              <circle cx="10" cy="10" r="8" />
-                            </svg>
-                          )}
-                        </div>
-                        <hr className={currentStatusIndex >= 2 ? 'bg-success' : ''} />
-                      </li>
-
-                      {/* Delivered */}
-                      <li>
-                        <hr className={currentStatusIndex >= 2 ? 'bg-success' : ''} />
-                        <div className="timeline-start timeline-box">
-                          <span className={currentStatusIndex >= 2 ? 'font-semibold' : ''}>
-                            Delivered
-                          </span>
-                        </div>
-                        <div className="timeline-middle">
-                          {currentStatusIndex >= 2 ? (
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                              className="h-5 w-5 text-success"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          ) : (
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                              className="h-5 w-5 text-gray-300"
-                            >
-                              <circle cx="10" cy="10" r="8" />
-                            </svg>
-                          )}
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-
-                  {/* Show cancelled status if applicable */}
-                  {delivery.status === 'cancelled' && (
-                    <div className="mt-4 p-3 bg-red-100 border border-red-300 rounded-lg">
-                      <span className="text-red-800 font-semibold">
-                        ⚠️ This order has been cancelled
-                      </span>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
           </div>
         </div>
       )}

@@ -108,7 +108,7 @@ const router = createBrowserRouter([
           {
             path: ':id',
             element: <ProductView />,
-            loader: productViewloader(queryClient, store),
+            loader: productViewloader(queryClient),
           },
         ],
       },
@@ -125,7 +125,7 @@ const router = createBrowserRouter([
       {
         path: 'profile',
         element: <Profile />,
-        loader: profileLoader(queryClient, store),
+        loader: profileLoader(),
         children: [
           {
             index: true,
@@ -155,7 +155,7 @@ const router = createBrowserRouter([
           {
             path: 'transactions/:id',
             element: <TransactionsView />,
-            loader: transactionViewLoader(queryClient, store)
+            loader: transactionViewLoader(queryClient)
           },
         ],
       },

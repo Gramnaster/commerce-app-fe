@@ -10,7 +10,7 @@ import ProductDetailsSection from './ProductDetails';
 import ProductsRelated from './ProductsRelated';
 
 export const loader =
-  (queryClient: any, store: any) =>
+  (queryClient: any) =>
   async ({ params }: any) => {
     const id = params.id;
 
