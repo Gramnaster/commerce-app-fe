@@ -115,14 +115,14 @@ const Transactions = () => {
   };
 
   return (
-    <div className="min-h-screen bg-base-100 text-base-content p-6 align-element">
+    <div className="min-h-screen bg-base-100 text-base-content px-6">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-transparent rounded-lg border border-gray-700">
+        <div className="bg-transparent ">
           {/* Header */}
-          <div className="p-6 border-b border-gray-700">
+          <div className="px-6 pb-4 border-b border-gray-700">
             <div className="flex justify-between items-center">
               <h1 className="text-2xl font-bold">Transactions</h1>
-              <div className="flex items-center space-x-4">
+              {/* <div className="flex items-center space-x-4">
                 <div className="relative">
                   <input
                     type="text"
@@ -143,7 +143,7 @@ const Transactions = () => {
                     />
                   </svg>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -152,13 +152,11 @@ const Transactions = () => {
             <table className="w-full">
               <thead>
                 <tr className="border-b text-base-content border-gray-700">
-                  <th className="text-left p-4 font-medium">Type</th>
-                  <th className="text-left p-4 font-medium">Balance Before</th>
-                  <th className="text-left p-4 font-medium">Balance After</th>
-                  <th className="text-right p-4 font-medium">Amount</th>
+                  <th className="text-left pl-5 font-medium">Transaction Type</th>
+                  <th className="text-right font-medium">Amount</th>
                   <th className="text-right p-4 font-medium">Order Status</th>
                   <th className="text-right p-4 font-medium">Date</th>
-                  <th className="text-right p-4 font-medium"></th>
+                  <th className="text-center p-4 font-medium">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -167,20 +165,20 @@ const Transactions = () => {
                     (transaction: Transaction, index: number) => (
                       <tr
                         key={transaction.id}
-                        className={`border-b border-gray-800 hover:bg-transparent transition-colors ${
+                        className={`border-b border-gray-800 hover:bg-transparent transition-colors font-secondary${
                           index % 2 === 0 ? 'bg-transparent' : 'bg-transparent'
                         }`}
                       >
-                        <td className="p-4">
+                        <td className="pl-4">
                           <span
-                            className={`inline-block px-2 py-1 rounded text-sm font-medium ${
+                            className={`inline-block px-2 py-1 rounded text-sm font-medium capitalize ${
                               transaction.transaction_type === 'purchase'
-                                ? 'bg-green-600 text-white'
+                                ? 'text-green-600 font-bold'
                                 : transaction.transaction_type === 'withdraw'
-                                  ? 'bg-red-600 text-white'
+                                  ? 'text-red-600 font-bold'
                                   : transaction.transaction_type === 'deposit'
-                                    ? 'bg-blue-600 text-white'
-                                    : 'bg-purple-600 text-white'
+                                    ? 'text-blue-600 font-bold' 
+                                    : 'text-purple-600 font-bold'
                             }`}
                           >
                             {getTransactionTypeDisplay(
@@ -188,59 +186,18 @@ const Transactions = () => {
                             )}
                           </span>
                         </td>
-                        <td className="p-4">
-                          {/* <div className="flex items-center space-x-3">
-                          {transaction.stock?.logo_url ? (
-                            <img 
-                              src={transaction.stock.logo_url} 
-                              alt={`${transaction.stock.ticker} logo`}
-                              className="w-8 h-8 rounded-full object-cover flex-shrink-0"
-                              onError={(e) => {
-                                e.currentTarget.style.display = 'none';
-                              }}
-                            />
-                          ) : (
-                            <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center flex-shrink-0">
-                              <span className="text-xs font-bold text-gray-300">
-                                {transaction.stock?.ticker?.charAt(0) || '?'}
-                              </span>
-                            </div>
-                          )}
-                          <span className="text-white">
-                            {getCompanyDisplay(transaction)}
-                          </span>
-                        </div> */}
-                          <div className="flex items-center space-x-3">
-                            {transaction.balance_before &&
-                            transaction.balance_before !== 0
-                              ? transaction.balance_before
-                              : '-'}
-                          </div>
-                        </td>
-                        <td className="p-4 text-right text-base-content">
-                          {/* {transaction.quantity && transaction.quantity !== '0.0' 
-                          ? parseFloat(transaction.quantity).toLocaleString()
-                          : '-'
-                        } */}
-                          <div className="flex items-center space-x-3">
-                            {transaction.balance_after &&
-                            transaction.balance_after !== 0
-                              ? transaction.balance_after
-                              : '-'}
-                          </div>
-                        </td>
-                        <td className="p-4 text-right text-base-content">
+                        <td className="text-right text-base-content">
                           {/* {transaction.price_per_share && transaction.price_per_share !== '0.0'
                           ? `$${parseFloat(transaction.price_per_share).toFixed(2)}`
                           : '-'
                         } */}
                           <div className="text-right space-x-3">
                             {transaction.amount && transaction.amount !== 0
-                              ? transaction.amount
+                              ? `PHP ${transaction.amount.toFixed(2)}`
                               : '-'}
                           </div>
                         </td>
-                        <td className="p-4 text-right text-base-content font-medium">
+                        <td className="p-4 text-right text-base-content font-medium capitalize">
                           {/* ${parseFloat(transaction.total_amount).toFixed(2)} */}
                           {transaction.order?.cart_status
                             ? transaction.order.cart_status
@@ -254,7 +211,7 @@ const Transactions = () => {
                             </div>
                           </div>
                         </td>
-                        <td>
+                        <td className='p-4 text-center text-base-content underline'>
                           <NavLink
                             to={`${transaction.id}`}
                             className={'hover:underline hover:cursor-pointer'}
