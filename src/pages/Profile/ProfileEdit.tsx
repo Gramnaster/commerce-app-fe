@@ -36,7 +36,7 @@ interface UserDetail {
 
 interface Phone {
   id: number;
-  phone_number: string;
+  phone_no: string;
   phone_type: 'mobile' | 'home' | 'work';
   is_default: boolean;
 }
@@ -186,7 +186,7 @@ const ProfileEdit = () => {
         (userDetails.data.phones?.length
           ? userDetails.data.phones.map((phone_number: Phone) => ({
               id: phone_number.id || '',
-              phone_no: phone_number.phone_number || '',
+              phone_no: phone_number.phone_no || '',
               phone_type: phone_number.phone_type || 'mobile',
               _destroy: false,
             }))
