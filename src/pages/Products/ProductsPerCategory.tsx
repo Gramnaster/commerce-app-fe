@@ -84,7 +84,7 @@ const ProductsPerCategory = () => {
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center">
-        <span className="loading loading-ring loading-lg text-black">Loading...</span>
+        <span className="loading loading-ring loading-lg text-base-content">Loading...</span>
       </div>
     );
   }

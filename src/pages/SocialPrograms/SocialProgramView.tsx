@@ -96,7 +96,7 @@ const SocialProgramView = () => {
   const formattedAddress = addressParts.join(', ');
 
   return (
-    <div className="align-element text-black mb-20">
+    <div className="align-element text-base-content mb-20">
       <div className="flex justify-center align-middle flex-col my-[85px]">
         <h2 className="font-primary text-base-content text-2xl text-center">
           SOCIAL PROGRAMS

@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import type { Product } from './Products';
+import { formatPrice } from '../../utils';
 
 // Extended type to handle legacy promotion field from ProductsAll
 interface ProductWithBooleanPromotion extends Product {
@@ -32,16 +33,11 @@ const SmallProductCard = ({ product }: SmallProductCardProps) => {
             </div>
           )}
         </div>
-        <div className="uppercase text-base text-black">
-          {title.length > 20 ? title.slice(0, 20) + '. . .' : title}
+                <div className="uppercase text-base text-base-content">
+          {title}
         </div>
-        <div className="font-secondary text-base font-extralight text-black">
-          PHP {price}
-          {hasPromotion && discount_percentage && (
-            <span className="ml-2 text-green-600 font-semibold">
-              ({discount_percentage}%)
-            </span>
-          )}
+        <div className="font-secondary text-base font-extralight text-base-content">
+          {formatPrice(price)}
         </div>
       </NavLink>
     </div>
