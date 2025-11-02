@@ -4,10 +4,66 @@ import { useLoaderData, useLocation, useNavigate } from 'react-router-dom';
 import type { RootState } from '../../store';
 import CheckoutAddressForm from './CheckoutAddressForm';
 import CheckoutSummary from './CheckoutSummary';
+import ExistingAddressSelector from './ExistingAddressSelector';
+import AddressEditModal from './AddressEditModal';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 
+// Shared types for checkout and address components
 export interface Address {
+  id: number;
+  unit_no: string;
+  street_no: string;
+  address_line1: string;
+  address_line2: string;
+  barangay: string;
+  city: string;
+  region: string;
+  zipcode: string;
+  country_id: number;
+}
+
+export interface UserAddress {
+  id: number; // user_addresses join table ID
+  is_default: boolean;
+  address: Address;
+}
+
+export interface UserDetail {
+  id: number;
+  first_name: string;
+  middle_name: string | null;
+  last_name: string;
+  dob: string;
+}
+
+export interface Phone {
+  id: number;
+  phone_number: string;
+  phone_type: 'mobile' | 'home' | 'office';
+  is_default: boolean;
+}
+
+export interface UserPaymentMethod {
+  id: number;
+  balance: string;
+  payment_type: string | null;
+}
+
+export interface User {
+  id: number;
+  email: string;
+  is_verified: boolean;
+  confirmed_at: string;
+  created_at: string;
+  updated_at: string;
+  user_detail: UserDetail;
+  phones: Phone[];
+  user_addresses: UserAddress[];
+  user_payment_methods: UserPaymentMethod[];
+}
+
+export interface AddressFormData {
   unit_no: string;
   street_no: string;
   address_line1: string;
@@ -40,7 +96,14 @@ export interface SocialProgramResponse {
   pagination: Pagination;
 }
 
-export const loader = (queryClient: any) => async ({ params }: any) => {
+export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
+  const storeState = store.getState();
+  const user = storeState.userState?.user;
+  
+  if (!user) {
+    return { SocialPrograms: { data: [], pagination: {} }, userDetails: null };
+  }
+
   const id = params.id;
 
   const SocialProgramsQuery = {
@@ -52,22 +115,37 @@ export const loader = (queryClient: any) => async ({ params }: any) => {
     },
   };
 
+  const userDetailsQuery = {
+    queryKey: ['userDetails', user.id.toString()],
+    queryFn: async () => {
+      const response = await customFetch.get(`/users/${user.id}`, {
+        headers: {
+          Authorization: user.token,
+        },
+      });
+      return response.data;
+    },
+  };
+
   try {
-    const [SocialPrograms] = await Promise.all([
-      queryClient.ensureQueryData(SocialProgramsQuery)
+    const [SocialPrograms, userDetails] = await Promise.all([
+      queryClient.ensureQueryData(SocialProgramsQuery),
+      queryClient.ensureQueryData(userDetailsQuery),
     ]);
-    console.log('Checkout SocialPrograms :', SocialPrograms)
-    return { SocialPrograms };
+    console.log('Checkout SocialPrograms:', SocialPrograms)
+    console.log('Checkout userDetails:', userDetails)
+    return { SocialPrograms, userDetails };
   } catch (error: any) {
-    console.error('Failed to load Social Programs data:', error);
-    toast.error('Failed to load Social Programs data');
-    return { allPSocialPrograms: [] };
+    console.error('Failed to load checkout data:', error);
+    toast.error('Failed to load checkout data');
+    return { SocialPrograms: { data: [], pagination: {} }, userDetails: null };
   }
 };
 
 const Checkout = () => {
-  const { SocialPrograms } = useLoaderData() as {
-    SocialPrograms: SocialProgramResponse
+  const { SocialPrograms, userDetails } = useLoaderData() as {
+    SocialPrograms: SocialProgramResponse;
+    userDetails: { data: User } | null;
   };
   const location = useLocation();
   const sp_id = location.state?.sp_id
@@ -76,10 +154,45 @@ const Checkout = () => {
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.userState.user);
   const { cartItems } = useSelector((state: RootState) => state.cartState);
-  const [userAddressId, setUserAddressId] = useState<number | null>(null);
+  
+  // Address management state
+  const [addressId, setAddressId] = useState<number | null>(null);
+  const [showNewAddressForm, setShowNewAddressForm] = useState(false);
+  const [editingAddress, setEditingAddress] = useState<UserAddress | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  const handleAddressSaved = (addressId: number) => {
-    setUserAddressId(addressId);
+  const userAddresses = userDetails?.data?.user_addresses || [];
+  const defaultPhone = userDetails?.data?.phones?.find(p => p.is_default)?.phone_number || 'N/A';
+  const userName = userDetails?.data?.user_detail 
+    ? `${userDetails.data.user_detail.first_name} ${userDetails.data.user_detail.last_name}`
+    : 'User';
+
+  const handleAddressSelected = (selectedAddressId: number) => {
+    setAddressId(selectedAddressId);
+    setShowNewAddressForm(false); // Hide form when existing address is selected
+  };
+
+  const handleAddressSaved = (newAddressId: number) => {
+    setAddressId(newAddressId);
+    setShowNewAddressForm(false);
+  };
+
+  const handleEditAddress = (userAddress: UserAddress) => {
+    setEditingAddress(userAddress);
+    setIsEditModalOpen(true);
+  };
+
+  const handleAddressUpdated = async () => {
+    // Refresh user details to get updated addresses
+    if (user) {
+      try {
+        await customFetch.get(`/users/${user.id}`);
+        // You might want to update the loader data here or trigger a refetch
+        toast.success('Please select the updated address');
+      } catch (error) {
+        console.error('Failed to refresh addresses:', error);
+      }
+    }
   };
 
   const handleOrderComplete = () => {
@@ -130,13 +243,38 @@ const Checkout = () => {
       <h1 className="text-3xl font-bold mb-8 text-base-content">SHOPPING CART</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left side - Address Form (2/3) */}
+        {/* Left side - Address Selection & Form (2/3) */}
         <div className="lg:col-span-2">
-          <CheckoutAddressForm
-            onAddressSaved={handleAddressSaved}
-            userEmail={user.email || 'N/A'}
-            userId={user.id}
-          />
+          {/* Existing Addresses Selector */}
+          {userAddresses.length > 0 && (
+            <ExistingAddressSelector
+              userAddresses={userAddresses}
+              userName={userName}
+              userPhone={defaultPhone}
+              onAddressSelected={handleAddressSelected}
+              onEditAddress={handleEditAddress}
+              selectedAddressId={addressId}
+            />
+          )}
+
+          {/* Add New Address Button/Form */}
+          {!showNewAddressForm ? (
+            <div className="bg-base-100 rounded-lg shadow-md p-6">
+              <button
+                className="btn btn-secondary btn-block"
+                onClick={() => setShowNewAddressForm(true)}
+              >
+                {userAddresses.length > 0 ? 'Add a new delivery address' : 'Add delivery address'}
+              </button>
+            </div>
+          ) : (
+            <CheckoutAddressForm
+              onAddressSaved={handleAddressSaved}
+              onCancel={() => setShowNewAddressForm(false)}
+              userEmail={user?.email || 'N/A'}
+              userId={user?.id || 0}
+            />
+          )}
 
           {/* Billing Section Placeholder */}
           <div className="bg-base-100 rounded-lg shadow-md p-6 mt-6">
@@ -158,13 +296,22 @@ const Checkout = () => {
         {/* Right side - Order Summary (1/3) */}
         <div className="lg:col-span-1">
           <CheckoutSummary
-            userAddressId={userAddressId}
+            addressId={addressId}
             onOrderComplete={handleOrderComplete}
             SocialPrograms={SocialPrograms}
             selectedSP={sp_id}
           />
         </div>
       </div>
+
+      {/* Address Edit Modal */}
+      <AddressEditModal
+        isOpen={isEditModalOpen}
+        userAddress={editingAddress}
+        userId={user?.id || 0}
+        onClose={() => setIsEditModalOpen(false)}
+        onAddressUpdated={handleAddressUpdated}
+      />
     </div>
   );
 };

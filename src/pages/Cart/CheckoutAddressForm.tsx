@@ -1,27 +1,18 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
-
-export interface AddressFormData {
-  unit_no: string;
-  street_no: string;
-  address_line1: string;
-  address_line2: string;
-  city: string;
-  region: string;
-  barangay: string;
-  zipcode: string;
-  country_id: string;
-}
+import type { AddressFormData } from './Checkout';
 
 interface CheckoutAddressFormProps {
   onAddressSaved: (addressId: number) => void;
+  onCancel: () => void;
   userEmail: string;
   userId: number;
 }
 
-const CheckoutAddressForm = ({ onAddressSaved, userEmail, userId }: CheckoutAddressFormProps) => {
+const CheckoutAddressForm = ({ onAddressSaved, onCancel, userEmail, userId }: CheckoutAddressFormProps) => {
   const [loading, setLoading] = useState(false);
+  const [saveAddress, setSaveAddress] = useState(true); // Save address by default
   const [formData, setFormData] = useState<AddressFormData>({
     unit_no: '',
     street_no: '',
@@ -46,26 +37,39 @@ const CheckoutAddressForm = ({ onAddressSaved, userEmail, userId }: CheckoutAddr
     setLoading(true);
 
     try {
-      const response = await customFetch.patch(`/users/${userId}`, {
-        user: {
-          user_addresses_attributes: [
-            {
-              is_default: true,
-              address_attributes: formData,
-            },
-          ],
-        },
-      });
+      if (saveAddress) {
+        // Save address to user's profile
+        const response = await customFetch.patch(`/users/${userId}`, {
+          user: {
+            user_addresses_attributes: [
+              {
+                is_default: false, // Don't force as default
+                address_attributes: formData,
+              },
+            ],
+          },
+        });
 
-      toast.success('Address saved successfully');
-      // Get the address ID from the user_addresses array
-      const userAddresses = response.data.data.user_addresses;
-      if (userAddresses && userAddresses.length > 0) {
-        // Get the most recently added address (last in array) or the default one
-        const savedAddress = userAddresses[userAddresses.length - 1];
-        onAddressSaved(savedAddress.id);
+        toast.success('Address saved successfully');
+        // Get the address ID from the response - note: we need address.id, not user_address.id
+        const userAddresses = response.data.data.user_addresses;
+        if (userAddresses && userAddresses.length > 0) {
+          // Get the most recently added address
+          const savedUserAddress = userAddresses[userAddresses.length - 1];
+          const addressId = savedUserAddress.address.id; // This is the address table ID!
+          onAddressSaved(addressId);
+        } else {
+          toast.error('Address was saved but ID not found');
+        }
       } else {
-        toast.error('Address was saved but ID not found');
+        // Create a temporary address without saving to profile
+        const response = await customFetch.post('/addresses', {
+          address: formData,
+        });
+
+        toast.success('Address created for this order');
+        const addressId = response.data.data.id;
+        onAddressSaved(addressId);
       }
     } catch (error: any) {
       console.error('Failed to save address:', error);
@@ -238,18 +242,43 @@ const CheckoutAddressForm = ({ onAddressSaved, userEmail, userId }: CheckoutAddr
           </select>
         </div>
 
-        {/* Save Button */}
-        <button
-          type="submit"
-          className="btn btn-neutral text-white w-full"
-          disabled={loading}
-        >
-          {loading ? (
-            <span className="loading loading-spinner loading-sm"></span>
-          ) : (
-            'Save Address'
-          )}
-        </button>
+        {/* Save Address Checkbox */}
+        <div className="form-control mb-6">
+          <label className="label cursor-pointer justify-start gap-3">
+            <input
+              type="checkbox"
+              className="checkbox checkbox-secondary"
+              checked={saveAddress}
+              onChange={(e) => setSaveAddress(e.target.checked)}
+            />
+            <span className="label-text text-base-content">
+              Save this address to my profile for future orders
+            </span>
+          </label>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex gap-3">
+          <button
+            type="button"
+            className="btn btn-ghost flex-1"
+            onClick={onCancel}
+            disabled={loading}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="btn btn-secondary flex-1"
+            disabled={loading}
+          >
+            {loading ? (
+              <span className="loading loading-spinner loading-sm"></span>
+            ) : (
+              'Use This Address'
+            )}
+          </button>
+        </div>
       </form>
     </div>
   );
