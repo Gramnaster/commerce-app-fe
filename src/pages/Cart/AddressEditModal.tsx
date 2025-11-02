@@ -195,7 +195,7 @@ const AddressEditModal = ({
           <div className="modal-action">
             <button
               type="button"
-              className="btn"
+              className="btn bg-neutral-500 text-[#ffffff] border-none shadow-none outline-none"
               onClick={onClose}
               disabled={loading}
             >

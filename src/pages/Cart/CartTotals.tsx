@@ -117,13 +117,12 @@ const CartTotals = ({
           </div>
           {SocialProgramValue ? (
             <div className="flex flex-col justify-between text-sm text-base-content mt-2">
-              <div>About this program:</div>
               <div>
                 {programDescription}{' '}
-                <NavLink to={`/social_programs/${SocialProgramValue}`}>
-                  More about them here
-                </NavLink>
               </div>
+              <NavLink to={`/social_programs/${SocialProgramValue}`} className="text-right underline">
+                Read More
+              </NavLink>
             </div>
           ) : (
             ''
