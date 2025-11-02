@@ -49,6 +49,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return redirect('/login');
   } catch (error) {
     const err = error as AxiosError<{ error: { message: string } }>;
+    console.log(err.response?.data);
     const errorMessage =
       err.response?.data?.error?.message || 'Double check thy credentials';
     toast.error(errorMessage);
