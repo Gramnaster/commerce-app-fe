@@ -12,7 +12,24 @@ export default defineConfig({
     }),
     tailwindcss(),
   ],
-  	preview: {
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Split Philippines address data into separate chunks
+          'philippines-region': ['./src/assets/data/philippines/region.json'],
+          'philippines-province': ['./src/assets/data/philippines/province.json'],
+          'philippines-city': ['./src/assets/data/philippines/city.json'],
+          'philippines-barangay': ['./src/assets/data/philippines/barangay.json'],
+          // Split vendor libraries
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'query-vendor': ['@tanstack/react-query'],
+          'ui-vendor': ['react-toastify'],
+        }
+      }
+    }
+  },
+  preview: {
 		port: 5173,
 		host: true,    // This enables listening on all network interfaces
 	},
