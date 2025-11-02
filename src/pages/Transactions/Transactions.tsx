@@ -1,17 +1,14 @@
-import React from 'react';
 import { customFetch } from '../../utils';
 import { toast } from 'react-toastify';
-import type { RootState } from '@reduxjs/toolkit/query';
-import { useSelector } from 'react-redux';
 import { store } from '../../store';
 import { NavLink, useLoaderData } from 'react-router-dom';
 
-interface User {
+export interface User {
   id: number;
   email: string;
 }
 
-interface Order {
+export interface Order {
   id: number;
   cart_status: 'pending' | 'approved' | 'rejected';
   is_paid: boolean;
@@ -20,7 +17,7 @@ interface Order {
   total_quantity: string;
 }
 
-interface Transaction {
+export interface Transaction {
   id: number;
   transaction_type: 'deposit' | 'withdraw' | 'purchase';
   amount: number;

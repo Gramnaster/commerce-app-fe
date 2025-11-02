@@ -1,18 +1,11 @@
 import { redirect, useLoaderData } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
-import { IconLineDark, IconLineWhite } from '../../assets/images';
+import type { Order, Transaction } from './Transactions';
 
 import { type Product } from '../Cart/Cart';
 
-interface User {
-  id: number;
-  email: string;
-  first_name: string;
-  last_name: string;
-  full_name: string;
-}
-
+// TransactionView-specific types (not in Transactions.tsx)
 interface Item {
   id: number;
   qty: string;
@@ -50,36 +43,22 @@ interface DeliveryOrder {
   status: 'pending' | 'shipped' | 'delivered' | 'cancelled';
 }
 
-interface Order {
-  id: number;
-  cart_status: 'pending' | 'approved' | 'rejected';
-  is_paid: boolean;
-  total_cost: number;
-  items_count: number;
-  total_quantity: string;
+// Extended Order interface with additional fields for TransactionView
+interface TransactionViewOrder extends Order {
   items: Item[];
   delivery_address: DeliveryAddress;
   delivery_orders: DeliveryOrder[];
 }
 
-interface Transaction {
-  id: number;
-  transaction_type: 'deposit' | 'withdraw' | 'purchase';
-  amount: number;
-  balance_before: number;
-  balance_after: number;
-  description: string;
-  created_at: string;
-  user: User;
-  order: Order | null;
+// Extended Transaction interface for TransactionView
+interface TransactionViewDetails extends Transaction {
+  order: TransactionViewOrder | null;
   items: Item[] | null;
 }
 
 export const loader =
-  (queryClient: any, store: any) =>
+  (queryClient: any) =>
   async ({ params }: any) => {
-    const storeState = store.getState();
-    const user = storeState.userState?.user;
     const id = params.id;
 
     const TransactionQuery = {
@@ -103,7 +82,7 @@ export const loader =
 
 const TransactionView = () => {
   const { TransactionDetails } = useLoaderData() as {
-    TransactionDetails: Transaction;
+    TransactionDetails: TransactionViewDetails;
   };
   console.log(`TransactionView TransactionDetails`, TransactionDetails);
   const formatDate = (dateString: string) => {
