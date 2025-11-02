@@ -267,10 +267,10 @@ const Wallet = () => {
               {/* Balance Display */}
               <div className="mb-8">
                 <div className="text-4xl font-bold mb-2">
-                  $ {wallet?.balance || '0.00'}
-                  <span className="text-sm font-normal text-black">USD</span>
+                  PHP {wallet?.balance || '0.00'}
+                  <span className="text-sm font-normal text-black">PHP</span>
                 </div>
-                <div className="text-sm text-black">= ₱ 0.00PHP</div>
+                <div className="text-sm text-black">= PHP 0.00PHP</div>
               </div>
 
               {/* Portfolio Summary */}

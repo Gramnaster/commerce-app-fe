@@ -40,7 +40,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           {truncatedTitle}
         </div>
         <div className="font-secondary text-base font-extralight text-base-content">
-          ₱{formatPrice(price)}
+          PHP{formatPrice(price)}
           {hasPromotion && discount_percentage && (
             <span className="ml-2 text-green-600 font-semibold">
               ({discount_percentage}%)

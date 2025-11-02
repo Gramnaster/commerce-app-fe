@@ -1,6 +1,6 @@
 import { redirect, useLoaderData } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { customFetch } from '../../utils';
+import { customFetch, formatPrice } from '../../utils';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from '../../features/cart/cartSlice';
@@ -149,14 +149,14 @@ const ProductView = () => {
             {product.promotion_id && product.discount_percentage > 0 ? (
               <>
                 <span className="line-through text-gray-500 mr-4 ">
-                  ${product.price}
+                  PHP{formatPrice(product.price)}
                 </span>
                 <span className="text-error font-bold">
-                  ${product.final_price}
+                  PHP{formatPrice(parseFloat(product.final_price))}
                 </span>
               </>
             ) : (
-              <span>${product.price}</span>
+              <span>PHP{formatPrice(product.price)}</span>
             )}
           </div>
 
