@@ -257,7 +257,7 @@ const Checkout = () => {
           {!showNewAddressForm ? (
             <div className="bg-base-100 rounded-lg shadow-md p-6">
               <button
-                className="btn btn-secondary btn-block"
+                className="btn btn-secondary btn-block shadow-none"
                 onClick={() => setShowNewAddressForm(true)}
               >
                 {userAddresses.length > 0 ? 'Add a new delivery address' : 'Add delivery address'}
@@ -271,22 +271,6 @@ const Checkout = () => {
               userId={user?.id || 0}
             />
           )}
-
-          {/* Billing Section Placeholder */}
-          <div className="bg-base-100 rounded-lg shadow-md p-6 mt-6">
-            <h2 className="text-2xl font-bold mb-4 text-base-content">Billing</h2>
-            <p className="text-base-content/70">
-              Billing information will be the same as shipping address.
-            </p>
-          </div>
-
-          {/* Payment Section Placeholder */}
-          <div className="bg-base-100 rounded-lg shadow-md p-6 mt-6">
-            <h2 className="text-2xl font-bold mb-4 text-base-content">Payment</h2>
-            <p className="text-base-content/70">
-              Payment will be processed using your account balance.
-            </p>
-          </div>
         </div>
 
         {/* Right side - Order Summary (1/3) */}

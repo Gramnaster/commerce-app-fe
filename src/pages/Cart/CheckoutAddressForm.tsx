@@ -209,7 +209,7 @@ const CheckoutAddressForm = ({ onAddressSaved, onCancel, userEmail, userId }: Ch
         <div className="flex gap-3">
           <button
             type="button"
-            className="btn btn-ghost flex-1"
+            className="btn bg-neutral-500 text-[#ffffff] btn-block border-none shadow-none outline-none mb-2 flex-1"
             onClick={onCancel}
             disabled={loading}
           >

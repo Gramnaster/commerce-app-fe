@@ -13,6 +13,8 @@ interface FormInputType {
   inputRef?: (el: HTMLInputElement | null) => void;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   error?: boolean;
+  min?: string;
+  max?: string;
 }
 
 const FormInput = ({ label, name, type = 'text', placeholder = '', as = 'input', options = [], inputRef, onBlur, error, ...rest }: FormInputType) => {
