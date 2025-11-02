@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useLoaderData, useLocation, useNavigate } from 'react-router-dom';
+import { useLoaderData, useLocation, useNavigate, useRevalidator } from 'react-router-dom';
 import type { RootState } from '../../store';
 import CheckoutAddressForm from './CheckoutAddressForm';
 import CheckoutSummary from './CheckoutSummary';
@@ -152,6 +152,7 @@ const Checkout = () => {
   console.log(`Checkout sp_id`, sp_id)
 
   const navigate = useNavigate();
+  const revalidator = useRevalidator();
   const user = useSelector((state: RootState) => state.userState.user);
   const { cartItems } = useSelector((state: RootState) => state.cartState);
   
@@ -175,6 +176,8 @@ const Checkout = () => {
   const handleAddressSaved = (newAddressId: number) => {
     setAddressId(newAddressId);
     setShowNewAddressForm(false);
+    // Revalidate to fetch updated user addresses
+    revalidator.revalidate();
   };
 
   const handleEditAddress = (userAddress: UserAddress) => {
@@ -182,17 +185,10 @@ const Checkout = () => {
     setIsEditModalOpen(true);
   };
 
-  const handleAddressUpdated = async () => {
-    // Refresh user details to get updated addresses
-    if (user) {
-      try {
-        await customFetch.get(`/users/${user.id}`);
-        // You might want to update the loader data here or trigger a refetch
-        toast.success('Please select the updated address');
-      } catch (error) {
-        console.error('Failed to refresh addresses:', error);
-      }
-    }
+  const handleAddressUpdated = () => {
+    // Revalidate to fetch updated addresses
+    setIsEditModalOpen(false);
+    revalidator.revalidate();
   };
 
   const handleOrderComplete = () => {

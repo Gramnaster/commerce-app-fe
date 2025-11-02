@@ -78,8 +78,8 @@ const AddressEditModal = ({
       });
 
       toast.success('Address updated successfully');
-      onAddressUpdated();
       onClose();
+      onAddressUpdated();
     } catch (error: any) {
       console.error('Failed to update address:', error);
       toast.error('Failed to update address');
