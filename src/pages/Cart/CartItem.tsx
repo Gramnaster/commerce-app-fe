@@ -32,6 +32,8 @@ const CartItem = ({
                 src={product.product_image_url}
                 alt={product.title}
                 className="w-full h-full object-contain"
+                loading="lazy"
+                decoding="async"
               />
             ) : (
               <span className="text-gray-500 text-xs">No Image</span>

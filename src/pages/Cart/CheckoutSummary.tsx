@@ -257,9 +257,9 @@ const CheckoutSummary = ({
       <div className="mt-4 text-left text-sm text-base-content">
         <p>We Accept:</p>
         <div className="flex justify-center gap-2 mt-2">
-          <img src={cardVisa} alt="VISA" className="h-8" />
-          <img src={cardMastercard} alt="Mastercard" className="h-8" />
-          <img src={cardAmex} alt="AMEX" className="h-8" />
+          <img src={cardVisa} alt="VISA" className="h-8" loading="lazy" />
+          <img src={cardMastercard} alt="Mastercard" className="h-8" loading="lazy" />
+          <img src={cardAmex} alt="AMEX" className="h-8" loading="lazy" />
         </div>
       </div>
     </div>

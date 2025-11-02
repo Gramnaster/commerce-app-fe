@@ -208,6 +208,8 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
                             src={item.image}
                             alt={item.title}
                             className="w-full h-full object-contain rounded"
+                            loading="lazy"
+                            decoding="async"
                           />
                         ) : (
                           <span className="text-gray-500 text-xs">No Image</span>
