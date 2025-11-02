@@ -51,23 +51,22 @@ const CartItem = ({
 
             {/* Quantity Controls */}
             <div className="flex items-center gap-4">
-              <div className="join">
+              <div className="flex items-center gap-2">
                 <button
-                  className="btn btn-sm join-item"
+                  type="button"
                   onClick={() => onUpdateQuantity(id, quantity - 1)}
                   disabled={quantity <= 1}
+                  className="btn btn-square bg-[#4d4d4d] text-white text-2xl hover:bg-[#3d3d3d] h-[30px] w-[30px]"
                 >
-                  -
+                  −
                 </button>
-                <input
-                  type="text"
-                  className="input input-sm join-item w-16 text-center"
-                  value={quantity}
-                  readOnly
-                />
+                <div className="border-2 font-secondary text-black text-[16px] items-center bg-white border-gray-400 rounded-lg px-6 py-2 text-center min-w-[70px] text-xl font-medium h-[40px]">
+                  {quantity}x
+                </div>
                 <button
-                  className="btn btn-sm join-item"
+                  type="button"
                   onClick={() => onUpdateQuantity(id, quantity + 1)}
+                  className="btn btn-square bg-[#4d4d4d] text-white text-2xl hover:bg-[#3d3d3d] h-[30px] w-[30px]"
                 >
                   +
                 </button>
