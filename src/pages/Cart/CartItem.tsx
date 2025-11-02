@@ -7,6 +7,7 @@ interface CartItemProps {
   product: Product;
   onUpdateQuantity: (cartItemId: number, newQty: number) => void;
   onRemove: (cartItemId: number) => void;
+  isUpdating: boolean;
 }
 
 const CartItem = ({
@@ -16,20 +17,25 @@ const CartItem = ({
   product,
   onUpdateQuantity,
   onRemove,
+  isUpdating,
 }: CartItemProps) => {
   const quantity = parseInt(qty);
 
   return (
-    <div className="card bg-base-100 shadow-md">
+    <div className="card bg-[#f3f3f3]">
       <div className="card-body p-4">
         <div className="flex gap-4">
           {/* Product Image */}
-          <div className="w-24 h-24 flex-shrink-0">
-            <img
-              src={product.product_image_url}
-              alt={product.title}
-              className="w-full h-full object-cover rounded"
-            />
+          <div className="w-24 h-24 flex-shrink-0 bg-gray-400 flex items-center justify-center">
+            {product.product_image_url ? (
+              <img
+                src={product.product_image_url}
+                alt={product.title}
+                className="w-full h-full object-contain"
+              />
+            ) : (
+              <span className="text-gray-500 text-xs">No Image</span>
+            )}
           </div>
 
           {/* Product Details */}
@@ -47,23 +53,23 @@ const CartItem = ({
 
             {/* Quantity Controls */}
             <div className="flex items-center gap-4">
-              <div className="join">
+              <div className="flex items-center gap-2">
                 <button
-                  className="btn btn-sm join-item"
+                  type="button"
                   onClick={() => onUpdateQuantity(id, quantity - 1)}
-                  disabled={quantity <= 1}
+                  disabled={quantity <= 1 || isUpdating}
+                  className="btn btn-square bg-[#4d4d4d] text-white text-2xl hover:bg-[#3d3d3d] h-[30px] w-[30px] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  -
+                  −
                 </button>
-                <input
-                  type="text"
-                  className="input input-sm join-item w-16 text-center"
-                  value={quantity}
-                  readOnly
-                />
+                <div className="border-2 font-secondary text-black text-[16px] items-center bg-white border-gray-400 rounded-lg px-6 py-2 text-center min-w-[70px] text-xl font-medium h-[40px]">
+                  {quantity}x
+                </div>
                 <button
-                  className="btn btn-sm join-item"
+                  type="button"
                   onClick={() => onUpdateQuantity(id, quantity + 1)}
+                  disabled={isUpdating}
+                  className="btn btn-square bg-[#4d4d4d] text-white text-2xl hover:bg-[#3d3d3d] h-[30px] w-[30px] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   +
                 </button>

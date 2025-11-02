@@ -105,7 +105,7 @@ const ProfileView = () => {
   const officePhone = phones.find(p => p.phone_type === 'office');
 
   return (
-    <div className="min-h-screen bg-base-100 text-black mb-20">
+    <div className="min-h-screen bg-base-100 text-base-content mb-20">
       <div className="max-w-4xl mx-auto font-secondary">
         
         {/* Header */}

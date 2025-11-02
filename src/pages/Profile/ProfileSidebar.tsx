@@ -10,7 +10,7 @@ export interface LinksType {
 }
 
 
-export const getProfileLinks = (user: User | null): LinksType[] => [
+export const getProfileLinks = (user: { id?: number } | null): LinksType[] => [
   { id: 0, url: '/profile/transactions', text: "Transactions" },
   { id: 1, url: `/profile/view/${user?.id}`, text: "Profile" },
   { id: 2, url: `/profile/wallet/`, text: "Wallet" },
@@ -29,7 +29,7 @@ const ProfileSidebar = ({ user }: { user: User }) => {
   return (
     <div className="h-full">
       <div className="h-[468px] border-r border-[#808080]">
-        <div className="font-bold flex flex-col justify-end items-end mr-4 text-black">
+        <div className="font-bold flex flex-col justify-end items-end mr-4 text-base-content">
           <h3 className="font-primary font-light text-[24px] mb-2">Profile</h3>
           {links.map((link) => {
             const { id, url, text } = link;

@@ -70,7 +70,7 @@ const SocialPrograms = () => {
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center">
-        <span className="loading loading-ring loading-lg text-black">
+        <span className="loading loading-ring loading-lg text-base-content">
           Loading...
         </span>
       </div>
@@ -79,7 +79,7 @@ const SocialPrograms = () => {
 
   return (
     <>
-      <section className="align-element text-black">
+      <section className="align-element text-base-content">
         <div className="flex justify-center align-middle flex-col my-[85px]">
           <h2 className="font-primary text-base-content text-2xl text-center">
             SOCIAL PROGRAMS

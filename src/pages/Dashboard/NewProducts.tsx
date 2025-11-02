@@ -73,7 +73,7 @@ const NewProducts = () => {
                     {title.length > 25 ? title.slice(0, 25) + '. . .' : title}
                   </div>
                   <div className="font-secondary text-base font-extralight">
-                    {price}
+                    PHP {price}
                     {promotion_id && discount_percentage && (
                       <span className="ml-2 text-green-600 font-semibold">
                         ({discount_percentage}%)

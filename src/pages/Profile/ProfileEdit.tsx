@@ -373,13 +373,13 @@ const handleInputChange = (
   };
 
   return (
-    <div className="min-h-screen bg-base-100 text-black p-6">
+    <div className="min-h-screen bg-base-100 text-base-content p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
           <button
             onClick={() => navigate('/admin')}
-            className="mb-4 flex items-center gap-2 text-black hover:text-white transition-colors"
+            className="mb-4 flex items-center gap-2 text-base-content hover:text-secondary transition-colors"
           >
             <svg
               className="w-5 h-5"
@@ -396,8 +396,8 @@ const handleInputChange = (
             </svg>
             Back to Traders List
           </button>
-          <h1 className="text-3xl font-bold text-black mb-2">Edit Trader</h1>
-          <p className="text-black">
+          <h1 className="text-3xl font-bold text-base-content mb-2">Edit Trader</h1>
+          <p className="text-base-content">
             Editing information for 
             {userDetails.data.user_detail.first_name || ''}{' '}
             {userDetails.data.user_detail.last_name || ''}{' '}
@@ -420,12 +420,12 @@ const handleInputChange = (
 
           {/* Personal Information */}
           <div className="bg-base-100 rounded-lg p-6 border border-gray-700">
-            <h2 className="text-xl font-bold text-black mb-4 pb-2 border-b border-gray-700">
+            <h2 className="text-xl font-bold text-base-content mb-4 pb-2 border-b border-gray-700">
               Personal Information
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-black text-sm font-medium mb-2">
+                <label className="block text-base-content text-sm font-medium mb-2">
                   Email Address (Read-only)
                 </label>
                 <input
@@ -438,7 +438,7 @@ const handleInputChange = (
                 <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
               </div>
               <div>
-                <label className="block text-black text-sm font-medium mb-2">
+                <label className="block text-base-content text-sm font-medium mb-2">
                   First Name *
                 </label>
                 <input
@@ -446,12 +446,12 @@ const handleInputChange = (
                   name="first_name"
                   value={formData.user_detail_attributes.first_name}
                   onChange={handleInputChange}
-                  className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent"
+                  className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-base-content focus:ring-2 focus:ring-secondary focus:border-transparent"
                   required
                 />
               </div>
               <div>
-                <label className="block text-black text-sm font-medium mb-2">
+                <label className="block text-base-content text-sm font-medium mb-2">
                   Middle Name
                 </label>
                 <input
@@ -459,11 +459,11 @@ const handleInputChange = (
                   name="middle_name"
                   value={formData.user_detail_attributes.middle_name}
                   onChange={handleInputChange}
-                  className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent"
+                  className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-base-content focus:ring-2 focus:ring-secondary focus:border-transparent"
                 />
               </div>
               <div>
-                <label className="block text-black text-sm font-medium mb-2">
+                <label className="block text-base-content text-sm font-medium mb-2">
                   Last Name *
                 </label>
                 <input
@@ -471,12 +471,12 @@ const handleInputChange = (
                   name="last_name"
                   value={formData.user_detail_attributes.last_name}
                   onChange={handleInputChange}
-                  className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-black focus:border-transparent"
+                  className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-base-content focus:ring-2 focus:ring-black focus:border-transparent"
                   required
                 />
               </div>
               <div>
-                <label className="block text-black text-sm font-medium mb-2">
+                <label className="block text-base-content text-sm font-medium mb-2">
                   Date of Birth *
                 </label>
                 <input
@@ -485,7 +485,7 @@ const handleInputChange = (
                   data-theme='light'
                   value={formData.user_detail_attributes.dob}
                   onChange={handleInputChange}
-                  className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent"
+                  className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-base-content focus:ring-2 focus:ring-secondary focus:border-transparent"
                   required
                 />
               </div>
@@ -505,7 +505,7 @@ const handleInputChange = (
               return (
             <div key={userAddress.id || index} className="mb-8">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-black">
+                <h3 className="text-lg font-semibold text-base-content">
                   Address #{index + 1}
                   {userAddress.is_default && (
                     <span className="ml-2 text-sm bg-green-600 text-white px-2 py-1 rounded">
@@ -543,7 +543,7 @@ const handleInputChange = (
                   name="unit_no"
                   value={userAddress.address_attributes.unit_no}
                   onChange={(e) => handleInputChange(e, index)}
-                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('unit_no') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
+                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-base-content focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('unit_no') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
                 />
               </div>
               <div>
@@ -555,7 +555,7 @@ const handleInputChange = (
                   name="street_no"
                   value={userAddress.address_attributes.street_no}
                   onChange={(e) => handleInputChange(e, index)}
-                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-black focus:ring-2 focus:ring-ffffff focus:border-transparent ${hasError('street_no') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
+                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-base-content focus:ring-2 focus:ring-ffffff focus:border-transparent ${hasError('street_no') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
                 />
               </div>
               <div>
@@ -567,7 +567,7 @@ const handleInputChange = (
                   name="address_line1"
                   value={userAddress.address_attributes.address_line1}
                   onChange={(e) => handleInputChange(e, index)}
-                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('address_line1') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
+                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-base-content focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('address_line1') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
                 />
               </div>
               <div>
@@ -579,7 +579,7 @@ const handleInputChange = (
                   name="address_line2"
                   value={userAddress.address_attributes.address_line2}
                   onChange={(e) => handleInputChange(e, index)}
-                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('address_line2') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
+                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-base-content focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('address_line2') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
                 />
               </div>
               <div>
@@ -591,7 +591,7 @@ const handleInputChange = (
                   name="barangay"
                   value={userAddress.address_attributes.barangay}
                   onChange={(e) => handleInputChange(e, index)}
-                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('barangay') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
+                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-base-content focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('barangay') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
                   required
                 />
               </div>
@@ -604,7 +604,7 @@ const handleInputChange = (
                   name="city"
                   value={userAddress.address_attributes.city}
                   onChange={(e) => handleInputChange(e, index)}
-                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('city') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
+                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-base-content focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('city') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
                   required
                 />
               </div>
@@ -617,7 +617,7 @@ const handleInputChange = (
                   name="region"
                   value={userAddress.address_attributes.region}
                   onChange={(e) => handleInputChange(e, index)}
-                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('region') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
+                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-base-content focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('region') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
                   required
                 />
               </div>
@@ -630,7 +630,7 @@ const handleInputChange = (
                   name="zipcode"
                   value={userAddress.address_attributes.zipcode}
                   onChange={(e) => handleInputChange(e, index)}
-                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('zipcode') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
+                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-base-content focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('zipcode') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
                   required
                 />
               </div>
@@ -642,7 +642,7 @@ const handleInputChange = (
                   name="country_id"
                   value={userAddress.address_attributes.country_id}
                   onChange={(e) => handleInputChange(e, index)}
-                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('country') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
+                  className={`w-full bg-[#ffffff] rounded-lg p-3 text-base-content focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('country') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
                   required
                 >
                   <option value="">Select Country...</option>
@@ -701,7 +701,7 @@ const handleInputChange = (
                     name="phone_no"
                     value={phoneNumber.phone_no}
                     onChange={(e) => handleInputChange(e, undefined, index)}
-                    className={`w-full bg-[#ffffff] rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('phone') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
+                    className={`w-full bg-[#ffffff] rounded-lg p-3 text-base-content focus:ring-2 focus:ring-secondary focus:border-transparent ${hasError('phone') ? 'border-2 border-red-600' : 'border border-gray-600'}`}
                   />
                 </div>
               </div>
@@ -717,7 +717,7 @@ const handleInputChange = (
                     value="office"
                     checked={phoneNumber.phone_type === 'office'}
                     onChange={(e) => handleInputChange(e, undefined, index)}
-                    className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent"
+                    className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-base-content focus:ring-2 focus:ring-secondary focus:border-transparent"
                   />
                 </div>
                 <div className='flex items-center justify-between gap-5'>
@@ -728,7 +728,7 @@ const handleInputChange = (
                     value="home"
                     checked={phoneNumber.phone_type === 'home'}
                     onChange={(e) => handleInputChange(e, undefined, index)}
-                    className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent"
+                    className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-base-content focus:ring-2 focus:ring-secondary focus:border-transparent"
                   />
                 </div>
                 <div className='flex items-center justify-between gap-5'>
@@ -739,7 +739,7 @@ const handleInputChange = (
                     value="mobile"
                     checked={phoneNumber.phone_type === 'mobile'}
                     onChange={(e) => handleInputChange(e, undefined, index)}
-                    className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-secondary focus:border-transparent"
+                    className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-base-content focus:ring-2 focus:ring-secondary focus:border-transparent"
                   />
                 </div>
               </div>

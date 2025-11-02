@@ -5,12 +5,14 @@ interface CartItemsListProps {
   cartItems: CartItemType[];
   onUpdateQuantity: (cartItemId: number, newQty: number) => void;
   onRemove: (cartItemId: number) => void;
+  updatingItems: Set<number>;
 }
 
 const CartItemsList = ({
   cartItems,
   onUpdateQuantity,
   onRemove,
+  updatingItems,
 }: CartItemsListProps) => {
   if (cartItems.length === 0) {
     return (
@@ -34,6 +36,7 @@ const CartItemsList = ({
           product={cartItem.product}
           onUpdateQuantity={onUpdateQuantity}
           onRemove={onRemove}
+          isUpdating={updatingItems.has(cartItem.id)}
         />
       ))}
     </div>

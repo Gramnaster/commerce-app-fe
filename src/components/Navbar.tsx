@@ -1,9 +1,10 @@
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate, useMatch } from 'react-router-dom';
 import NavLinks from './NavLinks';
 import { useEffect, useState } from 'react';
 import type { RootState } from '../store';
 import { logoutUser } from '../features/user/userSlice';
 import { clearCart } from '../features/cart/cartSlice';
+import { toggleTheme } from '../features/theme/themeSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   IconCart,
@@ -18,27 +19,18 @@ import {
 import CartModal from './CartModal';
 import ProfileLinks from './ProfileLinks';
 
-const themes = {
-  light: 'light',
-  dark: 'dark',
-};
-
-const getThemeFromLocalStorage = () => {
-  return localStorage.getItem('theme') || themes.light;
-};
-
 const Navbar = () => {
-  // Always sync with the real data-theme attribute
-  const getCurrentTheme = () =>
-    document.documentElement.getAttribute('data-theme') || themes.light;
-  const [theme, setTheme] = useState(getThemeFromLocalStorage);
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.userState.user);
+  const theme = useSelector((state: RootState) => state.themeState.theme);
   const numItemsInCart = useSelector(
     (state: RootState) => state.cartState.numItemsInCart
   );
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  
+  // Check if we're on the cart page
+  const isCartPage = useMatch('/cart');
 
   const handleLogout = () => {
     // Clear cart and close modal
@@ -49,14 +41,12 @@ const Navbar = () => {
   };
 
   const handleTheme = () => {
-    const { light, dark } = themes;
-    const newTheme = theme === light ? dark : light;
-    setTheme(newTheme);
+    dispatch(toggleTheme());
   };
 
+  // Sync theme with DOM on mount and when theme changes
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
   }, [theme]);
 
   return (
@@ -88,6 +78,7 @@ const Navbar = () => {
                 </ul>
               </div>
             </div>
+            {/* WIP - SEARCH BAR */}
             <div className="navbar-center hidden lg:flex flex-6 justify-center">
               <label className="input flex items-center w-full max-w-4xl max-h-[32px]">
                 <input
@@ -141,21 +132,27 @@ const Navbar = () => {
                 {/* <button className="btn text-base bg-secondary text-white w-[128px] h-[33px]" onClick={handleLogout}>
                   Sign Up
                 </button> */}
-                <button
-                  className="btn bg-transparent h-[30px] border-none shadow-none outline-none btn-circle"
-                  onClick={() => setIsCartOpen(true)}
-                >
-                  <div className="indicator">
-                    <img src={IconCart} alt="cart-icon" />
-                    {numItemsInCart > 0 && (
-                      <span className="badge badge-xs badge-error indicator-item text-xs">
-                        {numItemsInCart}
-                      </span>
-                    )}
-                  </div>
-                </button>
+                {!isCartPage && (
+                  <button
+                    className="btn bg-transparent h-[30px] border-none shadow-none outline-none btn-circle"
+                    onClick={() => setIsCartOpen(true)}
+                  >
+                    <div className="indicator">
+                      <img src={IconCart} alt="cart-icon" />
+                      {numItemsInCart > 0 && (
+                        <span className="badge badge-xs badge-error indicator-item text-xs">
+                          {numItemsInCart}
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                )}
                 <label className="swap swap-rotate">
-                  <input type="checkbox" onChange={handleTheme} />
+                  <input 
+                    type="checkbox" 
+                    onChange={handleTheme}
+                    checked={theme === 'dark'}
+                  />
                   {/* Moon Icon */}
                   <img
                     src={IconThemeDark}
@@ -202,8 +199,10 @@ const Navbar = () => {
         </section>
       </nav>
 
-      {/* Cart Modal */}
-      <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      {/* Cart Modal - Only show if not on cart page */}
+      {!isCartPage && (
+        <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      )}
     </>
   );
 };

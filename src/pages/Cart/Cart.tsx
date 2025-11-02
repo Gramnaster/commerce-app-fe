@@ -1,12 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store';
-import { customFetch } from '../../utils';
+import { customFetch, syncCartWithBackend } from '../../utils';
 import { toast } from 'react-toastify';
-import {
-  editItem,
-  removeItem as removeItemFromRedux,
-} from '../../features/cart/cartSlice';
 import CartItemsList from './CartItemsList';
 import CartTotals from './CartTotals';
 import { IconLineDark, IconLineWhite } from '../../assets/images';
@@ -65,6 +61,7 @@ const Cart = () => {
 
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [updatingItems, setUpdatingItems] = useState<Set<number>>(new Set());
   const updateTimeoutRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(
     new Map()
   );
@@ -112,6 +109,9 @@ const Cart = () => {
   // Debounced backend update
   const updateBackend = useCallback(
     async (cartItemId: number, newQty: number) => {
+      // Mark item as updating
+      setUpdatingItems(prev => new Set(prev).add(cartItemId));
+      
       try {
         await customFetch.patch(`/shopping_cart_items/${cartItemId}`, {
           shopping_cart_item: {
@@ -119,19 +119,9 @@ const Cart = () => {
           },
         });
 
-        // Update Redux store
-        setCartItems((currentItems) => {
-          const cartItem = currentItems.find((item) => item.id === cartItemId);
-          if (cartItem) {
-            dispatch(
-              editItem({
-                cartID: cartItem.product.id + cartItem.product.title,
-                amount: newQty,
-              })
-            );
-          }
-          return currentItems;
-        });
+        // Sync cart from backend to get fresh data
+        await syncCartWithBackend(dispatch);
+        await fetchCartItems();
 
       } catch (error: any) {
         console.error('Failed to update quantity:', error);
@@ -148,6 +138,13 @@ const Cart = () => {
           // Revert on error
           fetchCartItems();
         }
+      } finally {
+        // Remove updating state
+        setUpdatingItems(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(cartItemId);
+          return newSet;
+        });
       }
     },
     [dispatch]
@@ -177,11 +174,11 @@ const Cart = () => {
         clearTimeout(existingTimeout);
       }
 
-      // Set new timeout to update backend after 800ms of no changes
+      // Set new timeout to update backend after 1000ms / 1 second of no changes
       const timeoutId = setTimeout(() => {
         updateBackend(cartItemId, newQty);
         updateTimeoutRef.current.delete(cartItemId);
-      }, 800);
+      }, 1000);
 
       updateTimeoutRef.current.set(cartItemId, timeoutId);
     },
@@ -206,18 +203,14 @@ const Cart = () => {
 
     if (!removedItem) return;
 
-    // Optimistically update UI with standard filtering
+    // Optimistically update UI
     setCartItems((prev) => prev.filter((item) => item.id !== cartItemId));
-
-    // Update Redux store
-    dispatch(
-      removeItemFromRedux({
-        cartID: removedItem.product.id + removedItem.product.title,
-      })
-    );
 
     try {
       await customFetch.delete(`/shopping_cart_items/${cartItemId}`);
+      
+      // Sync cart from backend to get fresh data
+      await syncCartWithBackend(dispatch);
       toast.success('Item removed from cart');
     } catch (error: any) {
       console.error('Failed to remove item:', error);
@@ -255,10 +248,10 @@ const Cart = () => {
   }
 
   return (
-    <div className="align-element py-8">
+    <div className="align-element mb-20">
       <div className='flex justify-center align-middle flex-col my-[85px]'>
         <h2 className="font-primary text-base-content text-2xl text-center">
-          POPULAR CATEGORIES
+          SHOPPING CART
         </h2>
         <div className="relative h-[11px] w-[67px] mx-auto">
           <img src={IconLineWhite} className="block dark:hidden h-[11px] w-[67px] mx-auto" />
@@ -283,6 +276,7 @@ const Cart = () => {
             cartItems={cartItems}
             onUpdateQuantity={updateQuantity}
             onRemove={removeCartItem}
+            updatingItems={updatingItems}
           />
         )}
         

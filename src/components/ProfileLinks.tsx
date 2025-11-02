@@ -2,9 +2,9 @@ import { NavLink } from 'react-router-dom';
 
 import { getProfileLinks } from '../pages/Profile/ProfileSidebar';
 
-import type { User } from '../pages/Profile/ProfileEdit';
+import type { User as UserState } from '../features/user/userSlice';
 
-export const loader = (queryClient: any, store: any) => async () => {
+export const loader = (_queryClient: any, store: any) => async () => {
   const storeState = store.getState();
   const user = storeState.userState?.user;
   console.log(`profile user`, user);
@@ -37,7 +37,7 @@ export const loader = (queryClient: any, store: any) => async () => {
 };
 
 interface ProfileLinksProps {
-  user: User;
+  user: UserState;
   onLogout?: () => void;
 }
 

@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import type { CartItem } from './Cart';
 import { socialPrograms } from '../../assets/data/socialPrograms';
-import type { SocialProgram, SocialProgramResponse } from './Checkout'
+import type { SocialProgram, SocialProgramResponse } from './Checkout';
+import { cardVisa, cardMastercard, cardAmex } from '../../assets/images';
 
 interface CartTotalsProps {
   cartItems: CartItem[];
@@ -11,7 +12,12 @@ interface CartTotalsProps {
   SocialProgramValue: number;
 }
 
-const CartTotals = ({ cartItems, setSocialProgram, SocialPrograms, SocialProgramValue }: CartTotalsProps) => {
+const CartTotals = ({
+  cartItems,
+  setSocialProgram,
+  SocialPrograms,
+  SocialProgramValue,
+}: CartTotalsProps) => {
   const navigate = useNavigate();
   const [programDescription, setProgramDescription] = useState('');
   // const [selectedProgram, setSelectedProgram] = useState<string>('');
@@ -21,14 +27,14 @@ const CartTotals = ({ cartItems, setSocialProgram, SocialPrograms, SocialProgram
     (sum, item) => sum + parseFloat(item.subtotal),
     0
   );
-  const shipping = 85.11; // PHP shipping cost
+  const shipping = subtotal >= 1000 ? 0 : 85.11; // Free shipping over 1000 PHP
   const gst = subtotal * 0.12; // 12% GST
   const donation = SocialProgramValue !== 0 ? subtotal * 0.08 : 0; // 8% donation if program selected
   const total = subtotal + shipping + gst + donation;
 
   return (
     <div className="lg:col-span-1">
-      <div className="card bg-base-100 shadow-md sticky top-4">
+      <div className="card bg-base-100 border-l border-[#808080] sticky rounded-none">
         <div className="card-body">
           <h2 className="card-title text-xl mb-4 text-base-content">
             Order Summary:
@@ -58,8 +64,19 @@ const CartTotals = ({ cartItems, setSocialProgram, SocialPrograms, SocialProgram
             </div>
             <div className="flex justify-between text-sm text-base-content">
               <span>Shipping</span>
-              <span>PHP {shipping.toFixed(2)}</span>
+              <span>
+                {shipping === 0 ? (
+                  <span className="text-base-content font-semibold">FREE</span>
+                ) : (
+                  `PHP ${shipping.toFixed(2)}`
+                )}
+              </span>
             </div>
+            {subtotal < 1000 && subtotal > 0 && (
+              <div className="text-xs text-base-content/70 italic">
+                Add PHP {(1000 - subtotal).toFixed(2)} more for free shipping
+              </div>
+            )}
             <div className="flex justify-between text-sm text-base-content">
               <span>GST (12%)</span>
               <span>PHP {gst.toFixed(2)}</span>
@@ -96,7 +113,7 @@ const CartTotals = ({ cartItems, setSocialProgram, SocialPrograms, SocialProgram
             </select>
           </div>
           {SocialProgramValue ? (
-            <div className="flex justify-between text-sm text-base-content mt-2">
+            <div className="flex flex-col justify-between text-sm text-base-content mt-2">
               <div>About this program:</div>
               <div>
                 {programDescription}{' '}
@@ -117,7 +134,7 @@ const CartTotals = ({ cartItems, setSocialProgram, SocialPrograms, SocialProgram
           </div>
 
           <button
-            className="btn btn-primary btn-block mt-4"
+            className="btn btn-secondary btn-block mt-4 font-secondary"
             onClick={() =>
               navigate('/checkout', {
                 state: { sp_id: SocialProgramValue },
@@ -127,21 +144,25 @@ const CartTotals = ({ cartItems, setSocialProgram, SocialPrograms, SocialProgram
             Proceed to Checkout
           </button>
 
-          <button className="btn btn-outline btn-block mt-2">
-            <img
+          <button className="btn btn-accent btn-block mt-2  gap-0  font-secondary">
+            {/* <img
               src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg"
               alt="PayPal"
               className="h-5"
-            />
-            PayPal Checkout
+            /> */}
+            <span className="font-black italic text-[#003087] text-center">
+              Pay
+            </span>
+            <span className="font-black italic text-[#009CDE]">Pal </span>
+            <span className="text-black font-bold">&nbsp; {'Checkout'}</span>
           </button>
 
-          <div className="mt-4 text-center text-sm text-base-content/70">
+          <div className="mt-4 text-left text-sm text-base-content">
             <p>We Accept:</p>
             <div className="flex justify-center gap-2 mt-2">
-              <span className="badge badge-outline">VISA</span>
-              <span className="badge badge-outline">Mastercard</span>
-              <span className="badge badge-outline">AMEX</span>
+              <img src={cardVisa} alt="VISA" className="h-8" />
+              <img src={cardMastercard} alt="Mastercard" className="h-8" />
+              <img src={cardAmex} alt="AMEX" className="h-8" />
             </div>
           </div>
         </div>

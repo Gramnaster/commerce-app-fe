@@ -82,6 +82,9 @@ const FeaturedSocials = () => {
   }
 
   const socialPrograms = socialProgramsResponse?.data || [];
+  // Limit to first 4 social programs
+  const featuredPrograms = socialPrograms.slice(0, 4);
+  
   return (
     <section className="align-social text-base-content">
       <div className="flex justify-center align-middle flex-col my-[85px] text-center">
@@ -114,7 +117,7 @@ const FeaturedSocials = () => {
         </div>
       </div>
       <div className="align-social flex-col">
-        {socialPrograms.map((program: SocialProgram, index: number) => {
+        {featuredPrograms.map((program: SocialProgram, index: number) => {
           const { id, title, description } = program;
           // Use static images in order
           const img = socialImages[index % socialImages.length];
