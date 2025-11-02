@@ -24,12 +24,16 @@ const CartItem = ({
       <div className="card-body p-4">
         <div className="flex gap-4">
           {/* Product Image */}
-          <div className="w-24 h-24 flex-shrink-0">
-            <img
-              src={product.product_image_url}
-              alt={product.title}
-              className="w-full h-full object-cover rounded"
-            />
+          <div className="w-24 h-24 flex-shrink-0 bg-gray-400 flex items-center justify-center">
+            {product.product_image_url ? (
+              <img
+                src={product.product_image_url}
+                alt={product.title}
+                className="w-full h-full object-contain"
+              />
+            ) : (
+              <span className="text-gray-500 text-xs">No Image</span>
+            )}
           </div>
 
           {/* Product Details */}

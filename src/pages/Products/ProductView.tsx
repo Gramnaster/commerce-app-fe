@@ -1,9 +1,8 @@
 import { redirect, useLoaderData } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { customFetch } from '../../utils';
+import { customFetch, syncCartWithBackend } from '../../utils';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addItem } from '../../features/cart/cartSlice';
 import type { RootState } from '../../store';
 import { LoginCartModal, ProductPrice } from '../../components';
 import type { Product } from './Products';
@@ -79,38 +78,23 @@ const ProductView = () => {
       return;
     }
 
-    // Create cart product object with unique cartID
-    const cartProduct = {
-      cartID: product.id + product.title,
-      productID: product.id,
-      image: product.product_image_url,
-      title: product.title,
-      price:
-        typeof product.final_price === 'string'
-          ? parseFloat(product.final_price)
-          : product.price,
-      amount,
-      productCategory: product.product_category.title,
-      producer: product.producer.title,
-    };
-
-    // Add to Redux store (which also syncs to localStorage)
-    dispatch(addItem({ product: cartProduct }));
-
-    // If user is logged in, sync to backend shopping cart
-    if (user) {
-      try {
-        await customFetch.post('/shopping_cart_items', {
-          shopping_cart_item: {
-            product_id: product.id,
-            qty: amount,
-          },
-        });
-        console.log('Cart synced to backend');
-      } catch (error: any) {
-        console.error('Failed to sync cart to backend:', error);
-        // Don't show error to user - cart still works via localStorage
-      }
+    // Add to backend shopping cart
+    try {
+      await customFetch.post('/shopping_cart_items', {
+        shopping_cart_item: {
+          product_id: product.id,
+          qty: amount,
+        },
+      });
+      
+      // Sync cart from backend to get fresh data
+      await syncCartWithBackend(dispatch);
+      toast.success('Item added to cart');
+      
+      console.log('Cart synced to backend');
+    } catch (error: any) {
+      console.error('Failed to add item to cart:', error);
+      toast.error('Failed to add item to cart');
     }
   };
 

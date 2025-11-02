@@ -1,12 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store';
-import { customFetch } from '../../utils';
+import { customFetch, syncCartWithBackend } from '../../utils';
 import { toast } from 'react-toastify';
-import {
-  editItem,
-  removeItem as removeItemFromRedux,
-} from '../../features/cart/cartSlice';
 import CartItemsList from './CartItemsList';
 import CartTotals from './CartTotals';
 import { IconLineDark, IconLineWhite } from '../../assets/images';
@@ -119,19 +115,9 @@ const Cart = () => {
           },
         });
 
-        // Update Redux store
-        setCartItems((currentItems) => {
-          const cartItem = currentItems.find((item) => item.id === cartItemId);
-          if (cartItem) {
-            dispatch(
-              editItem({
-                cartID: cartItem.product.id + cartItem.product.title,
-                amount: newQty,
-              })
-            );
-          }
-          return currentItems;
-        });
+        // Sync cart from backend to get fresh data
+        await syncCartWithBackend(dispatch);
+        await fetchCartItems();
 
       } catch (error: any) {
         console.error('Failed to update quantity:', error);
@@ -206,18 +192,14 @@ const Cart = () => {
 
     if (!removedItem) return;
 
-    // Optimistically update UI with standard filtering
+    // Optimistically update UI
     setCartItems((prev) => prev.filter((item) => item.id !== cartItemId));
-
-    // Update Redux store
-    dispatch(
-      removeItemFromRedux({
-        cartID: removedItem.product.id + removedItem.product.title,
-      })
-    );
 
     try {
       await customFetch.delete(`/shopping_cart_items/${cartItemId}`);
+      
+      // Sync cart from backend to get fresh data
+      await syncCartWithBackend(dispatch);
       toast.success('Item removed from cart');
     } catch (error: any) {
       console.error('Failed to remove item:', error);
