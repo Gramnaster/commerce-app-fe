@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
+import { PhilippineAddressFields } from '../../components';
 import type { UserAddress, AddressFormData } from './Checkout';
 
 interface AddressEditModalProps {
@@ -53,6 +54,14 @@ const AddressEditModal = ({
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
+    });
+  };
+
+  // Handler for Philippine address fields
+  const handleAddressFieldChange = (field: string, value: string) => {
+    setFormData({
+      ...formData,
+      [field]: value,
     });
   };
 
@@ -158,54 +167,16 @@ const AddressEditModal = ({
             />
           </div>
 
-          {/* City */}
-          <div className="form-control mb-4">
-            <label className="label">
-              <span className="label-text">City</span>
-            </label>
-            <input
-              type="text"
-              name="city"
-              value={formData.city}
-              onChange={handleChange}
-              className="input input-bordered w-full"
-              placeholder="Manila"
-              required
-            />
-          </div>
-
-          {/* Region & Barangay */}
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">State/Province (Optional)</span>
-              </label>
-              <input
-                type="text"
-                name="region"
-                value={formData.region}
-                onChange={handleChange}
-                className="input input-bordered w-full"
-                placeholder="Metro Manila"
-              />
-            </div>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Barangay</span>
-              </label>
-              <input
-                type="text"
-                name="barangay"
-                value={formData.barangay}
-                onChange={handleChange}
-                className="input input-bordered w-full"
-                placeholder="e.g. Barangay Uno Dos Tres"
-              />
-            </div>
-          </div>
+          {/* Philippine Address Fields (Region, Province, City, Barangay) */}
+          <PhilippineAddressFields
+            initialRegion={formData.region}
+            initialCity={formData.city}
+            initialBarangay={formData.barangay}
+            onAddressChange={handleAddressFieldChange}
+          />
 
           {/* Zipcode */}
-          <div className="form-control mb-4">
+          <div className="form-control mb-6">
             <label className="label">
               <span className="label-text">Postal Code</span>
             </label>
@@ -218,24 +189,6 @@ const AddressEditModal = ({
               placeholder="1000"
               required
             />
-          </div>
-
-          {/* Country */}
-          <div className="form-control mb-6">
-            <label className="label">
-              <span className="label-text">Country</span>
-            </label>
-            <select
-              name="country_id"
-              value={formData.country_id}
-              onChange={handleChange}
-              className="select select-bordered w-full"
-              required
-            >
-              <option value="1">Philippines</option>
-              <option value="2">United States</option>
-              <option value="3">United Kingdom</option>
-            </select>
           </div>
 
           {/* Action Buttons */}

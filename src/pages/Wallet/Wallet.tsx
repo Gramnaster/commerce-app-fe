@@ -256,12 +256,12 @@ const Wallet = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#E6E6E6] text-black p-6">
+    <div className="min-h-screen text-black p-6">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Left Side - My Wallet */}
-          <div className="lg:col-span-1">
-            <div className="bg-[#E6E6E6] rounded-lg p-6 border border-[#808080]">
+          <div className="lg:col-span-2">
+            <div className="bg-[#f3f3f3] rounded-lg p-6">
               <h2 className="text-xl font-bold mb-6">My Wallet</h2>
 
               {/* Balance Display */}
@@ -278,8 +278,8 @@ const Wallet = () => {
           </div>
 
           {/* Right Side - Deposit/Withdraw Forms */}
-          <div className="lg:col-span-1">
-            <div className="bg-[#E6E6E6] rounded-lg p-6 border border-[#808080]">
+          <div className="lg:col-span-2">
+            <div className="bg-[#f3f3f3] rounded-lg p-6">
               <h2 className="text-xl font-bold mb-6">Manage Funds</h2>
 
               {/* Tab Buttons */}
@@ -313,14 +313,14 @@ const Wallet = () => {
                     <label className="block text-sm font-medium mb-2">
                       Deposit from
                     </label>
-                    <select className="w-full bg-[#ffffff] border border-gray-600 rounded-lg p-3 text-black">
+                    <select className="w-full bg-[#f3f3f3] border border-gray-600 rounded-lg p-3 text-black">
                       <option>[MC] ****-****-****-0010</option>
                     </select>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium mb-2">
-                      Amount (USD)
+                      Amount (PHP)
                     </label>
                     <input
                       type="number"

@@ -12,4 +12,5 @@ export { default as PaginationControls } from './PaginationControls';
 export { default as ProductPrice } from './ProductPrice';
 export { default as SidebarDropdown } from './SidebarDropdown';
 export { default as ThemeProvider } from './ThemeProvider';
+export { default as PhilippineAddressFields } from './PhilippineAddressFields';
 // export { default as FeaturedProducts } from './FeaturedProducts';

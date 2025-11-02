@@ -382,7 +382,7 @@ const handleInputChange = (
         {/* Header */}
         <div className="mb-6">
           <button
-            onClick={() => navigate('/admin')}
+            onClick={() => navigate(`/profile/view/${userDetails.data.id}`)}
             className="mb-4 flex items-center gap-2 text-base-content hover:text-secondary transition-colors"
           >
             <svg
@@ -398,9 +398,9 @@ const handleInputChange = (
                 d="M10 19l-7-7m0 0l7-7m-7 7h18"
               />
             </svg>
-            Back to Traders List
+            Back to Profile
           </button>
-          <h1 className="text-3xl font-bold text-base-content mb-2">Edit Trader</h1>
+          <h1 className="text-3xl font-bold text-base-content mb-2">Edit User</h1>
           <p className="text-base-content">
             Editing information for 
             {userDetails.data.user_detail.first_name || ''}{' '}
