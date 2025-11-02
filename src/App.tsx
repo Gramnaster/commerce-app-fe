@@ -22,7 +22,8 @@ import {
   ProductsPerCategory,
   Wallet,
   SocialPrograms,
-  SocialProgramView
+  SocialProgramView,
+  ThankYou
 } from './pages/index.ts';
 import { store } from './store.ts';
 
@@ -51,6 +52,8 @@ import { loader as checkoutLoader } from './pages/Cart/Checkout.tsx';
 
 import { loader as socialProgramLoader } from './pages/SocialPrograms/SocialPrograms.tsx';
 import { loader as socialProgramViewLoader } from './pages/SocialPrograms/SocialProgramView.tsx';
+
+import { loader as thankYouLoader } from './pages/Cart/ThankYou.tsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -159,7 +162,12 @@ const router = createBrowserRouter([
       {
         path: 'cart',
         element: <Cart />,
-        loader: cartLoader(queryClient)
+        loader: cartLoader(queryClient),
+      },
+      {
+        path: 'order_completed',
+        element: <ThankYou />,
+        loader: thankYouLoader(queryClient),
       },
       {
         path: 'checkout',
