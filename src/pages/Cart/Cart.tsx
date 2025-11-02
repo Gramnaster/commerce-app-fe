@@ -174,11 +174,11 @@ const Cart = () => {
         clearTimeout(existingTimeout);
       }
 
-      // Set new timeout to update backend after 1500ms of no changes
+      // Set new timeout to update backend after 1000ms / 1 second of no changes
       const timeoutId = setTimeout(() => {
         updateBackend(cartItemId, newQty);
         updateTimeoutRef.current.delete(cartItemId);
-      }, 1500);
+      }, 1000);
 
       updateTimeoutRef.current.set(cartItemId, timeoutId);
     },

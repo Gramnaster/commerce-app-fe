@@ -73,19 +73,14 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
     } catch (error: any) {
       console.error('Failed to update quantity:', error);
       toast.error('Failed to update quantity');
-      // Revert local quantity on error
-      setLocalQuantities(prev => {
-        const newMap = new Map(prev);
-        newMap.delete(cartID);
-        return newMap;
-      });
     } finally {
+      // Always clear updating state (re-enable buttons)
       setUpdatingItems(prev => {
         const newSet = new Set(prev);
         newSet.delete(cartID);
         return newSet;
       });
-      // Clear local quantity after backend update
+      // Always clear local quantity (sync completed or failed)
       setLocalQuantities(prev => {
         const newMap = new Map(prev);
         newMap.delete(cartID);
