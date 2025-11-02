@@ -92,7 +92,7 @@ const AddressEditModal = ({
 
   return (
     <dialog className="modal modal-open">
-      <div className="modal-box max-w-2xl">
+      <div className="modal-box max-w-2xl bg-base-100 text-base-content">
         <h3 className="font-bold text-lg mb-4">Edit Address</h3>
 
         <form onSubmit={handleSubmit}>

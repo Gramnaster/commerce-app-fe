@@ -63,7 +63,7 @@ const ExistingAddressSelector = ({
   }
 
   return (
-    <div className="bg-base-100 rounded-lg shadow-md p-6 mb-6">
+    <div className="bg-base-100 rounded-lg p-6 mb-6">
       <h2 className="text-2xl font-bold mb-2 text-base-content">Select a delivery address</h2>
       <p className="text-sm text-base-content/70 mb-4">
         Delivery addresses ({userAddresses.length})
@@ -117,7 +117,7 @@ const ExistingAddressSelector = ({
 
                 {/* Edit Button */}
                 <button
-                  className="btn btn-ghost btn-sm text-primary"
+                  className="btn btn-ghost btn-sm text-primary text-base-content"
                   onClick={(e) => {
                     e.stopPropagation();
                     onEditAddress(userAddress);
