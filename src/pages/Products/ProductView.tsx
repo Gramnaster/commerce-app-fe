@@ -80,16 +80,33 @@ const ProductView = () => {
 
     // Add to backend shopping cart
     try {
-      await customFetch.post('/shopping_cart_items', {
-        shopping_cart_item: {
-          product_id: product.id,
-          qty: amount,
-        },
-      });
+      // First, check if the item already exists in the cart
+      const response = await customFetch.get('/shopping_cart_items');
+      const backendItems = response.data?.data || [];
+      const existingItem = backendItems.find((item: any) => item.product.id === product.id);
+      
+      if (existingItem) {
+        // Item exists - update quantity by adding the new amount
+        const newQty = parseInt(existingItem.qty, 10) + amount;
+        await customFetch.patch(`/shopping_cart_items/${existingItem.id}`, {
+          shopping_cart_item: {
+            qty: newQty,
+          },
+        });
+        toast.success('Cart updated');
+      } else {
+        // Item doesn't exist - create new cart item
+        await customFetch.post('/shopping_cart_items', {
+          shopping_cart_item: {
+            product_id: product.id,
+            qty: amount,
+          },
+        });
+        toast.success('Item added to cart');
+      }
       
       // Sync cart from backend to get fresh data
       await syncCartWithBackend(dispatch);
-      toast.success('Item added to cart');
       
       console.log('Cart synced to backend');
     } catch (error: any) {

@@ -94,10 +94,25 @@ const Navbar = () => {
               </button>
             </div>
             <div className="navbar-end flex-3 flex justify-end">
+              {!isCartPage && user && (
+                <button
+                  className="btn bg-transparent h-[30px] border-none shadow-none outline-none btn-circle mr-3"
+                  onClick={() => setIsCartOpen(true)}
+                >
+                  <div className="indicator">
+                    <img src={IconCart} alt="cart-icon" />
+                    {numItemsInCart > 0 && (
+                      <span className="badge badge-xs badge-error indicator-item text-xs">
+                        {numItemsInCart}
+                      </span>
+                    )}
+                  </div>
+                </button>
+              )}
               <div className="flex gap-x-y justify-center items-center px-1 gap-[20px]">
                 {user ? (
                   <div className="flex gap-x-2 sm:gap-x-8 items-center">
-                      <div className="dropdown">
+                    <div className="dropdown">
                       <label
                         tabIndex={0}
                         className="btn bg-transparent h-[30px] border-none shadow-none outline-none btn-circle"
@@ -108,7 +123,7 @@ const Navbar = () => {
                         tabIndex={0}
                         className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-200 rounded-box"
                       >
-                        <ProfileLinks user={user} onLogout={handleLogout}/>
+                        <ProfileLinks user={user} onLogout={handleLogout} />
                       </ul>
                     </div>
                   </div>
@@ -132,24 +147,9 @@ const Navbar = () => {
                 {/* <button className="btn text-base bg-secondary text-white w-[128px] h-[33px]" onClick={handleLogout}>
                   Sign Up
                 </button> */}
-                {!isCartPage && (
-                  <button
-                    className="btn bg-transparent h-[30px] border-none shadow-none outline-none btn-circle"
-                    onClick={() => setIsCartOpen(true)}
-                  >
-                    <div className="indicator">
-                      <img src={IconCart} alt="cart-icon" />
-                      {numItemsInCart > 0 && (
-                        <span className="badge badge-xs badge-error indicator-item text-xs">
-                          {numItemsInCart}
-                        </span>
-                      )}
-                    </div>
-                  </button>
-                )}
                 <label className="swap swap-rotate">
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     onChange={handleTheme}
                     checked={theme === 'dark'}
                   />
@@ -183,11 +183,7 @@ const Navbar = () => {
               className="hidden lg:flex btn bg-transparent border-none shadow-none text-secondary items-center"
             >
               <img
-                src={
-                  theme === 'dark' 
-                    ? MainLogoDark 
-                    : MainLogoLight
-                }
+                src={theme === 'dark' ? MainLogoDark : MainLogoLight}
                 alt="Main-Logo"
                 className="w-[253px] h-[115px] ml-10"
               />

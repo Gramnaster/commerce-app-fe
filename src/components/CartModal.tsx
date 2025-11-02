@@ -166,10 +166,10 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
       ></div>
 
       {/* Modal */}
-      <div className="fixed top-20 right-4 md:right-10 z-50 w-[95%] max-w-[400px] bg-base-100 rounded-lg shadow-2xl max-h-[85vh] overflow-hidden">
-        <div className="flex flex-col h-full">
+      <div className="fixed top-20 right-4 md:right-10 z-50 w-[95%] max-w-[400px] bg-base-100 rounded-lg shadow-2xl max-h-[85vh] flex flex-col">
+        <div className="flex flex-col h-full max-h-[85vh]">
           {/* Header */}
-          <div className="p-4 border-b border-base-300">
+          <div className="p-4 border-b border-base-300 flex-shrink-0">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-bold text-base-content">Shopping Cart</h2>
               <button
@@ -181,8 +181,8 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
             </div>
           </div>
 
-          {/* Cart Items */}
-          <div className="flex-1 overflow-y-auto p-4">
+          {/* Cart Items - Scrollable */}
+          <div className="flex-1 overflow-y-auto p-4 min-h-0">
             {cartItems.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-base-content/70">Your cart is empty</p>
@@ -268,8 +268,8 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
             )}
           </div>
 
-          {/* Footer */}
-          <div className="p-4 border-t border-base-300 bg-base-200">
+          {/* Footer - Fixed at bottom */}
+          <div className="p-4 border-t border-base-300 bg-base-200 flex-shrink-0">
             <div className="flex justify-between items-center mb-4">
               <span className="text-lg font-bold text-base-content">Total</span>
               <div className="text-right">

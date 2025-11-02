@@ -31,6 +31,9 @@ const CartTotals = ({
   const gst = subtotal * 0.12; // 12% GST
   const donation = SocialProgramValue !== 0 ? subtotal * 0.08 : 0; // 8% donation if program selected
   const total = subtotal + shipping + gst + donation;
+  
+  // Check if cart is empty
+  const isCartEmpty = cartItems.length === 0;
 
   return (
     <div className="lg:col-span-1">
@@ -140,11 +143,15 @@ const CartTotals = ({
                 state: { sp_id: SocialProgramValue },
               })
             }
+            disabled={isCartEmpty}
           >
             Proceed to Checkout
           </button>
 
-          <button className="btn btn-accent btn-block mt-2  gap-0  font-secondary">
+          <button 
+            className="btn btn-accent btn-block mt-2 gap-0 font-secondary"
+            disabled={isCartEmpty}
+          >
             {/* <img
               src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg"
               alt="PayPal"

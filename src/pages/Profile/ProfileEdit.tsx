@@ -218,11 +218,15 @@ const ProfileEdit = () => {
       );
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success('User updated successfully');
       setValidationErrors([]);
-      queryClient.invalidateQueries({ queryKey: ['users', user?.id] });
-      queryClient.invalidateQueries({ queryKey: ['userDetails', userDetails.data.id.toString()] });
+      
+      // Invalidate and await refetch before navigating
+      await queryClient.invalidateQueries({ queryKey: ['users', user?.id] });
+      await queryClient.invalidateQueries({ queryKey: ['userDetails', userDetails.data.id.toString()] });
+      
+      // Navigate after cache is invalidated
       navigate(`/profile/view/${userDetails.data.id}`);
     },
     onError: (error: { response?: { data?: { errors?: string[] } } }) => {
