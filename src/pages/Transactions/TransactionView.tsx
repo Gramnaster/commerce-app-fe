@@ -40,7 +40,7 @@ interface CompanySite {
 
 interface DeliveryOrder {
   company_site: CompanySite;
-  status: 'pending' | 'shipped' | 'delivered' | 'cancelled';
+  status: 'storage' | 'progress' | 'delivered';
 }
 
 // Extended Order interface with additional fields for TransactionView
@@ -201,7 +201,7 @@ const TransactionView = () => {
           <h3 className="font-primary text-2xl font-semibold mb-4">Delivery Status</h3>
           <div className="space-y-4">
             {delivery_orders.map((delivery, index) => {
-              const statuses = ['pending', 'shipped', 'delivered'];
+              const statuses = ['storage', 'progress', 'delivered'];
               const currentStatusIndex = statuses.indexOf(delivery.status.toLowerCase());
               
               // Debug log
@@ -219,11 +219,11 @@ const TransactionView = () => {
                   {/* Timeline - Centered */}
                   <div className="flex justify-center">
                     <ul className="timeline">
-                      {/* Pending */}
+                      {/* Storage */}
                       <li>
                         <div className="timeline-start timeline-box">
                           <span className={currentStatusIndex >= 0 ? 'font-semibold text-primary' : ''}>
-                            Pending
+                            Storage
                           </span>
                         </div>
                         <div className="timeline-middle">
@@ -254,12 +254,12 @@ const TransactionView = () => {
                         <hr className={currentStatusIndex >= 1 ? 'bg-primary' : ''} />
                       </li>
 
-                      {/* Shipped */}
+                      {/* Progress (In Transit) */}
                       <li>
                         <hr className={currentStatusIndex >= 1 ? 'bg-primary' : ''} />
                         <div className="timeline-start timeline-box">
                           <span className={currentStatusIndex >= 1 ? 'font-semibold text-primary' : ''}>
-                            Shipped
+                            In Transit
                           </span>
                         </div>
                         <div className="timeline-middle">
@@ -326,15 +326,6 @@ const TransactionView = () => {
                       </li>
                     </ul>
                   </div>
-
-                  {/* Show cancelled status if applicable */}
-                  {delivery.status === 'cancelled' && (
-                    <div className="mt-4 p-3 bg-red-100 border border-red-300 rounded-lg">
-                      <span className="text-red-800 font-semibold">
-                        ⚠️ This order has been cancelled
-                      </span>
-                    </div>
-                  )}
                 </div>
               );
             })}
