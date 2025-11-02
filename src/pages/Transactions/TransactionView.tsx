@@ -197,40 +197,143 @@ const TransactionView = () => {
       {/* Delivery Orders Section */}
       {delivery_orders && delivery_orders.length > 0 && (
         <div className="mt-8">
-          <h3 className="font-primary text-2xl font-semibold mb-4">Delivery Orders</h3>
+          <h3 className="font-primary text-2xl font-semibold mb-4">Delivery Status</h3>
           <div className="space-y-4">
-            {delivery_orders.map((delivery, index) => (
-              <div
-                key={index}
-                className="border border-gray-300 rounded-lg p-4 bg-white"
-              >
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="text-lg font-semibold">
-                      {delivery.company_site.title}
-                    </p>
-                    <p className="text-base text-gray-600">
-                      Warehouse ID: {delivery.company_site.id}
-                    </p>
+            {delivery_orders.map((delivery, index) => {
+              const statuses = ['pending', 'shipped', 'delivered'];
+              const currentStatusIndex = statuses.indexOf(delivery.status);
+              
+              return (
+                <div key={index} className="border border-gray-300 rounded-lg p-6 bg-white">
+                  <p className="text-lg font-semibold mb-2">
+                    {delivery.company_site.title}
+                  </p>
+                  <p className="text-base text-gray-600 mb-6">
+                    Warehouse ID: {delivery.company_site.id}
+                  </p>
+                  
+                  {/* Timeline - Right aligned container */}
+                  <div className="flex justify-center">
+                    <ul className="timeline">
+                      {/* Pending */}
+                      <li>
+                        <div className="timeline-start timeline-box">
+                          <span className={currentStatusIndex >= 0 ? 'font-semibold' : ''}>
+                            Pending
+                          </span>
+                        </div>
+                        <div className="timeline-middle">
+                          {currentStatusIndex >= 0 ? (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              className="h-5 w-5 text-success"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          ) : (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              className="h-5 w-5 text-gray-300"
+                            >
+                              <circle cx="10" cy="10" r="8" />
+                            </svg>
+                          )}
+                        </div>
+                        <hr className={currentStatusIndex >= 1 ? 'bg-success' : ''} />
+                      </li>
+
+                      {/* Shipped */}
+                      <li>
+                        <hr className={currentStatusIndex >= 1 ? 'bg-success' : ''} />
+                        <div className="timeline-start timeline-box">
+                          <span className={currentStatusIndex >= 1 ? 'font-semibold' : ''}>
+                            Shipped
+                          </span>
+                        </div>
+                        <div className="timeline-middle">
+                          {currentStatusIndex >= 1 ? (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              className="h-5 w-5 text-success"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          ) : (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              className="h-5 w-5 text-gray-300"
+                            >
+                              <circle cx="10" cy="10" r="8" />
+                            </svg>
+                          )}
+                        </div>
+                        <hr className={currentStatusIndex >= 2 ? 'bg-success' : ''} />
+                      </li>
+
+                      {/* Delivered */}
+                      <li>
+                        <hr className={currentStatusIndex >= 2 ? 'bg-success' : ''} />
+                        <div className="timeline-start timeline-box">
+                          <span className={currentStatusIndex >= 2 ? 'font-semibold' : ''}>
+                            Delivered
+                          </span>
+                        </div>
+                        <div className="timeline-middle">
+                          {currentStatusIndex >= 2 ? (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              className="h-5 w-5 text-success"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          ) : (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              className="h-5 w-5 text-gray-300"
+                            >
+                              <circle cx="10" cy="10" r="8" />
+                            </svg>
+                          )}
+                        </div>
+                      </li>
+                    </ul>
                   </div>
-                  <div>
-                    <span
-                      className={`px-4 py-2 rounded-full text-sm font-semibold ${
-                        delivery.status === 'delivered'
-                          ? 'bg-green-100 text-green-800'
-                          : delivery.status === 'shipped'
-                          ? 'bg-blue-100 text-blue-800'
-                          : delivery.status === 'cancelled'
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-yellow-100 text-yellow-800'
-                      }`}
-                    >
-                      {delivery.status.charAt(0).toUpperCase() + delivery.status.slice(1)}
-                    </span>
-                  </div>
+
+                  {/* Show cancelled status if applicable */}
+                  {delivery.status === 'cancelled' && (
+                    <div className="mt-4 p-3 bg-red-100 border border-red-300 rounded-lg">
+                      <span className="text-red-800 font-semibold">
+                        ⚠️ This order has been cancelled
+                      </span>
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
