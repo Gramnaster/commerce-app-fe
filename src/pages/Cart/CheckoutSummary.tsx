@@ -77,9 +77,20 @@ const CheckoutSummary = ({
         },
       });
 
+      // Get all cart items and delete them from backend
+      const cartResponse = await customFetch.get('/shopping_cart_items');
+      const backendCartItems = cartResponse.data?.data || [];
+      
+      // Delete each cart item from backend
+      await Promise.all(
+        backendCartItems.map((item: any) => 
+          customFetch.delete(`/shopping_cart_items/${item.id}`)
+        )
+      );
+
       toast.success('Order placed successfully!');
       
-      // Clear cart after successful order
+      // Clear cart from Redux state
       dispatch(clearCart());
       
       onOrderComplete();
