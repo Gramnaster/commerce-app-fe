@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import type { RootState } from '../store';
 import { logoutUser } from '../features/user/userSlice';
 import { clearCart } from '../features/cart/cartSlice';
+import { toggleTheme } from '../features/theme/themeSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   IconCart,
@@ -18,27 +19,15 @@ import {
 import CartModal from './CartModal';
 import ProfileLinks from './ProfileLinks';
 
-const themes = {
-  light: 'light',
-  dark: 'dark',
-};
-
-const getThemeFromLocalStorage = () => {
-  return localStorage.getItem('theme') || themes.light;
-};
-
 const Navbar = () => {
-  // Always sync with the real data-theme attribute
-  const getCurrentTheme = () =>
-    document.documentElement.getAttribute('data-theme') || themes.light;
-  const [theme, setTheme] = useState(getThemeFromLocalStorage);
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.userState.user);
+  const theme = useSelector((state: RootState) => state.themeState.theme);
   const numItemsInCart = useSelector(
     (state: RootState) => state.cartState.numItemsInCart
   );
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const handleLogout = () => {
     // Clear cart and close modal
@@ -49,14 +38,12 @@ const Navbar = () => {
   };
 
   const handleTheme = () => {
-    const { light, dark } = themes;
-    const newTheme = theme === light ? dark : light;
-    setTheme(newTheme);
+    dispatch(toggleTheme());
   };
 
+  // Sync theme with DOM on mount and when theme changes
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
   }, [theme]);
 
   return (
@@ -155,7 +142,11 @@ const Navbar = () => {
                   </div>
                 </button>
                 <label className="swap swap-rotate">
-                  <input type="checkbox" onChange={handleTheme} />
+                  <input 
+                    type="checkbox" 
+                    onChange={handleTheme}
+                    checked={theme === 'dark'}
+                  />
                   {/* Moon Icon */}
                   <img
                     src={IconThemeDark}

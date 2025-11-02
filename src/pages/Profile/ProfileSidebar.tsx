@@ -10,7 +10,7 @@ export interface LinksType {
 }
 
 
-export const getProfileLinks = (user: User | null): LinksType[] => [
+export const getProfileLinks = (user: { id?: number } | null): LinksType[] => [
   { id: 0, url: '/profile/transactions', text: "Transactions" },
   { id: 1, url: `/profile/view/${user?.id}`, text: "Profile" },
   { id: 2, url: `/profile/wallet/`, text: "Wallet" },
