@@ -1,6 +1,6 @@
 // import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
-import type { User } from './ProfileEdit';
+import type { User } from '../../features/user/userSlice';
 // import type { RootState } from '../store';
 
 export interface LinksType {
@@ -24,7 +24,7 @@ export const getProfileLinks = (user: { id?: number } | null): LinksType[] => [
   // { id: 8, url: '/categories/airstrikes', text: 'Air Strikes' },
 ];
 
-const ProfileSidebar = ({ user }: { user: User }) => {
+const ProfileSidebar = ({ user }: { user: User | null }) => {
   const links = getProfileLinks(user);
   return (
     <div className="h-full">

@@ -124,7 +124,6 @@ const TransactionView = () => {
   };
   
   const {
-    id,
     // transaction_type,
     description,
     created_at,

@@ -1,7 +1,7 @@
 // import { toast } from 'react-toastify';
 // import { Navbar } from '../../components'
 // import Sidebar from '../../components/Sidebar'
-import { NavLink, Outlet, redirect, useNavigation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 // import { customFetch } from '../../utils';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
@@ -9,10 +9,10 @@ import ProfileSidebar from './ProfileSidebar';
 import { IconLineDark, IconLineWhite } from '../../assets/images';
 
 
-export const loader = (queryClient: any, store: any) => async () => {
-  const storeState = store.getState();
-  const user = storeState.userState?.user;
-  console.log(`profile user`, user);
+export const loader = () => async () => {
+  // const storeState = store.getState();
+  // const user = storeState.userState?.user;
+  // console.log(`profile user`, user);
 
   // if (!user || user.user_role !== 'admin') {
   //   toast.warn('There must be something wrong. Please refresh the page.');
