@@ -114,7 +114,7 @@ const TransactionView = () => {
 
   return (
     <div className="min-h-screen bg-base-100 text-2xl text-base-content p-6 align-element">
-      <div className="font-primary text-3xl text-center mb-6">ORDER #{id}</div>
+      <div className="font-primary text-3xl text-center mb-6">RECEIPT #{id}</div>
 
       <table className="w-full mb-8 font-secondary">
         <tbody>
@@ -216,11 +216,11 @@ const TransactionView = () => {
                     Warehouse ID: {delivery.company_site.id}
                   </p>
                   
-                  {/* Timeline - Centered */}
+                  {/* Timeline - Centered with custom spacing */}
                   <div className="flex justify-center">
                     <ul className="timeline">
                       {/* Storage */}
-                      <li>
+                      <li className="w-80">
                         <div className="timeline-start timeline-box">
                           <span className={currentStatusIndex >= 0 ? 'font-semibold text-primary' : ''}>
                             Storage
@@ -251,12 +251,12 @@ const TransactionView = () => {
                             </svg>
                           )}
                         </div>
-                        <hr className={currentStatusIndex >= 1 ? 'bg-primary' : ''} />
+                        <hr className={`${currentStatusIndex >= 1 ? 'bg-primary' : ''}`} />
                       </li>
 
                       {/* Progress (In Transit) */}
-                      <li>
-                        <hr className={currentStatusIndex >= 1 ? 'bg-primary' : ''} />
+                      <li className="w-80">
+                        <hr className={`${currentStatusIndex >= 1 ? 'bg-primary' : ''}`} />
                         <div className="timeline-start timeline-box">
                           <span className={currentStatusIndex >= 1 ? 'font-semibold text-primary' : ''}>
                             In Transit
@@ -287,12 +287,12 @@ const TransactionView = () => {
                             </svg>
                           )}
                         </div>
-                        <hr className={currentStatusIndex >= 2 ? 'bg-primary' : ''} />
+                        <hr className={`${currentStatusIndex >= 2 ? 'bg-primary' : ''}`} />
                       </li>
 
                       {/* Delivered */}
-                      <li>
-                        <hr className={currentStatusIndex >= 2 ? 'bg-primary' : ''} />
+                      <li className="w-80">
+                        <hr className={`${currentStatusIndex >= 2 ? 'bg-primary' : ''}`} />
                         <div className="timeline-start timeline-box">
                           <span className={currentStatusIndex >= 2 ? 'font-semibold text-primary' : ''}>
                             Delivered
