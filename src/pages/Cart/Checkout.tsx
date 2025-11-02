@@ -193,7 +193,7 @@ const Checkout = () => {
 
   const handleOrderComplete = () => {
     // Navigate to success page or home
-    navigate('/');
+    navigate('/order_completed');
   };
 
   // Redirect if not logged in

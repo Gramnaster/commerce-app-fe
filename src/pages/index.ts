@@ -8,6 +8,7 @@ export { default as ProfileEdit } from "./Profile/ProfileEdit";
 export { default as Transactions } from "./Transactions/Transactions";
 export { default as TransactionsView } from "./Transactions/TransactionView";
 export { default as Cart } from "./Cart/Cart";
+export { default as ThankYou } from './Cart/ThankYou';
 export { default as Checkout } from "./Cart/Checkout";
 export { default as Products } from './Products/Products';
 export { default as ProductsAll } from './Products/ProductsAll';
