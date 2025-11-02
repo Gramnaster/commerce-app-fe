@@ -2,6 +2,8 @@ import { customFetch } from '../../utils';
 import { toast } from 'react-toastify';
 import { store } from '../../store';
 import { NavLink, useLoaderData } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { PaginationControls } from '../../components';
 
 export interface User {
   id: number;
@@ -19,7 +21,7 @@ export interface Order {
 
 export interface Transaction {
   id: number;
-  transaction_type: 'deposit' | 'withdraw' | 'purchase';
+  transaction_type: 'deposit' | 'withdraw' | 'purchase' | 'donation';
   amount: number;
   balance_before: number;
   balance_after: number;
@@ -77,10 +79,18 @@ export const loader =
   };
 
 const Transactions = () => {
-  const { TransactionReceipts } = useLoaderData() as {
+  const { TransactionReceipts: initialReceipts } = useLoaderData() as {
     TransactionReceipts: TransactionResponse;
   };
-  console.log(`Transactions TransactionReceipts`, TransactionReceipts);
+  const [loading, setLoading] = useState(false);
+  const [transactionData, setTransactionData] = useState(initialReceipts);
+  
+  console.log(`Transactions TransactionReceipts`, transactionData);
+
+  // Update transactionData when loader fetches new data
+  useEffect(() => {
+    setTransactionData(initialReceipts);
+  }, [initialReceipts]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -106,19 +116,61 @@ const Transactions = () => {
         return 'Deposit';
       case 'withdraw':
         return 'Withdraw';
+      case 'donation':
+        return 'Donation';
       default:
         return type;
     }
   };
+
+  const handlePagination = async (page: number | null) => {
+    if (!page) return;
+    setLoading(true);
+
+    try {
+      const storeState = store.getState();
+      const user = storeState.userState?.user;
+
+      const response = await customFetch.get(
+        `/receipts?page=${page}&per_page=${transactionData.pagination.per_page || 20}`,
+        {
+          headers: {
+            Authorization: user?.token,
+          },
+        }
+      );
+      const data = response.data;
+      console.log('Transactions handlePagination - Response:', data);
+      setTransactionData(data);
+      setLoading(false);
+    } catch (error: any) {
+      console.error(
+        'Transactions handlePagination - Failed to load pagination data:',
+        error
+      );
+      toast.error('Failed to load pagination data');
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <span className="loading loading-ring loading-lg text-base-content">
+          Loading...
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-base-100 text-base-content px-6">
       <div className="max-w-7xl mx-auto">
         <div className="bg-transparent ">
           {/* Header */}
-          <div className="px-6 pb-4 border-b border-gray-700">
+          <div className="px-6 pb-4 border-b border-gray-700 w-200">
             <div className="flex justify-between items-center">
-              <h1 className="text-2xl font-bold">Transactions</h1>
+              <h2 className="font-secondary text-xl font-semibold">TRANSACTIONS</h2>
               {/* <div className="flex items-center space-x-4">
                 <div className="relative">
                   <input
@@ -145,8 +197,8 @@ const Transactions = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div className="overflow-x-auto mb-20">
+            <table className="w-200">
               <thead>
                 <tr className="border-b text-base-content border-gray-700">
                   <th className="text-left pl-5 font-medium">Transaction Type</th>
@@ -157,8 +209,8 @@ const Transactions = () => {
                 </tr>
               </thead>
               <tbody>
-                {TransactionReceipts && TransactionReceipts.data.length > 0 ? (
-                  TransactionReceipts.data.map(
+                {transactionData && transactionData.data.length > 0 ? (
+                  transactionData.data.map(
                     (transaction: Transaction, index: number) => (
                       <tr
                         key={transaction.id}
@@ -174,8 +226,10 @@ const Transactions = () => {
                                 : transaction.transaction_type === 'withdraw'
                                   ? 'text-red-600 font-bold'
                                   : transaction.transaction_type === 'deposit'
-                                    ? 'text-blue-600 font-bold' 
-                                    : 'text-purple-600 font-bold'
+                                    ? 'text-blue-600 font-bold'
+                                : transaction.transaction_type === 'donation'
+                                  ? 'text-purple-600 font-bold'
+                                  : 'text-gray-600 font-bold'
                             }`}
                           >
                             {getTransactionTypeDisplay(
@@ -229,6 +283,12 @@ const Transactions = () => {
               </tbody>
             </table>
           </div>
+
+          {/* Pagination Controls */}
+          <PaginationControls
+            pagination={transactionData.pagination}
+            onPageChange={handlePagination}
+          />
         </div>
       </div>
     </div>
