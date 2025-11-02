@@ -218,18 +218,16 @@ const ProfileEdit = () => {
       );
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success('User updated successfully');
       setValidationErrors([]);
       
-      // Invalidate and refetch queries before navigating
-      queryClient.invalidateQueries({ queryKey: ['users', user?.id] });
-      queryClient.invalidateQueries({ queryKey: ['userDetails', userDetails.data.id.toString()] });
+      // Invalidate and await refetch before navigating
+      await queryClient.invalidateQueries({ queryKey: ['users', user?.id] });
+      await queryClient.invalidateQueries({ queryKey: ['userDetails', userDetails.data.id.toString()] });
       
-      // Wait a bit for cache invalidation to process, then navigate
-      setTimeout(() => {
-        navigate(`/profile/view/${userDetails.data.id}`);
-      }, 100);
+      // Navigate after cache is invalidated
+      navigate(`/profile/view/${userDetails.data.id}`);
     },
     onError: (error: { response?: { data?: { errors?: string[] } } }) => {
       console.error('Update failed:', error);
