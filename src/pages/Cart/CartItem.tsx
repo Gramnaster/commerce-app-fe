@@ -7,6 +7,7 @@ interface CartItemProps {
   product: Product;
   onUpdateQuantity: (cartItemId: number, newQty: number) => void;
   onRemove: (cartItemId: number) => void;
+  isUpdating: boolean;
 }
 
 const CartItem = ({
@@ -16,6 +17,7 @@ const CartItem = ({
   product,
   onUpdateQuantity,
   onRemove,
+  isUpdating,
 }: CartItemProps) => {
   const quantity = parseInt(qty);
 
@@ -55,8 +57,8 @@ const CartItem = ({
                 <button
                   type="button"
                   onClick={() => onUpdateQuantity(id, quantity - 1)}
-                  disabled={quantity <= 1}
-                  className="btn btn-square bg-[#4d4d4d] text-white text-2xl hover:bg-[#3d3d3d] h-[30px] w-[30px]"
+                  disabled={quantity <= 1 || isUpdating}
+                  className="btn btn-square bg-[#4d4d4d] text-white text-2xl hover:bg-[#3d3d3d] h-[30px] w-[30px] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   −
                 </button>
@@ -66,7 +68,8 @@ const CartItem = ({
                 <button
                   type="button"
                   onClick={() => onUpdateQuantity(id, quantity + 1)}
-                  className="btn btn-square bg-[#4d4d4d] text-white text-2xl hover:bg-[#3d3d3d] h-[30px] w-[30px]"
+                  disabled={isUpdating}
+                  className="btn btn-square bg-[#4d4d4d] text-white text-2xl hover:bg-[#3d3d3d] h-[30px] w-[30px] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   +
                 </button>

@@ -61,6 +61,7 @@ const Cart = () => {
 
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [updatingItems, setUpdatingItems] = useState<Set<number>>(new Set());
   const updateTimeoutRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(
     new Map()
   );
@@ -108,6 +109,9 @@ const Cart = () => {
   // Debounced backend update
   const updateBackend = useCallback(
     async (cartItemId: number, newQty: number) => {
+      // Mark item as updating
+      setUpdatingItems(prev => new Set(prev).add(cartItemId));
+      
       try {
         await customFetch.patch(`/shopping_cart_items/${cartItemId}`, {
           shopping_cart_item: {
@@ -134,6 +138,13 @@ const Cart = () => {
           // Revert on error
           fetchCartItems();
         }
+      } finally {
+        // Remove updating state
+        setUpdatingItems(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(cartItemId);
+          return newSet;
+        });
       }
     },
     [dispatch]
@@ -163,11 +174,11 @@ const Cart = () => {
         clearTimeout(existingTimeout);
       }
 
-      // Set new timeout to update backend after 800ms of no changes
+      // Set new timeout to update backend after 1500ms of no changes
       const timeoutId = setTimeout(() => {
         updateBackend(cartItemId, newQty);
         updateTimeoutRef.current.delete(cartItemId);
-      }, 800);
+      }, 1500);
 
       updateTimeoutRef.current.set(cartItemId, timeoutId);
     },
@@ -265,6 +276,7 @@ const Cart = () => {
             cartItems={cartItems}
             onUpdateQuantity={updateQuantity}
             onRemove={removeCartItem}
+            updatingItems={updatingItems}
           />
         )}
         

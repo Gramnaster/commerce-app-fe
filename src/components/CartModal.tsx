@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../store';
 import { Link } from 'react-router-dom';
 import { formatPrice, syncCartWithBackend, customFetch } from '../utils';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { toast } from 'react-toastify';
 
 interface CartModalProps {
@@ -15,6 +15,8 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
   const user = useSelector((state: RootState) => state.userState.user);
   const cartState = useSelector((state: RootState) => state.cartState);
   const [updatingItems, setUpdatingItems] = useState<Set<string>>(new Set());
+  const [localQuantities, setLocalQuantities] = useState<Map<string, number>>(new Map());
+  const updateTimeoutRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   
   // Track last synced user ID to prevent duplicate syncs
   const lastSyncedUserIdRef = useRef<number | null>(null);
@@ -40,9 +42,16 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
     }
   }, [user?.id, dispatch]);
 
-  const handleUpdateQuantity = async (cartID: string, productId: number, newAmount: number) => {
-    if (newAmount < 1) return;
-    
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      updateTimeoutRef.current.forEach((timeout) => clearTimeout(timeout));
+      updateTimeoutRef.current.clear();
+    };
+  }, []);
+
+  // Backend update function
+  const updateBackend = useCallback(async (cartID: string, productId: number, newAmount: number) => {
     setUpdatingItems(prev => new Set(prev).add(cartID));
     
     try {
@@ -64,16 +73,66 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
     } catch (error: any) {
       console.error('Failed to update quantity:', error);
       toast.error('Failed to update quantity');
+      // Revert local quantity on error
+      setLocalQuantities(prev => {
+        const newMap = new Map(prev);
+        newMap.delete(cartID);
+        return newMap;
+      });
     } finally {
       setUpdatingItems(prev => {
         const newSet = new Set(prev);
         newSet.delete(cartID);
         return newSet;
       });
+      // Clear local quantity after backend update
+      setLocalQuantities(prev => {
+        const newMap = new Map(prev);
+        newMap.delete(cartID);
+        return newMap;
+      });
     }
-  };
+  }, [dispatch]);
+
+  // Debounced quantity update so we only send one request to the backend with pooled quantity updates
+  // Because I don't wanna be rate-limited by my own creations
+  // It's like being kicked out of your house by your kids
+  const handleUpdateQuantity = useCallback((cartID: string, productId: number, newAmount: number) => {
+    if (newAmount < 1) return;
+    
+    // Update local quantity immediately for responsive UI
+    setLocalQuantities(prev => new Map(prev).set(cartID, newAmount));
+    
+    // Clear existing timeout for this item
+    const existingTimeout = updateTimeoutRef.current.get(cartID);
+    if (existingTimeout) {
+      clearTimeout(existingTimeout);
+    }
+    
+    // Set new timeout to update backend after 1500ms of no changes
+    const timeoutId = setTimeout(() => {
+      updateBackend(cartID, productId, newAmount);
+      updateTimeoutRef.current.delete(cartID);
+    }, 1500);
+    
+    updateTimeoutRef.current.set(cartID, timeoutId);
+  }, [updateBackend]);
 
   const handleRemoveItem = async (cartID: string, productId: number) => {
+    // Cancel any pending updates for this item
+    const existingTimeout = updateTimeoutRef.current.get(cartID);
+    if (existingTimeout) {
+      clearTimeout(existingTimeout);
+      updateTimeoutRef.current.delete(cartID);
+    }
+    
+    // Clear local quantity
+    setLocalQuantities(prev => {
+      const newMap = new Map(prev);
+      newMap.delete(cartID);
+      return newMap;
+    });
+    
     setUpdatingItems(prev => new Set(prev).add(cartID));
     
     try {
@@ -139,6 +198,8 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
                   const isUpdating = updatingItems.has(item.cartID);
                   // Extract productId from cartID (format: "productId + title")
                   const productId = parseInt(item.cartID);
+                  // Use local quantity if available, otherwise use item amount
+                  const displayQuantity = localQuantities.get(item.cartID) ?? item.amount;
                   
                   return (
                     <div
@@ -165,10 +226,10 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
                         </h3>
                         <div className="flex items-center justify-between mb-2">
                           <span className="text-xs text-base-content/70">
-                            {item.amount}x
+                            {displayQuantity}x
                           </span>
                           <span className="font-bold text-sm text-base-content">
-                            PHP {formatPrice(item.price * item.amount)}
+                            PHP {formatPrice(item.price * displayQuantity)}
                           </span>
                         </div>
                         
@@ -177,17 +238,17 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
                           <div className="join join-horizontal">
                             <button
                               className="btn btn-xs join-item bg-neutral text-white"
-                              onClick={() => handleUpdateQuantity(item.cartID, productId, item.amount - 1)}
-                              disabled={item.amount <= 1 || isUpdating}
+                              onClick={() => handleUpdateQuantity(item.cartID, productId, displayQuantity - 1)}
+                              disabled={displayQuantity <= 1 || isUpdating}
                             >
                               -
                             </button>
                             <div className="btn btn-xs join-item bg-base-100 text-base-content pointer-events-none">
-                              {item.amount}x
+                              {displayQuantity}x
                             </div>
                             <button
                               className="btn btn-xs join-item bg-neutral text-white"
-                              onClick={() => handleUpdateQuantity(item.cartID, productId, item.amount + 1)}
+                              onClick={() => handleUpdateQuantity(item.cartID, productId, displayQuantity + 1)}
                               disabled={isUpdating}
                             >
                               +
