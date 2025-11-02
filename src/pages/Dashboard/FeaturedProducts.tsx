@@ -32,7 +32,13 @@ const FeaturedProducts = () => {
             id={`slide${index + 1}`}
             className="carousel-item relative w-full"
           >
-            <img src={image.url} className="w-full" />
+            <img 
+              src={image.url} 
+              className="w-full"
+              loading={index === 0 ? "eager" : "lazy"}
+              decoding="async"
+              alt={`Featured product ${index + 1}`}
+            />
             <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
               <a
                 href={`#slide${prevIndex + 1}`}

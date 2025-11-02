@@ -136,6 +136,8 @@ const FeaturedSocials = () => {
                   alt={title}
                   style={{ width: '724px', height: '316px', objectFit: 'cover' }}
                   className="pr-[20px]"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div className="h-full flex flex-col justify-between max-w-[370px]">
                   <div>
@@ -172,6 +174,8 @@ const FeaturedSocials = () => {
                   alt={title}
                   style={{ width: '724px', height: '316px', objectFit: 'cover' }}
                   className="pl-[20px]"
+                  loading="lazy"
+                  decoding="async"
                 />
               </li>
             );

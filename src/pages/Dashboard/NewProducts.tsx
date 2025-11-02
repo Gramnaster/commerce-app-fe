@@ -66,6 +66,8 @@ const NewProducts = () => {
                     <img
                       src={product_image_url}
                       className="w-[280px] h-[280px] object-contain"
+                      loading="lazy"
+                      decoding="async"
                       alt={title}
                     />
                   </div>

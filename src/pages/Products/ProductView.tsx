@@ -126,6 +126,8 @@ const ProductView = () => {
             <img
               src={product.product_image_url}
               className="max-w-full max-h-full object-contain"
+              loading="eager"
+              decoding="async"
               alt={product.title}
             />
           </div>

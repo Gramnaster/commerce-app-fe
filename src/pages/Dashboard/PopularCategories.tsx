@@ -47,7 +47,12 @@ const PopularCategories = () => {
           return (
             <li key={id} className="li font-secondary">
               <NavLink to={url} className="capitalize">
-                <img src={image} />
+                <img 
+                  src={image} 
+                  loading="lazy"
+                  decoding="async"
+                  alt={`Category ${id}`}
+                />
               </NavLink>
             </li>
           );
