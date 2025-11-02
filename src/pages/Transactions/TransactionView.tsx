@@ -116,27 +116,28 @@ const TransactionView = () => {
     <div className="min-h-screen bg-base-100 text-2xl text-base-content p-6 align-element">
       <div className="font-primary text-3xl text-center mb-6">ORDER #{id}</div>
 
-      <table className="w-full mb-8">
+      <table className="w-full mb-8 font-secondary">
         <tbody>
-          <tr>
+          {/* We don't need transaction type and paid - they're obsolete */}
+          {/* <tr>
             <th className="text-left">Transaction Type: </th>
-            <td>{transaction_type}</td>
+            <td className='capitalize font-light'>{transaction_type}</td>
+          </tr> */}
+
+          <tr>
+            <th className="text-left">Type: </th>
+            <td className='capitalize font-light'>{description}</td>
           </tr>
 
           <tr>
-            <th className="text-left">Description: </th>
-            <td>{description}</td>
+            <th className="text-left">Date:</th>
+            <td className='capitalize font-light'>{formatDate(created_at)}</td>
           </tr>
 
-          <tr>
-            <th className="text-left">Transaction created:</th>
-            <td>{formatDate(created_at)}</td>
-          </tr>
-
-          <tr>
+          {/* <tr>
             <th className="text-left">Paid?</th>
-            <td>{is_paid ? 'Yes' : 'Unpaid'}</td>
-          </tr>
+            <td className='capitalize font-light'>{is_paid ? 'Yes' : 'Unpaid'}</td>
+          </tr> */}
 
           {items && items.length > 0
             ? items.map((item) => {
@@ -165,7 +166,7 @@ const TransactionView = () => {
       {delivery_address && (
         <div className="mt-8 mb-8">
           <h3 className="font-primary text-2xl font-semibold mb-4">Delivery Address</h3>
-          <div className="border border-gray-300 rounded-lg p-6 bg-white">
+          <div className="border border-gray-300 rounded-lg p-6 bg-[#f3f3f3]">
             <div className="space-y-2 text-lg">
               {delivery_address.unit_no && (
                 <p>
@@ -204,7 +205,7 @@ const TransactionView = () => {
               const currentStatusIndex = statuses.indexOf(delivery.status);
               
               return (
-                <div key={index} className="border border-gray-300 rounded-lg p-6 bg-white">
+                <div key={index} className="border border-gray-300 rounded-lg p-6 bg-[#f3f3f3]">
                   <p className="text-lg font-semibold mb-2">
                     {delivery.company_site.title}
                   </p>

@@ -207,19 +207,13 @@ const ProfileView = () => {
         })}
 
         {/* Action Buttons */}
-        <div className="flex justify-end gap-4 mt-8">
+        <div className="flex justify-end mt-8">
           <NavLink 
             to={`/profile/edit/${userData.id}`}
             className="px-6 py-3 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
           >
             Edit Profile
           </NavLink>
-          <button 
-            className="px-6 py-3 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
-            onClick={() => window.history.back()}
-          >
-            Cancel
-          </button>
         </div>
       </div>
     </div>
