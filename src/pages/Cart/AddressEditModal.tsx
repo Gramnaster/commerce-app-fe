@@ -29,7 +29,7 @@ const AddressEditModal = ({
     region: '',
     barangay: '',
     zipcode: '',
-    country_id: '1',
+    country_id: '102',
   });
 
   // Populate form when userAddress changes
@@ -45,7 +45,7 @@ const AddressEditModal = ({
         region: addr.region || '',
         barangay: addr.barangay || '',
         zipcode: addr.zipcode || '',
-        country_id: addr.country_id?.toString() || '1',
+        country_id: addr.country_id?.toString() || '102',
       });
     }
   }, [userAddress]);
