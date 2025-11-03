@@ -23,7 +23,7 @@ const CheckoutAddressForm = ({ onAddressSaved, onCancel, userEmail, userId }: Ch
     region: '',
     barangay: '',
     zipcode: '',
-    country_id: '1', // Default to Philippines
+    country_id: '102', // Default to Philippines
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -139,7 +139,7 @@ const CheckoutAddressForm = ({ onAddressSaved, onCancel, userEmail, userId }: Ch
         {/* Address Line 1 */}
         <div className="form-control mb-4">
           <label className="label">
-            <span className="label-text text-base-content">Address</span>
+            <span className="label-text text-base-content">Address Line 01 (optional)</span>
           </label>
           <input
             type="text"
@@ -156,7 +156,7 @@ const CheckoutAddressForm = ({ onAddressSaved, onCancel, userEmail, userId }: Ch
         <div className="form-control mb-4">
           <label className="label">
             <span className="label-text text-base-content">
-              Apartment/Suite/Building (Optional)
+              Address Line 02 (Optional)
             </span>
           </label>
           <input
