@@ -174,6 +174,10 @@ const ProfileView = () => {
                   <p className="font-semibold">Street Name:</p>
                   <p>{address.street_no}</p>
                 </div>
+                                <div>
+                  <p className="font-semibold">Barangay:</p>
+                  <p>{address.barangay}</p>
+                </div>
               </div>
 
               <div className="grid grid-cols-3 gap-x-8 gap-y-4 mb-4">
