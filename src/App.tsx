@@ -156,7 +156,7 @@ const router = createBrowserRouter([
           {
             path: 'transactions/:id',
             element: <TransactionsView />,
-            loader: transactionViewLoader(queryClient)
+            loader: transactionViewLoader(queryClient, store)
           },
         ],
       },
