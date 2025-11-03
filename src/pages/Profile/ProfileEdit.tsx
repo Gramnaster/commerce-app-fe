@@ -161,7 +161,7 @@ const ProfileEdit = () => {
             city: userAddress.address?.city || '',
             region: userAddress.address?.region || '',
             zipcode: userAddress.address?.zipcode || '',
-            country_id: userAddress.address?.country_id || 102,
+            country_id: 102,
           },
         }))
       : [

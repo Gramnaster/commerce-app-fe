@@ -148,26 +148,37 @@ const TransactionView = () => {
 
   return (
     <div className="min-h-screen bg-base-100 text-2xl text-base-content p-6 align-element">
-      <div className="font-primary text-3xl text-center mb-6">ORDER #{orderNumber}</div>
+      <div className="font-primary text-3xl text-left mb-6">
+        ORDER #{orderNumber}
+      </div>
 
       {/* Delivery Orders Section */}
       {delivery_orders && delivery_orders.length > 0 && (
         <div className="mb-8">
-          <h3 className="font-primary text-2xl font-semibold mb-4">Delivery Status</h3>
+          <h3 className="font-primary text-2xl font-semibold mb-4">
+            Delivery Status
+          </h3>
           <div>
             {delivery_orders.map((delivery, index) => {
               const statuses = ['storage', 'progress', 'delivered'];
-              const currentStatusIndex = statuses.indexOf(delivery.status.toLowerCase());
-              
+              const currentStatusIndex = statuses.indexOf(
+                delivery.status.toLowerCase()
+              );
+
               // Debug log
-              console.log('Delivery status:', delivery.status, 'Index:', currentStatusIndex);
-              
+              console.log(
+                'Delivery status:',
+                delivery.status,
+                'Index:',
+                currentStatusIndex
+              );
+
               return (
                 <div
                   key={index}
                   className="flex flex-row border border-gray-300 rounded-lg px-6 pt-6 bg-[#f3f3f3]"
                 >
-                  <div className='flex flex-col'>
+                  <div className="flex flex-col">
                     <p className="text-lg font-semibold mb-2">
                       {delivery.company_site.title}
                     </p>
@@ -324,36 +335,46 @@ const TransactionView = () => {
 
       {/* Transaction Details Section */}
       <div className="mb-8 font-secondary">
-        <h3 className="font-primary text-2xl font-semibold mb-4">Transaction Details</h3>
-        
+        <h3 className="font-primary text-2xl font-semibold mb-4">
+          Transaction Details
+        </h3>
+
         {/* Type and Date */}
-        <div className="grid grid-cols-2 gap-x-8 gap-y-4 mb-6">
+        <div className="grid grid-cols-3 gap-x-8 gap-y-4 mb-6">
           <div>
-            <p className="font-semibold">Type:</p>
-            <p className="capitalize">{description}</p>
+            <p className="font-semibold text-[16px]">Type:</p>
+            <p className="capitalize text-[16px]">{description}</p>
           </div>
           <div>
-            <p className="font-semibold">Date:</p>
-            <p>{formatDate(created_at)}</p>
+            <p className="font-semibold text-[16px]">Date:</p>
+            <p className="capitalize text-[16px]">{formatDate(created_at)}</p>
+          </div>
+          {/* Order Total */}
+          <div>
+            <p className="font-semibold text-[16px]">Order Total:</p>
+            <p className="font-bold text-xl text-red-600">PHP {total_cost}</p>
           </div>
         </div>
 
         {/* Items Section */}
         {items && items.length > 0 && (
           <div className="mb-6">
-            <p className="font-semibold mb-3">Items:</p>
+            <p className="font-primary text-2xl font-semibold mb-4">Items Bought</p>
             <div className="space-y-3">
               {items.map((item) => {
                 const { id, qty, subtotal, product } = item;
                 const { title } = product;
                 return (
-                  <div key={id} className="flex justify-between items-center border-b border-gray-200 pb-2">
-                    <div className="flex-1">
-                      <p>{title}</p>
+                  <div
+                    key={id}
+                    className="flex justify-between items-end border-b border-gray-200 pb-2"
+                  >
+                    <div className="flex-1 w-max-[400px]">
+                      <p className='text-[16px]'>{title}</p>
                       <p className="text-sm text-gray-600">Quantity: {qty}</p>
                     </div>
-                    <div className="text-right">
-                      <p className="font-semibold">{subtotal}</p>
+                    <div className="text-start justify-start items-start">
+                      <p className="font-semibold text-[20px]">{subtotal}</p>
                     </div>
                   </div>
                 );
@@ -361,41 +382,42 @@ const TransactionView = () => {
             </div>
           </div>
         )}
-
-        {/* Order Total */}
-        <div className="flex justify-between items-center pt-4 border-t-2 border-gray-300">
-          <p className="font-semibold text-lg">Order Total:</p>
-          <p className="font-bold text-xl text-red-600">{total_cost}</p>
-        </div>
       </div>
 
       {/* Delivery Address Section */}
       {delivery_address && (
         <div className="mt-8 mb-8">
-          <h3 className="font-primary text-2xl font-semibold mb-4">Delivery Address</h3>
-          <div className="border border-gray-300 rounded-lg p-6 bg-[#f3f3f3]">
+          <h3 className="font-primary text-2xl font-semibold mb-4">
+            Delivery Address
+          </h3>
+          <div className="">
             <div className="space-y-2 text-lg">
               {delivery_address.unit_no && (
                 <p>
-                  <span className="font-semibold">Unit No:</span> {delivery_address.unit_no}
+                  <span className="font-semibold">Unit No:</span>{' '}
+                  {delivery_address.unit_no}
                 </p>
               )}
               {delivery_address.street_no && (
                 <p>
-                  <span className="font-semibold">Street No:</span> {delivery_address.street_no}
+                  <span className="font-semibold">Street No:</span>{' '}
+                  {delivery_address.street_no}
                 </p>
               )}
               <p>
-                <span className="font-semibold">Address:</span> {delivery_address.address_line1}
+                <span className="font-semibold">Address:</span>{' '}
+                {delivery_address.address_line1}
               </p>
               {delivery_address.address_line2 && (
                 <p>{delivery_address.address_line2}</p>
               )}
               <p>
-                {delivery_address.city}, {delivery_address.region} {delivery_address.zipcode}
+                {delivery_address.city}, {delivery_address.region}{' '}
+                {delivery_address.zipcode}
               </p>
               <p>
-                <span className="font-semibold">Country:</span> {delivery_address.country.name}
+                <span className="font-semibold">Country:</span>{' '}
+                {delivery_address.country.name}
               </p>
             </div>
           </div>
