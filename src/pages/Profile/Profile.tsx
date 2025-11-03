@@ -1,7 +1,7 @@
 // import { toast } from 'react-toastify';
 // import { Navbar } from '../../components'
 // import Sidebar from '../../components/Sidebar'
-import { Outlet } from 'react-router-dom';
+import { Outlet, redirect } from 'react-router-dom';
 // import { customFetch } from '../../utils';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
@@ -9,7 +9,13 @@ import ProfileSidebar from './ProfileSidebar';
 import { IconLineDark, IconLineWhite } from '../../assets/images';
 
 
-export const loader = () => async () => {
+export const loader = (store: any) => async () => {
+  const user = store.getState().userState.user;
+  if (!user) {
+    // toast.warn('You must be logged in to checkout');
+    return redirect('/login');
+  }
+  return null;
   // const storeState = store.getState();
   // const user = storeState.userState?.user;
   // console.log(`profile user`, user);

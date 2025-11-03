@@ -58,9 +58,16 @@ interface TransactionViewDetails extends Transaction {
 }
 
 export const loader =
-  (queryClient: any) =>
+  (queryClient: any, store: any) =>
   async ({ params }: any) => {
     const id = params.id;
+
+    const user = store.getState().userState.user;
+    if (!user) {
+      // toast.warn('You must be logged in to checkout');
+      return redirect('/login');
+    }
+
 
     const TransactionQuery = {
       queryKey: ['TransactionDetails', id],
@@ -105,13 +112,13 @@ const TransactionView = () => {
   console.log(`TransactionView TransactionDetails`, TransactionDetails);
   console.log(`TransactionView ReceiptsList`, ReceiptsList);
   
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    });
-  };
+  // const formatDate = (dateString: string) => {
+  //   return new Date(dateString).toLocaleDateString('en-US', {
+  //     year: 'numeric',
+  //     month: '2-digit',
+  //     day: '2-digit',
+  //   });
+  // };
 
   const formatDateTime = (dateString: string) => {
     return new Date(dateString).toLocaleString('en-US', {

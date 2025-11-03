@@ -83,6 +83,11 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
   const storeState = store.getState();
   const user = storeState.userState?.user;
 
+  if (!user) {
+    // toast.warn('You must be logged in to checkout');
+    return redirect('/login');
+  }
+
   const id = params.id;
 
   const userDetailsQuery = {

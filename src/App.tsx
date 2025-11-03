@@ -125,11 +125,12 @@ const router = createBrowserRouter([
       {
         path: 'profile',
         element: <Profile />,
-        loader: profileLoader(),
+        loader: profileLoader(store),
         children: [
           {
             index: true,
             element: <Profile />,
+            loader: profileLoader(store)
           },
           {
             path: 'view/:id',
@@ -155,7 +156,7 @@ const router = createBrowserRouter([
           {
             path: 'transactions/:id',
             element: <TransactionsView />,
-            loader: transactionViewLoader(queryClient)
+            loader: transactionViewLoader(queryClient, store)
           },
         ],
       },

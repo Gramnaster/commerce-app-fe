@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useLoaderData, useLocation, useNavigate, useRevalidator } from 'react-router-dom';
+import { redirect, useLoaderData, useLocation, useNavigate, useRevalidator } from 'react-router-dom';
 import type { RootState } from '../../store';
 import CheckoutAddressForm from './CheckoutAddressForm';
 import CheckoutSummary from './CheckoutSummary';
@@ -102,6 +102,11 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
   
   if (!user) {
     return { SocialPrograms: { data: [], pagination: {} }, userDetails: null };
+  }
+
+  if (!user) {
+    // toast.warn('You must be logged in to checkout');
+    return redirect('/login');
   }
 
   const id = params.id;

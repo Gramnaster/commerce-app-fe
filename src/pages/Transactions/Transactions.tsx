@@ -1,7 +1,7 @@
 import { customFetch } from '../../utils';
 import { toast } from 'react-toastify';
 import { store } from '../../store';
-import { NavLink, useLoaderData } from 'react-router-dom';
+import { NavLink, redirect, useLoaderData } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { PaginationControls } from '../../components';
 
@@ -51,6 +51,11 @@ export const loader =
     const storeState = store.getState();
     const user = storeState.userState?.user;
     const id = params.id;
+
+    if (!user) {
+      // toast.warn('You must be logged in to checkout');
+      return redirect('/login');
+    }
 
     const TransactionsQuery = {
       queryKey: ['TransactionsQuery', id],
