@@ -10,7 +10,6 @@ import {
   IconCart,
   IconHamburger,
   IconProfile,
-  IconSearch,
   IconThemeDark,
   IconThemeLight,
   MainLogoDark,
@@ -18,6 +17,7 @@ import {
 } from '../assets/images';
 import CartModal from './CartModal';
 import ProfileLinks from './ProfileLinks';
+import ProductSearchDropdown from './ProductSearchDropdown';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -80,18 +80,7 @@ const Navbar = () => {
             </div>
             {/* WIP - SEARCH BAR */}
             <div className="navbar-center hidden lg:flex flex-6 justify-center">
-              <label className="input flex items-center w-full max-w-4xl max-h-[32px]">
-                <input
-                  type="search"
-                  required
-                  placeholder="Search Categories or Products"
-                  className="flex-1 text-base text-black placeholder:text-gray-500 rounded-l-md rounded-tr-none rounded-br-none"
-                />
-              </label>
-              <button className="btn bg-accent text-base max-h-[32px] rounded-l-md rounded-tl-none rounded-bl-none">
-                Search
-                <img src={IconSearch} className="h-[15px] w-[15px]" />
-              </button>
+              <ProductSearchDropdown placeholder="Search Categories or Products" />
             </div>
             <div className="navbar-end flex-3 flex justify-end">
               {!isCartPage && user && (
