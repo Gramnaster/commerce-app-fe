@@ -58,10 +58,10 @@ const ProductSearchDropdown = ({
   // Fetch products when search button is clicked
   const handleSearchClick = async () => {
     // If already open and has products, just toggle
-    if (isOpen && products.length > 0) {
-      setIsOpen(false);
-      return;
-    }
+    // if (isOpen && products.length > 0) {
+    //   setIsOpen(false);
+    //   return;
+    // }
 
     setIsLoading(true);
     setError(null);
