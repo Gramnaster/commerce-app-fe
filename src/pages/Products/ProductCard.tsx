@@ -25,8 +25,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
             <img
               src={product_image_url}
               className="max-w-full max-h-full object-contain"
-              loading="lazy"
+              loading="eager"
               decoding="async"
+              crossOrigin="anonymous"
+              referrerPolicy="no-referrer"
               alt={title}
             />
           ) : (
