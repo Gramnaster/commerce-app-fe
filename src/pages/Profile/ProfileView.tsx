@@ -203,7 +203,7 @@ const ProfileView = () => {
                 </div>
                 <div>
                   <p className="font-semibold">Country:</p>
-                  <p>{address.country_id === 102 ? 'Philippines' : `Country ID: ${address.country_id}`}</p>
+                  <p>{`Philippines`}</p>
                 </div>
               </div>
             </div>

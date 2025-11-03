@@ -30,7 +30,6 @@ export const loader = (queryClient: any) => async ({ params }: any) => {
 
   try {
     const CategoryDetails = await queryClient.fetchQuery(CategoryViewQuery);
-    console.log(`ProductsPerCategory loader - Total products loaded:`, CategoryDetails.data.products?.length);
     return { CategoryDetails };
   } catch (error: any) {
     console.error('Failed to load category details:', error);

@@ -45,7 +45,7 @@ const AddressEditModal = ({
         region: addr.region || '',
         barangay: addr.barangay || '',
         zipcode: addr.zipcode || '',
-        country_id: addr.country_id?.toString() || '102',
+        country_id: '102',
       });
     }
   }, [userAddress]);
