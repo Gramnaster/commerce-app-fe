@@ -125,11 +125,12 @@ const router = createBrowserRouter([
       {
         path: 'profile',
         element: <Profile />,
-        loader: profileLoader(),
+        loader: profileLoader(store),
         children: [
           {
             index: true,
             element: <Profile />,
+            loader: profileLoader(store)
           },
           {
             path: 'view/:id',
