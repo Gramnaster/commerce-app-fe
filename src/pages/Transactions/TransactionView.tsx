@@ -347,7 +347,7 @@ const TransactionView = () => {
           </div>
           <div>
             <p className="font-semibold text-[16px]">Date:</p>
-            <p className="capitalize text-[16px]">{formatDate(created_at)}</p>
+            <p className="capitalize text-[16px]">{formatDateTime(created_at)}</p>
           </div>
           {/* Order Total */}
           <div>
