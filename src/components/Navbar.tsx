@@ -54,7 +54,7 @@ const Navbar = () => {
       <nav>
         <section className="w-full bg-primary">
           <div className="navbar align-headers flex items-center max-w-full px-10 max-h-[75px] mx-auto">
-            <div className="navbar-start flex-1 items-right">
+            <div className="navbar-start items-center">
               {/* <NavLink
                 to="/"
                 className="hidden lg:flex btn bg-transparent border-none shadow-none text-secondary items-center"
@@ -79,10 +79,10 @@ const Navbar = () => {
               </div>
             </div>
             {/* WIP - SEARCH BAR */}
-            <div className="navbar-center hidden lg:flex flex-6 justify-center">
+            <div className="navbar-center hidden lg:flex flex-1 justify-center px-4">
               <ProductSearchDropdown placeholder="Search Categories or Products" />
             </div>
-            <div className="navbar-end flex-3 flex justify-end">
+            <div className="navbar-end flex justify-end">
               {!isCartPage && user && (
                 <button
                   className="btn bg-transparent h-[30px] border-none shadow-none outline-none btn-circle mr-3"
