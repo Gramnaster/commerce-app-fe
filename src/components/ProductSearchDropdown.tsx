@@ -1,8 +1,26 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { customFetch } from '../utils';
+import { customFetch, formatPrice } from '../utils';
 import type { Product } from '../pages/Products/Products';
 import { IconSearch } from '../assets/images';
+
+// Add custom scrollbar styles
+const scrollbarStyles = `
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #f3f4f6;
+    border-radius: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #9ca3af;
+    border-radius: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+  }
+`;
 
 interface ProductSearchDropdownProps {
   placeholder?: string;
@@ -66,7 +84,7 @@ const ProductSearchDropdown = ({
     setSearchTerm('');
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       handleSearchClick();
@@ -74,16 +92,18 @@ const ProductSearchDropdown = ({
   };
 
   return (
-    <div className="relative flex-6 justify-center" ref={dropdownRef}>
-      {/* Search Input with Button */}
-      <div className="flex items-center w-full max-w-4xl">
+    <>
+      <style>{scrollbarStyles}</style>
+      <div className="relative flex-6 justify-center" ref={dropdownRef}>
+        {/* Search Input with Button */}
+        <div className="flex items-center w-full max-w-4xl">
         <input
           type="search"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="input flex-1 text-base text-black placeholder:text-gray-500 rounded-tr-none rounded-br-none max-h-[32px]"
+          className="input w-[1000px] text-base text-black placeholder:text-gray-500 rounded-tr-none rounded-br-none max-h-[32px] focus:outline-none focus:border-gray-300 focus:ring-0"
         />
         <button
           onClick={handleSearchClick}
@@ -97,7 +117,7 @@ const ProductSearchDropdown = ({
 
       {/* Dropdown Panel */}
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-96 overflow-hidden">
+        <div className="absolute z-50 w-[895px] mt-1 bg-white border border-gray-300 rounded-sm shadow-lg max-h-96 overflow-hidden">
           {isLoading ? (
             <div className="px-4 py-8 text-center text-gray-500">
               Loading products...
@@ -107,7 +127,13 @@ const ProductSearchDropdown = ({
               {error}
             </div>
           ) : filteredProducts.length > 0 ? (
-            <div className="overflow-y-auto max-h-96">
+            <div 
+              className="custom-scrollbar overflow-y-scroll max-h-96"
+              style={{
+                scrollbarWidth: 'thin',
+                scrollbarColor: '#9ca3af #f3f4f6'
+              }}
+            >
               {filteredProducts.map((product) => (
                 <div
                   key={product.id}
@@ -131,17 +157,17 @@ const ProductSearchDropdown = ({
                   
                   {/* Product Name */}
                   <div className="flex-1">
-                    <div className="font-medium text-sm">
+                    <div className="font-medium text-lg font-primary text-base-content">
                       {product.title}
                     </div>
-                    <div className="text-xs text-gray-500 group-hover:text-gray-200">
+                    <div className="text-xs text-gray-500 group-hover:text-gray-200 capitalize">
                       {product.product_category.title}
                     </div>
                   </div>
 
                   {/* Price */}
-                  <div className="text-sm font-semibold">
-                    PHP {product.final_price}
+                  <div className="text-md font-secondary font-semibold text-base-content">
+                    PHP {formatPrice(parseFloat(product.final_price))}
                   </div>
                 </div>
               ))}
@@ -153,7 +179,8 @@ const ProductSearchDropdown = ({
           )}
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 };
 
