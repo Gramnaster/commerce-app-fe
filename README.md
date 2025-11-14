@@ -90,3 +90,10 @@ Deployed On: Self-Deployed w/ Docker + Ngrok
 <img width="1277" height="737" alt="fe-24" src="https://github.com/user-attachments/assets/cf0ecb5e-655d-4723-aa71-125f5b1fb291" />
 <img width="1277" height="737" alt="fe-25" src="https://github.com/user-attachments/assets/9fb23639-aee8-476a-8efe-a2c4230eb15e" />
 <img width="1277" height="734" alt="fe-26" src="https://github.com/user-attachments/assets/be7e5828-ea6b-4b9a-85ec-7e86ef7d36db" />
+</br>
+
+<img width="3249" height="2452" alt="E-Commerce App" src="https://github.com/user-attachments/assets/17ba3db5-9c09-4471-b792-cdf7e65fb4b6" />
+<div align="center"> Near-Complete Entity Relationship Diagram of our Project </div> </br>
+
+<img width="1242" height="600" alt="fe-28" src="https://github.com/user-attachments/assets/5788617c-e7c8-46cf-bd41-886a5161dc83" />
+<div align="center"> Test Layouts in Figma </div> </br>
